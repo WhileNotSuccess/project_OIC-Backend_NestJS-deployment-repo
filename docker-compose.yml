@@ -9,3 +9,18 @@ services:
       - ./api:/app
     working_dir: /app
     command: sh -c "npm install && npm run start:dev"
+    networks:
+      - backend
+  db:
+    image: mysql:8.1.0
+    environment:
+      - MYSQL_DATABASE=db
+      - MYSQL_ROOT_PASSWORD=1234
+      - TZ=Asia/Seoul
+    ports:
+      - "3307:3306"
+    networks:
+      - backend
+
+networks:
+  backend:
