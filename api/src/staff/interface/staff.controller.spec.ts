@@ -3,7 +3,7 @@ import { StaffController } from "./staff.controller";
 import { StaffService } from "../application/service/staff.service";
 import { CreateStaffDto } from "../application/dto/create-staff.dto";
 import { UpdateStaffDto } from "../application/dto/update-staff.dto";
-import { Staff } from "../domain/entities/staff.entity";
+import { Staff } from "src/staff/domain/entities/staff.entity";
 
 describe("StaffController", () => {
   let controller: StaffController;

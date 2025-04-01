@@ -8,7 +8,9 @@ export default tseslint.config(
   {
     ignores: ["eslint.config.mjs"],
   },
-
+  eslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
+  eslintPluginPrettierRecommended,
   {
     languageOptions: {
       globals: {
@@ -28,12 +30,17 @@ export default tseslint.config(
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-floating-promises": "warn",
       "@typescript-eslint/no-unsafe-argument": "warn",
+      "object-curly-spacing": ["error", "always"],
       "prettier/prettier": ["warn", { singleQuote: false }],
       semi: ["error", "always"],
-      indent: ["error", 2],
       "comma-dangle": ["error", "always-multiline"],
-      "object-curly-spacing": ["error", "always"],
       "max-len": ["error", { code: 350 }],
+    },
+  },
+  {
+    files: ["**/*.spec.ts"],
+    rules: {
+      "@typescript-eslint/unbound-method": "off",
     },
   },
 );

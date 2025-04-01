@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { StaffOrmEntity } from "../entities/staff.entity";
-import { StaffRepository } from "src/staff/domain/repository/staff.repository";
+import { StaffRepository } from "../../domain/repository/staff.repository";
 import { toDomain, toOrmEntity } from "../mappers/staff.mapper";
-import { Staff } from "src/staff/domain/entities/staff.entity";
+import { Staff } from "../../domain/entities/staff.entity";
 
 @Injectable()
 export class TypeormStaffRepository extends StaffRepository {
@@ -52,12 +52,5 @@ export class TypeormStaffRepository extends StaffRepository {
   async delete(id: number): Promise<boolean> {
     const result = await this.dataSource.manager.delete(StaffOrmEntity, { id });
     return result.affected !== 0;
-  }
-
-  // 헬퍼: undefined 필드 제거
-  private omitUndefined<T extends object>(obj: T): Partial<T> {
-    return Object.fromEntries(
-      Object.entries(obj).filter(([_, v]) => v !== undefined),
-    ) as Partial<T>;
   }
 }
