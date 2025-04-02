@@ -59,7 +59,10 @@ describe("StaffController", () => {
       service.findAll.mockResolvedValue(staffList);
 
       const result = await controller.findAll();
-      expect(result).toEqual(staffList);
+      expect(result).toEqual({
+        message: "직원 목록을 불러왔습니다",
+        data: staffList,
+      });
     });
   });
 

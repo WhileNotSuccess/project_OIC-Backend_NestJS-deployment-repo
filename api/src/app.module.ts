@@ -4,6 +4,8 @@ import { AppService } from "./app.service";
 import { StaffModule } from "./staff/staff.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { StaffOrmEntity } from "./staff/infra/entities/staff.entity";
+import { PostModule } from "./post/post.module";
+import { PostOrmEntity } from "./post/infra/entities/post-orm.entity";
 
 @Module({
   imports: [
@@ -15,9 +17,10 @@ import { StaffOrmEntity } from "./staff/infra/entities/staff.entity";
       username: "root",
       password: "1234",
       database: "db",
-      entities: [StaffOrmEntity],
+      entities: [StaffOrmEntity, PostOrmEntity],
       synchronize: true,
     }),
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],
