@@ -60,7 +60,7 @@ describe("StaffController (e2e)", () => {
 
     expect(Array.isArray(body.data)).toBe(true);
 
-    expect(body.data).toBeGreaterThan(0);
+    expect(body.data.length).toBeGreaterThan(0);
   });
 
   it("/staff/:id (GET) should return one staff", async () => {
