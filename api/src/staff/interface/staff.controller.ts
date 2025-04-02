@@ -22,8 +22,11 @@ export class StaffController {
   }
 
   @Get()
-  findAll() {
-    return this.staffService.findAll();
+  async findAll() {
+    return {
+      message: "직원 목록을 불러왔습니다",
+      data: await this.staffService.findAll(),
+    };
   }
 
   @Get(":id")
