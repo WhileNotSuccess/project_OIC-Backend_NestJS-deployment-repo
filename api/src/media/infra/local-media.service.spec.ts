@@ -221,7 +221,7 @@ describe("LocalMediaService", () => {
       const targetPath = fileNames.map((item) =>
         path.resolve(getTestDir("test-file"), item),
       );
-
+      console.log(targetPath);
       await service.delete(targetPath);
 
       const afterDeleteFileNames = await fs.promises.readdir(
