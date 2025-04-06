@@ -172,7 +172,6 @@ describe("LocalMediaService", () => {
         return await service.uploadImage(item, "test-image");
       });
       const savedFileNames = await Promise.all(target);
-      console.log(savedFileNames);
       await service.delete(savedFileNames);
 
       const deletedDir = await fs.promises.readdir(getTestDir("test-image"));
