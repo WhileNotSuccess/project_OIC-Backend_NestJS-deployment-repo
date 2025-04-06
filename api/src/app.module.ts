@@ -11,6 +11,7 @@ import * as winston from "winston";
 import { APP_FILTER } from "@nestjs/core";
 import { HttpFilter } from "./common/http.filter";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { MediaModule } from './media/media.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
     }),
     PostModule,
     StaffModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [

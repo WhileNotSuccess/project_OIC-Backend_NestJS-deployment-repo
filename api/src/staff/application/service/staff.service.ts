@@ -18,7 +18,6 @@ export class StaffService {
 
   async findAll() {
     const result = await this.staffRepository.getAll();
-    console.log(result);
     return result;
   }
 

@@ -18,7 +18,6 @@ export class TypeormStaffRepository extends StaffRepository {
 
   async getAll(): Promise<Staff[]> {
     const ormList = await this.dataSource.manager.find(StaffOrmEntity);
-    console.log(ormList);
     return ormList.map((item) => toDomain(item));
   }
 
