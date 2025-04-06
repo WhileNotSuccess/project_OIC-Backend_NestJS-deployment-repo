@@ -43,7 +43,9 @@ export class LocalMediaService extends MediaService {
 
   async delete(filePaths: string[]): Promise<void> {
     const deletedPromises = filePaths.map(async (item) => {
+      console.log("item", item);
       const relativePath = item.replace(/^\/?files\//, "");
+
       try {
         console.log(path.join(this.uploadRoot, relativePath));
         await fs.unlink(path.join(this.uploadRoot, relativePath));
