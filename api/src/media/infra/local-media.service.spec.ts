@@ -66,25 +66,25 @@ describe("LocalMediaService", () => {
 
     const badFileBuffers = badFileNames.map((item) => {
       return {
-        originalName: item,
+        originalname: item,
         buffer: fs.readFileSync(path.resolve(badFilePath, item)),
       };
     });
     const goodFileBuffers = goodFileNames.map((item) => {
       return {
-        originalName: item,
+        originalname: item,
         buffer: fs.readFileSync(path.resolve(goodFilePath, item)),
       };
     });
     const badImageBuffers = badImageNames.map((item) => {
       return {
-        originalName: item,
+        originalname: item,
         buffer: fs.readFileSync(path.resolve(badImagePath, item)),
       };
     });
     const goodImageBuffers = goodImageNames.map((item) => {
       return {
-        originalName: item,
+        originalname: item,
         buffer: fs.readFileSync(path.resolve(goodImagePath, item)),
       };
     });
@@ -93,18 +93,20 @@ describe("LocalMediaService", () => {
       badFileBuffers.map(async (item) => {
         const type = await fileType.fromBuffer(item.buffer);
         if (!type) {
+          console.log(item.originalname);
           throw new Error("타입 판별 실패");
         }
-        return createMulterFile(item.buffer, item.originalName, type.mime);
+        return createMulterFile(item.buffer, item.originalname, type.mime);
       }),
     );
     mockFiles = await Promise.all(
       goodFileBuffers.map(async (item) => {
         const type = await fileType.fromBuffer(item.buffer);
         if (!type) {
+          console.log(item.originalname);
           throw new Error("타입 판별 실패");
         }
-        return createMulterFile(item.buffer, item.originalName, type.mime);
+        return createMulterFile(item.buffer, item.originalname, type.mime);
       }),
     );
 
@@ -112,9 +114,10 @@ describe("LocalMediaService", () => {
       badImageBuffers.map(async (item) => {
         const type = await fileType.fromBuffer(item.buffer);
         if (!type) {
+          console.log(item.originalname);
           throw new Error("타입 판별 실패");
         }
-        return createMulterFile(item.buffer, item.originalName, type.mime);
+        return createMulterFile(item.buffer, item.originalname, type.mime);
       }),
     );
 
@@ -122,15 +125,22 @@ describe("LocalMediaService", () => {
       goodImageBuffers.map(async (item) => {
         const type = await fileType.fromBuffer(item.buffer);
         if (!type) {
+          console.log(item.originalname);
           throw new Error("타입 판별 실패");
         }
-        return createMulterFile(item.buffer, item.originalName, type.mime);
+        return createMulterFile(item.buffer, item.originalname, type.mime);
       }),
     );
   });
   afterAll(async () => {
-    await fs.promises.rmdir(getTestDir("test-image"));
-    await fs.promises.rmdir(getTestDir("test-files"));
+    await fs.promises.rm(getTestDir("test-image"), {
+      recursive: true,
+      force: true,
+    });
+    await fs.promises.rm(getTestDir("test-file"), {
+      recursive: true,
+      force: true,
+    });
   });
 
   it("should be defined", () => {
@@ -155,7 +165,6 @@ describe("LocalMediaService", () => {
       });
       const savedFileNames = await Promise.all(target);
 
-      console.log(savedFileNames);
       await service.delete(savedFileNames);
 
       const deletedDir = await fs.promises.readdir(getTestDir("test-image"));
@@ -195,7 +204,7 @@ describe("LocalMediaService", () => {
       expect(uploadedFiles.length).toEqual(mockFiles.length);
       expect(
         uploadedFiles.map((item) => {
-          return item.originalName;
+          return item.originalname;
         }),
       ).toMatchObject(mockFiles.map((item) => item.originalname));
 
@@ -208,10 +217,10 @@ describe("LocalMediaService", () => {
 
       await service.delete(targetPath);
 
-      const atferDeletefileNames = await fs.promises.readdir(
+      const afterDeleteFileNames = await fs.promises.readdir(
         getTestDir("test-file"),
       );
-      expect(atferDeletefileNames.length).toEqual(0);
+      expect(afterDeleteFileNames.length).toEqual(0);
     });
   });
 
@@ -225,9 +234,7 @@ describe("LocalMediaService", () => {
     });
     it("should deny image", async () => {
       for (const image of badImages) {
-        await expect(
-          service.uploadAttachment(image, "test-file"),
-        ).rejects.toThrow();
+        await expect(service.uploadImage(image, "test-file")).rejects.toThrow();
       }
     });
   });

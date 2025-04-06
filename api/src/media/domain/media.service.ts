@@ -1,5 +1,5 @@
 type UploadAttachmentReturn = {
-  originalName: string;
+  originalname: string;
   mimeType: string;
   size: number;
   url: string;

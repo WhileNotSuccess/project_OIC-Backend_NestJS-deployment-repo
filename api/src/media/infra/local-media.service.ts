@@ -26,7 +26,7 @@ export class LocalMediaService extends MediaService {
   async uploadAttachment(file: Express.Multer.File, folder: string) {
     const { mimeType, size } = await MediaValidator.attachmentValidate(file);
     const savedFileName = `${uuid()}.${path.basename(file.originalname)}`;
-    const originalName = file.originalname;
+    const originalname = file.originalname;
     const targetDir = path.join(this.uploadRoot, folder);
     const targetPath = path.join(targetDir, savedFileName);
 
@@ -36,7 +36,7 @@ export class LocalMediaService extends MediaService {
     return {
       mimeType,
       size,
-      originalName,
+      originalname,
       url: `/files/${folder}/${savedFileName}`,
     };
   }
