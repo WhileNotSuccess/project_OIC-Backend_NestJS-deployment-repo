@@ -45,6 +45,7 @@ export class LocalMediaService extends MediaService {
     const deletedPromises = filePaths.map(async (item) => {
       const relativePath = item.replace(/^\/?files\//, "");
       try {
+        console.log(path.join(this.uploadRoot, relativePath));
         await fs.unlink(path.join(this.uploadRoot, relativePath));
       } catch {
         Logger.warn(`${item} 을 삭제하지 못했습니다.`);
