@@ -42,6 +42,14 @@ describe("LocalMediaService", () => {
     service = module.get<LocalMediaService>(LocalMediaService);
   });
   beforeAll(async () => {
+    await fs.promises.rm(getTestDir("test-image"), {
+      recursive: true,
+      force: true,
+    });
+    await fs.promises.rm(getTestDir("test-file"), {
+      recursive: true,
+      force: true,
+    });
     const badFilePath = path.resolve(
       __dirname,
       "../../../test/__fixtures__/attachment/bad",
