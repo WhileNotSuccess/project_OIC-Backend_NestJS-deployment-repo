@@ -46,6 +46,7 @@ export class LocalMediaService extends MediaService {
       try {
         await fs.unlink(item);
       } catch {
+        console.log("fail");
         Logger.warn(`${item} 을 삭제하지 못했습니다.`);
       }
     });
