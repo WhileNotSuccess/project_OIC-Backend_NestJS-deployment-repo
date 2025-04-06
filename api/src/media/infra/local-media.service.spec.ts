@@ -42,7 +42,6 @@ describe("LocalMediaService", () => {
     service = module.get<LocalMediaService>(LocalMediaService);
   });
   beforeAll(async () => {
-    await fs.promises.mkdir("/files");
     const badFilePath = path.resolve(
       __dirname,
       "../../../test/__fixtures__/attachment/bad",

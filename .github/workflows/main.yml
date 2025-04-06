@@ -26,6 +26,10 @@ jobs:
         run: npm run lint
         working-directory: api
 
+      - name: check path
+        run: pwd
+        working-directory: api
+
       - name: Run Unit Tests (Jest)
         run: npm run test
         working-directory: api
