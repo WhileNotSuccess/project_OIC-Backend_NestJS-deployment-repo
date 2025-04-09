@@ -291,7 +291,7 @@ export class PostController {
       ],
     },
   })
-  @Get("one/:id(\\d+)")
+  @Get("one/id/:id")
   async findOneForId(@Param("id") id: string) {
     const { post, files } = await this.postService.findOneForId(+id);
     if (!post) {
@@ -327,7 +327,7 @@ export class PostController {
       },
     },
   })
-  @Get("one/:category")
+  @Get("one/category/:category")
   async findOneForCategory(
     @Param("category") category: string,
     @Req() req: RequestWithCookies,
