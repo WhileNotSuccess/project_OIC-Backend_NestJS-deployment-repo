@@ -1,4 +1,5 @@
 import { IsString } from "class-validator";
+import { Language } from "src/post/domain/types/language";
 
 export class CreatePostDto {
   @IsString()
@@ -6,5 +7,7 @@ export class CreatePostDto {
   @IsString()
   content: string;
   @IsString()
-  author: string;
+  language: Language;
+  @IsString()
+  category: string;
 }
