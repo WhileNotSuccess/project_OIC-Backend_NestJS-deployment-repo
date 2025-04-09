@@ -16,6 +16,7 @@ services:
       - TEST_DB_DATABASE=${TEST_DB_DATABASE}
       - TEST_DB_TYPE=${TEST_DB_TYPE}
       - BACKEND_URL=${BACKEND_URL}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
     ports:
       - "3001:3000"
     volumes:

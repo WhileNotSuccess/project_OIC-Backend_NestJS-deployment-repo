@@ -22,6 +22,8 @@ import { CorporationOrmEntity } from "./corporation/infra/entities/corporation.e
 import { CountryOrmEntity } from "./corporation/infra/entities/country.entity";
 import { PrideOfYjuOrmEntity } from "./pride-of-yju/infra/entities/pride-of-yju.entity";
 import { ServeStaticModule } from "@nestjs/serve-static";
+import { UsersModule } from "./users/users.module";
+
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -104,6 +106,7 @@ import { ServeStaticModule } from "@nestjs/serve-static";
     CarouselModule,
     PrideOfYjuModule,
     CorporationModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [
