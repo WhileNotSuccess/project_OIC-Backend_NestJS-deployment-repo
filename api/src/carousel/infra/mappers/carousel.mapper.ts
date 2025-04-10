@@ -1,6 +1,15 @@
 import { Carousel } from "src/carousel/domain/entities/carousel.entity";
 import { CarouselOrmEntity } from "../entites/carousel.entity";
 
+// export const toDomain = (orm: CarouselOrmEntity): ReturnCarousel => {
+//   return new ReturnCarousel(
+//     orm.image,
+//     orm.postId,
+//     orm.KoreanTitle || orm.EnglishTitle || orm.JapaneseTitle,
+//     orm.KoreanDescription || orm.EnglishDescription || orm.JapaneseDescription,
+//     orm.id,
+//   );
+// }; //domain으로 변환
 export const toDomain = (orm: CarouselOrmEntity): Carousel => {
   return new Carousel(
     orm.image,
@@ -13,7 +22,7 @@ export const toDomain = (orm: CarouselOrmEntity): Carousel => {
     orm.JapaneseDescription,
     orm.id,
   );
-}; //domain으로 변환
+}; //getOne이 열을 그대로 내보내기 위해 만듬
 
 export const toOrmEntity = (carousel: Carousel): CarouselOrmEntity => {
   const orm = new CarouselOrmEntity();
@@ -27,6 +36,6 @@ export const toOrmEntity = (carousel: Carousel): CarouselOrmEntity => {
   orm.EnglishTitle = carousel.EnglishTitle;
   orm.EnglishDescription = carousel.EnglishDescription;
   orm.JapaneseTitle = carousel.JapaneseTitle;
-  orm.EnglishDescription = carousel.EnglishDescription;
+  orm.JapaneseDescription = carousel.JapaneseDescription;
   return orm;
 }; //entity로 변환

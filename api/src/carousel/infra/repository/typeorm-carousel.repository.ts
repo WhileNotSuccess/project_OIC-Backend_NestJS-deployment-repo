@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { Carousel } from "src/carousel/domain/entities/carousel.entity";
 import { CarouselRepository } from "src/carousel/domain/repository/carousel.repository";
 import { DataSource } from "typeorm";
@@ -36,6 +36,27 @@ export class TypeormCarouselRepository extends CarouselRepository {
   }
   async getAll(): Promise<Carousel[]> {
     const ormList = await this.dataSource.manager.find(CarouselOrmEntity);
+    // const queryBuilder = this.dataSource
+    //   .createQueryBuilder()
+    //   .from(CarouselOrmEntity, "caro")
+    //   .select("caro.id as id, caro.image as image, caro.postId as postId");
+    // switch (language) {
+    //   case "english":
+    //     queryBuilder.addSelect(
+    //       "caro.EnglishTitle as EnglishTitle, caro.EnglishDescription as EnglishDescription",
+    //     );
+    //     break;
+    //   case "japanese":
+    //     queryBuilder.addSelect(
+    //       "caro.JapaneseTitle as JapaneseTitle, caro.JapaneseDescription as JapaneseDescription",
+    //     );
+    //     break;
+    //   default:
+    //     queryBuilder.addSelect(
+    //       "caro.KoreanTitle as KoreanTitle, caro.KoreanDescription as KoreanDescription",
+    //     );
+    // }
+    // const ormList = await queryBuilder.getMany();
     return ormList.map(toDomain);
   }
   async update(
@@ -43,7 +64,8 @@ export class TypeormCarouselRepository extends CarouselRepository {
     carouselData: Partial<Carousel>,
   ): Promise<Carousel | null> {
     const existing = await this.getOne(id);
-    if (!existing) return null;
+    if (!existing)
+      throw new BadRequestException("해당 id의 캐러셀이 존재하지 않습니다.");
 
     const updated = new Carousel(
       carouselData.image ?? existing.image,
@@ -58,7 +80,8 @@ export class TypeormCarouselRepository extends CarouselRepository {
     );
     const orm = toOrmEntity(updated);
     await this.dataSource.manager.update(CarouselOrmEntity, { id }, orm);
-    return this.getOne(id);
+    const result = await this.getOne(id);
+    return result;
   }
   async delete(id: number): Promise<boolean> {
     const result = await this.dataSource.manager.delete(CarouselOrmEntity, {

@@ -1,14 +1,15 @@
 import { CarouselController } from "./carousel.controller";
 import { CarouselService } from "../../application/services/carousel.service";
 import { Test, TestingModule } from "@nestjs/testing";
-import { CarouselResponse } from "test/types/carousel-response";
-import { Carousel } from "src/carousel/domain/entities/carousel.entity";
 import { CreateCarouselDto } from "src/carousel/application/dto/create-carousel.dto";
+import { Request } from "express";
+import { ReturnCarousel } from "src/carousel/domain/entities/return-carousel.entity";
+import { Carousel } from "src/carousel/domain/entities/carousel.entity";
 
 describe("CarouselController", () => {
   let controller: CarouselController;
   let service: jest.Mocked<CarouselService>;
-  const dto: Partial<CarouselResponse["data"]> = {
+  const dto: Partial<Carousel> = {
     image: "/203846-92082392.jpg",
     postId: 1,
     KoreanTitle: "한글",
@@ -27,6 +28,9 @@ describe("CarouselController", () => {
           provide: CarouselService,
           useValue: {
             create: jest.fn(),
+            findAll: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],
@@ -44,52 +48,58 @@ describe("CarouselController", () => {
   describe("create", () => {
     // describe는 it(단일 동작)을 그룹화
     it("should create a carousel", async () => {
-      const created = new Carousel( // mock 설정 해둘 값 생성
-        dto.image as string,
-        dto.postId as number,
-        dto.KoreanTitle as string,
-        dto.KoreanDescription as string,
-        dto.EnglishTitle as string,
-        dto.EnglishDescription as string,
-        dto.JapaneseTitle as string,
-        dto.JapaneseDescription as string,
-        1,
-      );
-      service.create.mockResolvedValue(created); //mock 설정
+      service.create.mockResolvedValue(true); //mock 설정
 
       const result = await controller.create({ ...(dto as CreateCarouselDto) });
 
-      expect(result).toEqual(created);
+      expect(result.message).toEqual("작성에 성공했습니다.");
       expect(service.create).toHaveBeenCalledWith(dto);
     });
   });
   describe("findAll", () => {
     it("should return all carousel", async () => {
       const carouselList = [
-        new Carousel(
+        new ReturnCarousel(
           "/123456-image.jpg",
           1,
           dto.KoreanTitle + "1",
           dto.KoreanDescription + "1",
-          dto.EnglishTitle + "1",
-          dto.EnglishDescription + "1",
-          dto.JapaneseTitle + "1",
-          dto.JapaneseDescription + "1",
           1,
         ),
-        new Carousel(
+        new ReturnCarousel(
           "/098765-image.jpg",
           2,
           dto.KoreanTitle + "2",
           dto.KoreanDescription + "2",
-          dto.EnglishTitle + "2",
-          dto.EnglishDescription + "2",
-          dto.JapaneseTitle + "2",
-          dto.JapaneseDescription + "2",
           2,
         ),
       ];
+      // document.cookie = "language=korean;path=/"; // 쿠키 설정
+      // const cookies = document.cookie;
+      // expect(cookies).toContain("language=korean"); // 쿠키가 설정됐는지 확인
+      const mockRequest = {
+        cookies: [{ language: "korean" }],
+      } as unknown as Request;
       service.findAll.mockResolvedValue(carouselList);
+      const result = await controller.findAll(mockRequest);
+      expect(result.message).toBe("carousel을 불러왔습니다.");
+      expect(result.data.length).toBeGreaterThan(0);
+    });
+  });
+  describe("update", () => {
+    it("should patch one carousel", async () => {
+      service.update.mockResolvedValue(true);
+      const result = await controller.update(1, {
+        KoreanTitle: "수정된 한국어",
+      });
+      expect(result.message).toBe("수정에 성공했습니다.");
+    });
+  });
+  describe("delete", () => {
+    it("should delete one carousel", async () => {
+      service.update.mockResolvedValue(true);
+      const result = await controller.delete(1);
+      expect(result.message).toBe("삭제에 성공했습니다.");
     });
   });
 });

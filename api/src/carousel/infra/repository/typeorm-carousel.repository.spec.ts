@@ -41,11 +41,11 @@ describe("TypeormCarouselRepository (Integration)", () => {
       expectValue.EnglishDescription,
       expectValue.JapaneseTitle,
       expectValue.JapaneseDescription,
+      1,
     );
-    const created = await repository.create(input);
+    const created = await repository.create(expectValue);
 
-    expect(created.id).toBeDefined();
-    expect(created.image).toBe("/203846-92082392.jpg");
+    expect(created).toStrictEqual(input);
   });
   it("should get all carousel", async () => {});
 });

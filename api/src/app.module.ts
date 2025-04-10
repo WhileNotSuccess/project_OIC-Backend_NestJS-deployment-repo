@@ -4,10 +4,12 @@ import { AppService } from "./app.service";
 import { StaffModule } from "./staff/staff.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { StaffOrmEntity } from "./staff/infra/entities/staff.entity";
+import { CarouselModule } from "./carousel/carousel.model";
 
 @Module({
   imports: [
     StaffModule,
+    CarouselModule,
     TypeOrmModule.forRoot({
       type: "mysql",
       host: "db",

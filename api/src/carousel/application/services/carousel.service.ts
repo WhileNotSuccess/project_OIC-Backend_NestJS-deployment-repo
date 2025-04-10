@@ -8,17 +8,46 @@ export class CarouselService {
   constructor(private readonly carouselRepository: CarouselRepository) {}
   async create(createdto: CreateCarouselDto) {
     const carousel = await this.carouselRepository.create(createdto);
-
-    return carousel;
+    return !!carousel;
   }
-  async findAll() {
+  async findAll(language: string) {
     const carousel = await this.carouselRepository.getAll();
-    return carousel;
+    const returnCarousel = carousel.map((item) => {
+      let languageObject: object;
+      switch (language) {
+        case "english":
+          languageObject = {
+            title: item.EnglishTitle,
+            description: item.EnglishDescription,
+          };
+          break;
+        case "japanese":
+          languageObject = {
+            title: item.JapaneseTitle,
+            description: item.JapaneseDescription,
+          };
+          break;
+        default:
+          languageObject = {
+            title: item.KoreanTitle,
+            description: item.KoreanDescription,
+          };
+      }
+      return {
+        ...languageObject,
+        id: item.id,
+        image: item.image,
+        postId: item.postId,
+      };
+    });
+    return returnCarousel;
   }
   async update(id: number, updatedto: UpdateCarouselDto) {
-    await this.carouselRepository.update(id, updatedto);
+    const carousel = await this.carouselRepository.update(id, updatedto);
+    return !!carousel;
   }
   async delete(id: number) {
-    await this.carouselRepository.delete(id);
+    const carousel = await this.carouselRepository.delete(id);
+    return carousel;
   }
 }
