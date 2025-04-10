@@ -4,7 +4,7 @@ import * as request from "supertest";
 import { StaffModule } from "src/staff/staff.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { StaffOrmEntity } from "src/staff/infra/entities/staff.entity";
-import { StaffResponse } from "./types/staff-response";
+import { StaffResMessage, StaffResponse } from "./types/staff-response";
 
 describe("StaffController (e2e)", () => {
   let app: INestApplication;
@@ -56,11 +56,11 @@ describe("StaffController (e2e)", () => {
       typeof request
     >[0];
     const res = await request(server).get("/staff").expect(200);
-    const body: StaffResponse[] = res.body as StaffResponse[];
+    const body: StaffResMessage = res.body as StaffResMessage;
 
-    expect(Array.isArray(body)).toBe(true);
+    expect(Array.isArray(body.data)).toBe(true);
 
-    expect(body.length).toBeGreaterThan(0);
+    expect(body.data.length).toBeGreaterThan(0);
   });
 
   it("/staff/:id (GET) should return one staff", async () => {

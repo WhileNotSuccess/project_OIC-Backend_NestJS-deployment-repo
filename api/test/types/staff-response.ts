@@ -4,3 +4,8 @@ export interface StaffResponse {
   phoneNumber: string;
   role: string;
 }
+
+export interface StaffResMessage {
+  message: string;
+  data: StaffResponse[];
+}
