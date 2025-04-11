@@ -13,6 +13,9 @@ describe("LocalMediaService", () => {
 
   let service: LocalMediaService;
   let savedPath: string;
+
+  let savedFileNames: string[];
+
   const getTestDir = (folder: string) => {
     return path.resolve(__dirname, "../../../../files", folder);
   };
@@ -158,7 +161,7 @@ describe("LocalMediaService", () => {
   describe("upload image", () => {
     it("should save a image file and return url", async () => {
       const result = await service.uploadImage(mockImages[0], "test-image");
-      expect(result).toMatch(new RegExp(`^/files/test-image/.+`));
+      expect(result).toMatch(new RegExp(`^/test-image/.+`));
 
       savedPath = path.resolve(getTestDir("test-image"), path.basename(result));
       const exists = fs.existsSync(savedPath);
@@ -166,12 +169,19 @@ describe("LocalMediaService", () => {
     });
   });
 
-  describe("delete image files", () => {
-    it("should delete media file", async () => {
+  describe("findImage and delete image files", () => {
+    it("should save a image and find image files", async () => {
       const target = mockImages.map(async (item) => {
         return await service.uploadImage(item, "test-image");
       });
-      const savedFileNames = await Promise.all(target);
+      savedFileNames = await Promise.all(target);
+
+      const foundImage = await service.findImage(savedFileNames);
+      expect(foundImage.map((item) => item.size)).toMatchObject(
+        mockImages.map((item) => item.size),
+      );
+    });
+    it("should delete media file", async () => {
       await service.delete(savedFileNames);
 
       const deletedDir = await fs.promises.readdir(getTestDir("test-image"));
@@ -189,7 +199,7 @@ describe("LocalMediaService", () => {
   describe("upload file", () => {
     it("should save a attachment file and return data", async () => {
       const result = await service.uploadAttachment(mockFiles[0], "test-file");
-      expect(result.url).toMatch(new RegExp(`^/files/test-file/.+`));
+      expect(result.url).toMatch(new RegExp(`^/test-file/.+`));
 
       savedPath = path.resolve(
         getTestDir("test-file"),
@@ -218,16 +228,14 @@ describe("LocalMediaService", () => {
       const fileNames = await fs.promises.readdir(getTestDir("test-file"));
       expect(fileNames.length).toEqual(mockFiles.length + 1);
 
-      const targetPath = fileNames.map((item) =>
-        path.resolve(getTestDir("test-file"), item),
-      );
-      console.log(targetPath);
+      const targetPath = uploadedFiles.map((item) => item.url);
+
       await service.delete(targetPath);
 
       const afterDeleteFileNames = await fs.promises.readdir(
         getTestDir("test-file"),
       );
-      expect(afterDeleteFileNames.length).toEqual(0);
+      expect(afterDeleteFileNames.length).toEqual(1);
     });
   });
 

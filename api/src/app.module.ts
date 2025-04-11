@@ -11,7 +11,9 @@ import * as winston from "winston";
 import { APP_FILTER } from "@nestjs/core";
 import { HttpFilter } from "./common/http.filter";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { MediaModule } from './media/media.module';
+import { MediaModule } from "./media/media.module";
+import { PostImageOrmEntity } from "./post/infra/entities/post-image-orm-entity";
+import { AttachmentOrmEntity } from "./post/infra/entities/attachment-orm.entity";
 
 @Module({
   imports: [
@@ -27,7 +29,12 @@ import { MediaModule } from './media/media.module';
         username: config.getOrThrow<string>("DB_USERNAME"),
         password: config.getOrThrow<string>("DB_PASSWORD"),
         database: config.getOrThrow<string>("DB_DATABASE"),
-        entities: [StaffOrmEntity, PostOrmEntity],
+        entities: [
+          StaffOrmEntity,
+          PostOrmEntity,
+          PostImageOrmEntity,
+          AttachmentOrmEntity,
+        ],
         synchronize: true,
       }),
       inject: [ConfigService],
