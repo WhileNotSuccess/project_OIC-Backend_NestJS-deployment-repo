@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
 import { CreatePostDto } from "../dto/create-post.dto";
@@ -95,25 +96,33 @@ export class PostService {
   }
 
   async findApplicant() {
-    const regex: RegExp = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/g;
+    const regex: RegExp = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/;
     const applicants = await this.postRepository.getOneForCategory(
       "guidelinesForApplicants",
       Language.korean,
+    );
+    if (!applicants?.id) {
+      throw new InternalServerErrorException("모집요강을 못 찾았습니다.");
+    }
+    const applicantFile = await this.postRepository.getAttachmentsByPostId(
+      applicants.id,
     );
     const entry = await this.postRepository.getOneForCategory(
       "applicants",
       Language.korean,
     );
-    if (!applicants || !entry) {
-      throw new NotFoundException(
-        "입학신청서와 모집요강을 가져오지 못했습니다.",
-      );
+    if (!entry?.id) {
+      throw new InternalServerErrorException("입학신청서를 못 찾았습니다.");
     }
+    const entryFile = await this.postRepository.getAttachmentsByPostId(
+      entry.id,
+    );
+
     const applicantsMatch = regex.exec(applicants.content);
     const entryMatch = regex.exec(entry.content);
     if (!applicantsMatch || !entryMatch) {
       throw new NotFoundException(
-        "입학신청서와 모집요강을 가져오지 못했습니다.",
+        "입학신청서와 모집요강의 이미지를 가져오지 못했습니다.",
       );
     }
     return {
@@ -122,17 +131,17 @@ export class PostService {
           `${process.env.BACKEND_URL}/files`,
           "",
         ),
-        fileUrl: "",
+        fileUrl: applicantFile[0].url,
       },
       entry: {
         imageUrl: entryMatch[1].replace(`${process.env.BACKEND_URL}/files`, ""),
-        fileUrl: "",
+        fileUrl: entryFile[0].url,
       },
     };
   }
 
   async findNews(language: Language) {
-    const regex: RegExp = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/g;
+    const regex: RegExp = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/;
     const data = await this.postRepository.getNews(language);
     return data.map((item) => {
       const match = regex.exec(item.content);
@@ -154,32 +163,29 @@ export class PostService {
     const { deleteFilePath, ...dto } = updatePostDto;
 
     const regex = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/g;
-    const createFilenames: string[] = [];
+    const imageInContent: string[] = [];
     let match: RegExpExecArray | null;
-    if (
-      typeof dto.content === "string" &&
-      (match = regex.exec(dto.content)) !== null
+    while (
+      updatePostDto.content &&
+      (match = regex.exec(updatePostDto.content)) !== null
     ) {
-      createFilenames.push(
+      imageInContent.push(
         match[1].replace(`${process.env.BACKEND_URL}/files`, ""),
       );
     }
 
     const postImages = await this.postRepository.findImagesWithPostId(id);
-    const oldImages = postImages.map((item) => {
-      return {
-        size: item.fileSize,
-        filename: item.filename,
-      };
-    });
 
-    const newImages = createFilenames.filter(
-      (item) => !oldImages.map((item) => item.filename).includes(item),
+    const oldImages = postImages.map((item) => item.filename);
+
+    const newImages = imageInContent.filter(
+      (item) => !oldImages.includes(item),
     );
+
     const deleteImages = oldImages.filter(
-      (item) => !createFilenames.includes(item.filename),
+      (item) => !imageInContent.includes(item),
     );
-    const deleteImageNames = deleteImages.map((item) => item.filename);
+
     const imageData = await this.mediaService.findImage(newImages);
     // 업로드 파일이 있으면 업로드 후 메타데이터 저장
     const filesData = await Promise.all(
@@ -199,7 +205,7 @@ export class PostService {
       raw,
       imageData,
       filesData,
-      deleteImageNames,
+      deleteImages,
     );
   }
 

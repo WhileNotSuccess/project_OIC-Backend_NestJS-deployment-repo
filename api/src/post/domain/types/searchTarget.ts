@@ -1,5 +1,5 @@
 export enum searchTarget {
-  "title",
-  "author",
-  "date",
+  title = "title",
+  author = "author",
+  date = "date",
 }
