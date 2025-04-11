@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { Carousel } from "src/carousel/domain/entities/carousel.entity";
-import { CarouselRepository } from "src/carousel/domain/repository/carousel.repository";
+import { Carousel } from "../../domain/entities/carousel.entity";
+import { CarouselRepository } from "../../domain/repository/carousel.repository";
 import { DataSource } from "typeorm";
 import { toDomain, toOrmEntity } from "../mappers/carousel.mapper";
 import { CarouselOrmEntity } from "../entites/carousel.entity";
+import { transactional } from "src/common/utils/transaction-helper";
 
 @Injectable()
 export class TypeormCarouselRepository extends CarouselRepository {
@@ -24,7 +25,14 @@ export class TypeormCarouselRepository extends CarouselRepository {
       carouselData.id,
     );
     const orm = toOrmEntity(carousel);
-    const saved = await this.dataSource.manager.save(orm);
+
+    const saved = await transactional<CarouselOrmEntity>(
+      this.dataSource,
+      async (queryRunner) => {
+        return await queryRunner.manager.save(orm);
+      },
+    );
+
     return toDomain(saved);
   }
 
@@ -59,6 +67,7 @@ export class TypeormCarouselRepository extends CarouselRepository {
     // const ormList = await queryBuilder.getMany();
     return ormList.map(toDomain);
   }
+
   async update(
     id: number,
     carouselData: Partial<Carousel>,
@@ -79,13 +88,18 @@ export class TypeormCarouselRepository extends CarouselRepository {
       id,
     );
     const orm = toOrmEntity(updated);
-    await this.dataSource.manager.update(CarouselOrmEntity, { id }, orm);
+    await transactional(this.dataSource, async (queryRunner) => {
+      await queryRunner.manager.update(CarouselOrmEntity, { id }, orm);
+    });
     const result = await this.getOne(id);
     return result;
   }
+
   async delete(id: number): Promise<boolean> {
-    const result = await this.dataSource.manager.delete(CarouselOrmEntity, {
-      id,
+    const result = await transactional(this.dataSource, async (queryRunner) => {
+      return await queryRunner.manager.delete(CarouselOrmEntity, {
+        id,
+      });
     });
     return result.affected !== 0;
   }

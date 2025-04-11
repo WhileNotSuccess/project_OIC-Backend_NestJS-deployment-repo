@@ -8,11 +8,12 @@ import {
   CarouselResponse,
 } from "./types/carousel-response";
 import { CarouselOrmEntity } from "src/carousel/infra/entites/carousel.entity";
-import cookieParser from "cookie-parser";
+import * as cookieParser from "cookie-parser";
+import { Carousel } from "src/carousel/domain/entities/carousel.entity";
 
 describe("CarouselController (e2e)", () => {
   let app: INestApplication;
-  const dto: Partial<CarouselResponse["data"]> = {
+  const dto: Partial<Carousel> = {
     image: "carousel/203846-92082392.jpg",
     postId: 1,
     KoreanTitle: "한글",
@@ -69,12 +70,11 @@ describe("CarouselController (e2e)", () => {
       .set("Cookie", "language=korean")
       .expect(200); // get 요청 보내기
     const body = res.body as CarouselArrayResponse;
-    expect(body.message).toBe("carousel을 전부 불러왔습니다.");
+    expect(body.message).toBe("carousel을 불러왔습니다.");
     expect(Array.isArray(body.data)).toBe(true); // data가 []배열인지 확인
     expect(body.data.length).toBeGreaterThan(0); //길이가 0보다 큰지 확인
     if (body.data[0]) {
       createdId = body.data[0].id; // 첫번째로 생성된 열의 id를 저장
-      console.log(body.data);
     }
 
     // const body = res.body as CarouselArrayResponse["data"];
@@ -93,6 +93,7 @@ describe("CarouselController (e2e)", () => {
     const server = app.getHttpServer() as unknown as Parameters<
       typeof request
     >[0];
+    console.log(createdId);
     const res = await request(server)
       .patch(`/carousel/${createdId}`)
       .send({
@@ -100,15 +101,11 @@ describe("CarouselController (e2e)", () => {
       })
       .expect(200);
 
-    expect((res.body as CarouselResponse).message).toBe(
-      `${createdId}번의 carousel을 수정하였습니다.`,
-    );
-    const resTest = await request(server)
-      .get(`/carousel/${createdId}`)
-      .expect(200);
-    const body = resTest.body as CarouselResponse;
+    expect((res.body as CarouselResponse).message).toBe(`수정에 성공했습니다.`);
+    const resTest = await request(server).get(`/carousel`).expect(200);
+    const body = resTest.body as CarouselArrayResponse;
     if (body.data) {
-      expect(body.data.KoreanTitle).toBe("수정된 한글");
+      expect(body.data[0].title).toBe("수정된 한글");
     }
   });
 

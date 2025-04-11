@@ -1,10 +1,10 @@
 import { CarouselController } from "./carousel.controller";
 import { CarouselService } from "../../application/services/carousel.service";
 import { Test, TestingModule } from "@nestjs/testing";
-import { CreateCarouselDto } from "src/carousel/application/dto/create-carousel.dto";
+import { CreateCarouselDto } from "../../application/dto/create-carousel.dto";
 import { Request } from "express";
-import { ReturnCarousel } from "src/carousel/domain/entities/return-carousel.entity";
-import { Carousel } from "src/carousel/domain/entities/carousel.entity";
+import { ReturnCarousel } from "../../domain/entities/carousel-return.entiry";
+import { Carousel } from "../../domain/entities/carousel.entity";
 
 describe("CarouselController", () => {
   let controller: CarouselController;

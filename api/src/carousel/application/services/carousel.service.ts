@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CreateCarouselDto } from "../dto/create-carousel.dto";
-import { CarouselRepository } from "src/carousel/domain/repository/carousel.repository";
+import { CarouselRepository } from "../../domain/repository/carousel.repository";
 import { UpdateCarouselDto } from "../dto/update-carousel.dto";
 
 @Injectable()

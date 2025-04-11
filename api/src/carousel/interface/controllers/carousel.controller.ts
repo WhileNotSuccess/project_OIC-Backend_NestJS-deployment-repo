@@ -9,9 +9,9 @@ import {
   Req,
 } from "@nestjs/common";
 import { Request } from "express";
-import { CreateCarouselDto } from "src/carousel/application/dto/create-carousel.dto";
-import { UpdateCarouselDto } from "src/carousel/application/dto/update-carousel.dto";
-import { CarouselService } from "src/carousel/application/services/carousel.service";
+import { CreateCarouselDto } from "../../application/dto/create-carousel.dto";
+import { UpdateCarouselDto } from "../../application/dto/update-carousel.dto";
+import { CarouselService } from "../../application/services/carousel.service";
 
 interface Req extends Request {
   cookies: { [key: string]: string };

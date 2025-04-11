@@ -1,6 +1,6 @@
-import { CarouselRepository } from "src/carousel/domain/repository/carousel.repository";
+import { CarouselRepository } from "../../domain/repository/carousel.repository";
 import { CarouselService } from "./carousel.service";
-import { Carousel } from "src/carousel/domain/entities/carousel.entity";
+import { Carousel } from "../../domain/entities/carousel.entity";
 import { Test, TestingModule } from "@nestjs/testing";
 import { CreateCarouselDto } from "../dto/create-carousel.dto";
 

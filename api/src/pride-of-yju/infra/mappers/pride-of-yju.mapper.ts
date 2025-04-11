@@ -2,13 +2,13 @@ import { PrideOfYju } from "src/pride-of-yju/domain/entities/pride-of-yju.entity
 import { PrideOfYjuOrmEntity } from "../entities/pride-of-yju.entity";
 
 export const toDomain = (orm: PrideOfYjuOrmEntity): PrideOfYju => {
-    return new PrideOfYju(
-        orm.image, 
-        orm.Korean,
-        orm.English,
-        orm.Japanese, 
-        orm.id
-    );
+  return new PrideOfYju(
+    orm.image,
+    orm.Korean,
+    orm.English,
+    orm.Japanese,
+    orm.id,
+  );
 };
 
 export const toOrmEntity = (staff: PrideOfYju): PrideOfYjuOrmEntity => {

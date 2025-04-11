@@ -1,4 +1,4 @@
-import { Carousel } from "src/carousel/domain/entities/carousel.entity";
+import { Carousel } from "../../domain/entities/carousel.entity";
 import { CarouselOrmEntity } from "../entites/carousel.entity";
 
 // export const toDomain = (orm: CarouselOrmEntity): ReturnCarousel => {

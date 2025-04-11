@@ -11,7 +11,7 @@ import * as winston from "winston";
 import { APP_FILTER } from "@nestjs/core";
 import { HttpFilter } from "./common/http.filter";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { MediaModule } from './media/media.module';
+import { MediaModule } from "./media/media.module";
 import { CarouselModule } from "./carousel/carousel.model";
 
 @Module({
@@ -19,7 +19,6 @@ import { CarouselModule } from "./carousel/carousel.model";
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    CarouselModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
@@ -81,6 +80,7 @@ import { CarouselModule } from "./carousel/carousel.model";
     PostModule,
     StaffModule,
     MediaModule,
+    CarouselModule,
   ],
   controllers: [AppController],
   providers: [
