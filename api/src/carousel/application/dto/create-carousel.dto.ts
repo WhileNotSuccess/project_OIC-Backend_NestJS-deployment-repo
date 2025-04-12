@@ -4,15 +4,15 @@ export class CreateCarouselDto {
   @IsNumber()
   postId: number;
   @IsString()
-  KoreanTitle: string;
+  koreanTitle: string;
   @IsString()
-  KoreanDescription: string;
+  koreanDescription: string;
   @IsString()
-  EnglishTitle: string;
+  englishTitle: string;
   @IsString()
-  EnglishDescription: string;
+  englishDescription: string;
   @IsString()
-  JapaneseTitle: string;
+  japaneseTitle: string;
   @IsString()
-  JapaneseDescription: string;
+  japaneseDescription: string;
 }

@@ -9,20 +9,22 @@ import {
 } from "./types/carousel-response";
 import { CarouselOrmEntity } from "src/carousel/infra/entites/carousel.entity";
 import * as cookieParser from "cookie-parser";
-import { Carousel } from "src/carousel/domain/entities/carousel.entity";
+// import { Carousel } from "src/carousel/domain/entities/carousel.entity";
+import * as path from "path";
 
 describe("CarouselController (e2e)", () => {
   let app: INestApplication;
-  const dto: Partial<Carousel> = {
-    image: "carousel/203846-92082392.jpg",
-    postId: 1,
-    KoreanTitle: "한글",
-    KoreanDescription: "한글설명",
-    EnglishTitle: "영어",
-    EnglishDescription: "영어설명",
-    JapaneseTitle: "일본어",
-    JapaneseDescription: "일본어설명",
-  };
+  // console.log(path.join(__dirname, "../..", "files/141735.png"));
+  const testfilePath = path.join(__dirname, "../..", "files/141735.png");
+  // const dto: Partial<Carousel> = {
+  //   postId: 1,
+  //   koreanTitle: "한글",
+  //   koreanDescription: "한글설명",
+  //   englishTitle: "영어",
+  //   englishDescription: "영어설명",
+  //   japaneseTitle: "일본어",
+  //   japaneseDescription: "일본어설명",
+  // };
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
@@ -50,7 +52,15 @@ describe("CarouselController (e2e)", () => {
     >[0];
     const createRes = await request(server)
       .post("/carousel")
-      .send(dto)
+      // .send(dto)
+      .field("postId", 1)
+      .field("koreanTitle", "한글")
+      .field("koreanDescription", "한글설명")
+      .field("englishTitle", "영어")
+      .field("englishDescription", "영어설명")
+      .field("japaneseTitle", "일본어")
+      .field("japaneseDescription", "일본어설명")
+      .attach("file", testfilePath)
       .expect(201); // post 요청 성공 확인
     expect((createRes.body as CarouselResponse).message).toBe(
       "작성에 성공했습니다.",
@@ -73,6 +83,7 @@ describe("CarouselController (e2e)", () => {
     expect(body.message).toBe("carousel을 불러왔습니다.");
     expect(Array.isArray(body.data)).toBe(true); // data가 []배열인지 확인
     expect(body.data.length).toBeGreaterThan(0); //길이가 0보다 큰지 확인
+    expect(body.data[0].image).toContain(`141735.png`);
     if (body.data[0]) {
       createdId = body.data[0].id; // 첫번째로 생성된 열의 id를 저장
     }
@@ -93,12 +104,9 @@ describe("CarouselController (e2e)", () => {
     const server = app.getHttpServer() as unknown as Parameters<
       typeof request
     >[0];
-    console.log(createdId);
     const res = await request(server)
       .patch(`/carousel/${createdId}`)
-      .send({
-        KoreanTitle: "수정된 한글",
-      })
+      .field("koreanTitle", "수정된 한글")
       .expect(200);
 
     expect((res.body as CarouselResponse).message).toBe(`수정에 성공했습니다.`);

@@ -16,12 +16,12 @@ export class TypeormCarouselRepository extends CarouselRepository {
     const carousel = new Carousel( // entity 생성
       carouselData.image!,
       carouselData.postId!,
-      carouselData.KoreanTitle!,
-      carouselData.KoreanDescription!,
-      carouselData.EnglishTitle!,
-      carouselData.EnglishDescription!,
-      carouselData.JapaneseTitle!,
-      carouselData.JapaneseDescription!,
+      carouselData.koreanTitle!,
+      carouselData.koreanDescription!,
+      carouselData.englishTitle!,
+      carouselData.englishDescription!,
+      carouselData.japaneseTitle!,
+      carouselData.japaneseDescription!,
       carouselData.id,
     );
     const orm = toOrmEntity(carousel);
@@ -79,12 +79,12 @@ export class TypeormCarouselRepository extends CarouselRepository {
     const updated = new Carousel(
       carouselData.image ?? existing.image,
       carouselData.postId ?? existing.postId,
-      carouselData.KoreanTitle ?? existing.KoreanTitle,
-      carouselData.KoreanDescription ?? existing.KoreanDescription,
-      carouselData.EnglishTitle ?? existing.EnglishTitle,
-      carouselData.EnglishDescription ?? existing.image,
-      carouselData.JapaneseTitle ?? existing.JapaneseTitle,
-      carouselData.JapaneseDescription ?? existing.image,
+      carouselData.koreanTitle ?? existing.koreanTitle,
+      carouselData.koreanDescription ?? existing.koreanDescription,
+      carouselData.englishTitle ?? existing.englishTitle,
+      carouselData.englishDescription ?? existing.englishDescription,
+      carouselData.japaneseTitle ?? existing.japaneseTitle,
+      carouselData.japaneseDescription ?? existing.japaneseDescription,
       id,
     );
     const orm = toOrmEntity(updated);

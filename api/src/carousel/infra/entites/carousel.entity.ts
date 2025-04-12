@@ -9,15 +9,15 @@ export class CarouselOrmEntity {
   @Column()
   postId: number;
   @Column()
-  KoreanTitle: string;
+  koreanTitle: string;
   @Column()
-  KoreanDescription: string;
+  koreanDescription: string;
   @Column()
-  EnglishTitle: string;
+  englishTitle: string;
   @Column()
-  EnglishDescription: string;
+  englishDescription: string;
   @Column()
-  JapaneseTitle: string;
+  japaneseTitle: string;
   @Column()
-  JapaneseDescription: string;
+  japaneseDescription: string;
 }

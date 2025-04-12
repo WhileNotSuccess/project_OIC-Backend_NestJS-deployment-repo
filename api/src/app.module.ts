@@ -13,6 +13,7 @@ import { HttpFilter } from "./common/http.filter";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MediaModule } from "./media/media.module";
 import { CarouselModule } from "./carousel/carousel.model";
+import { PrideOfYjuModule } from "./pride-of-yju/pride-of-yju.module";
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { CarouselModule } from "./carousel/carousel.model";
     StaffModule,
     MediaModule,
     CarouselModule,
+    PrideOfYjuModule,
   ],
   controllers: [AppController],
   providers: [

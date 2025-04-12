@@ -9,12 +9,12 @@ describe("TypeormCarouselRepository (Integration)", () => {
   const expectValue = {
     image: "/203846-92082392.jpg",
     postId: 1,
-    KoreanTitle: "한글",
-    KoreanDescription: "한글설명",
-    EnglishTitle: "영어",
-    EnglishDescription: "영어설명",
-    JapaneseTitle: "일본어",
-    JapaneseDescription: "일본어설명",
+    koreanTitle: "한글",
+    koreanDescription: "한글설명",
+    englishTitle: "영어",
+    englishDescription: "영어설명",
+    japaneseTitle: "일본어",
+    japaneseDescription: "일본어설명",
   };
 
   beforeAll(async () => {
@@ -35,12 +35,12 @@ describe("TypeormCarouselRepository (Integration)", () => {
     const input = new Carousel(
       expectValue.image,
       expectValue.postId,
-      expectValue.KoreanTitle,
-      expectValue.KoreanDescription,
-      expectValue.EnglishTitle,
-      expectValue.EnglishDescription,
-      expectValue.JapaneseTitle,
-      expectValue.JapaneseDescription,
+      expectValue.koreanTitle,
+      expectValue.koreanDescription,
+      expectValue.englishTitle,
+      expectValue.englishDescription,
+      expectValue.japaneseTitle,
+      expectValue.japaneseDescription,
       1,
     );
     const created = await repository.create(expectValue);

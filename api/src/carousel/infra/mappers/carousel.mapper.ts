@@ -14,12 +14,12 @@ export const toDomain = (orm: CarouselOrmEntity): Carousel => {
   return new Carousel(
     orm.image,
     orm.postId,
-    orm.KoreanTitle,
-    orm.KoreanDescription,
-    orm.EnglishTitle,
-    orm.EnglishDescription,
-    orm.JapaneseTitle,
-    orm.JapaneseDescription,
+    orm.koreanTitle,
+    orm.koreanDescription,
+    orm.englishTitle,
+    orm.englishDescription,
+    orm.japaneseTitle,
+    orm.japaneseDescription,
     orm.id,
   );
 }; //getOne이 열을 그대로 내보내기 위해 만듬
@@ -31,11 +31,11 @@ export const toOrmEntity = (carousel: Carousel): CarouselOrmEntity => {
   }
   orm.image = carousel.image;
   orm.postId = carousel.postId;
-  orm.KoreanTitle = carousel.KoreanTitle;
-  orm.KoreanDescription = carousel.KoreanDescription;
-  orm.EnglishTitle = carousel.EnglishTitle;
-  orm.EnglishDescription = carousel.EnglishDescription;
-  orm.JapaneseTitle = carousel.JapaneseTitle;
-  orm.JapaneseDescription = carousel.JapaneseDescription;
+  orm.koreanTitle = carousel.koreanTitle;
+  orm.koreanDescription = carousel.koreanDescription;
+  orm.englishTitle = carousel.englishTitle;
+  orm.englishDescription = carousel.englishDescription;
+  orm.japaneseTitle = carousel.japaneseTitle;
+  orm.japaneseDescription = carousel.japaneseDescription;
   return orm;
 }; //entity로 변환
