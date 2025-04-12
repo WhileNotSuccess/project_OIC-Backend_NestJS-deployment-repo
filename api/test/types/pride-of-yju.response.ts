@@ -1,6 +1,6 @@
 interface PrideOfYju {
   id: number;
-  image: number;
+  image: string;
   Korean: number;
   English: number;
   Japanese: number;

@@ -9,12 +9,14 @@ import {
   PrideOfYjuResponse,
 } from "./types/pride-of-yju.response";
 import * as path from "path";
+import * as fs from "fs";
 import { PrideOfYjuOrmEntity } from "src/pride-of-yju/infra/entities/pride-of-yju.entity";
 import { PrideOfYjuModule } from "src/pride-of-yju/pride-of-yju.module";
 
 describe("PrideOfYjuController (e2e)", () => {
   let app: INestApplication;
   const testfilePath = path.join(__dirname, "../..", "files/141735.png");
+  const createdFilePath: string[] = [];
 
   // const dto: Partial<PrideOfYju> = {
   //   image: "pride/123456-789012.jpg",
@@ -40,6 +42,9 @@ describe("PrideOfYjuController (e2e)", () => {
   });
   afterAll(async () => {
     await app.close();
+        createdFilePath.map((item) => {
+          fs.unlinkSync(item);
+        });
   });
   let createdId: number;
   it("/pride (POST) should create a pride-of-yju", async () => {
@@ -68,6 +73,9 @@ describe("PrideOfYjuController (e2e)", () => {
     expect(body.message).toBe("pride of yju를 불러왔습니다.");
     expect(body.data.length).toBeGreaterThan(0);
     createdId = body.data[0].id;
+    body.data.map((item) => {
+      createdFilePath.push(item.image);
+    });
   });
   it("/pride/:id (GET) should return one pride-of-yju", async () => {
     const server = app.getHttpServer() as unknown as Parameters<

@@ -11,11 +11,13 @@ import { CarouselOrmEntity } from "src/carousel/infra/entites/carousel.entity";
 import * as cookieParser from "cookie-parser";
 // import { Carousel } from "src/carousel/domain/entities/carousel.entity";
 import * as path from "path";
+import * as fs from "fs";
 
 describe("CarouselController (e2e)", () => {
   let app: INestApplication;
   // console.log(path.join(__dirname, "../..", "files/141735.png"));
   const testfilePath = path.join(__dirname, "../..", "files/141735.png");
+  const createdFilePath: string[] = [];
   // const dto: Partial<Carousel> = {
   //   postId: 1,
   //   koreanTitle: "한글",
@@ -43,6 +45,9 @@ describe("CarouselController (e2e)", () => {
   });
   afterAll(async () => {
     await app.close();
+    createdFilePath.map((item) => {
+      fs.unlinkSync(item);
+    });
   });
   let createdId: number;
 
@@ -87,7 +92,9 @@ describe("CarouselController (e2e)", () => {
     if (body.data[0]) {
       createdId = body.data[0].id; // 첫번째로 생성된 열의 id를 저장
     }
-
+    body.data.map((item) => {
+      createdFilePath.push(item.image);
+    });
     // const body = res.body as CarouselArrayResponse["data"];
     // const bodyData = body.data as CarouselResponse["data"][]; // 받은 응답의 body 추출
 
