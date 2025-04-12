@@ -12,8 +12,11 @@ import { APP_FILTER } from "@nestjs/core";
 import { HttpFilter } from "./common/http.filter";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MediaModule } from "./media/media.module";
+import { CarouselModule } from "./carousel/carousel.model";
+import { PrideOfYjuModule } from "./pride-of-yju/pride-of-yju.module";
 import { PostImageOrmEntity } from "./post/infra/entities/post-image-orm-entity";
 import { AttachmentOrmEntity } from "./post/infra/entities/attachment-orm.entity";
+
 
 @Module({
   imports: [
@@ -86,6 +89,8 @@ import { AttachmentOrmEntity } from "./post/infra/entities/attachment-orm.entity
     PostModule,
     StaffModule,
     MediaModule,
+    CarouselModule,
+    PrideOfYjuModule,
   ],
   controllers: [AppController],
   providers: [
