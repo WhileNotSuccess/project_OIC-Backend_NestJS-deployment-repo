@@ -23,7 +23,7 @@ export class PostService {
     userId: number,
     files: Express.Multer.File[],
   ) {
-    // 이미지 추출 및 메타데이터 저장
+    // 이미지 추출
     const regex = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/g;
     const createFilenames: string[] = [];
     let match: RegExpExecArray | null;
@@ -32,6 +32,7 @@ export class PostService {
         match[1].replace(`${process.env.BACKEND_URL}/files`, ""),
       );
     }
+    // 서버에 저장된 이미지 정보 찾기
     const imageData = await this.mediaService.findImage(createFilenames);
     // 업로드 파일이 있으면 업로드 후 메타데이터 저장
     const filesData = await Promise.all(
@@ -56,6 +57,7 @@ export class PostService {
     take: number,
     language: Language,
   ) {
+    // 페이지네이션 정보 불러오기
     const [posts, total] = await this.postRepository.getAllForCategory(
       category,
       page,
@@ -76,7 +78,9 @@ export class PostService {
   }
 
   async findOneForId(id: number) {
+    // 게시글 받아오기
     const post = await this.postRepository.getOneById(id);
+    // 첨부파일 확인
     const attachments = await this.postRepository.getAttachmentsByPostId(id);
     if (!post) {
       return {
@@ -97,6 +101,8 @@ export class PostService {
 
   async findApplicant() {
     const regex: RegExp = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/;
+
+    // 모집요강 게시글 불러오기
     const applicants = await this.postRepository.getOneForCategory(
       "guidelinesForApplicants",
       Language.korean,
@@ -104,9 +110,13 @@ export class PostService {
     if (!applicants?.id) {
       throw new InternalServerErrorException("모집요강을 못 찾았습니다.");
     }
+
+    // 모집요강 파일 불러오기
     const applicantFile = await this.postRepository.getAttachmentsByPostId(
       applicants.id,
     );
+
+    // 입학신청서 게시글 불러오기
     const entry = await this.postRepository.getOneForCategory(
       "applicants",
       Language.korean,
@@ -114,10 +124,13 @@ export class PostService {
     if (!entry?.id) {
       throw new InternalServerErrorException("입학신청서를 못 찾았습니다.");
     }
+
+    // 입학신청서 파일 불러오기
     const entryFile = await this.postRepository.getAttachmentsByPostId(
       entry.id,
     );
 
+    // 썸네일 추출
     const applicantsMatch = regex.exec(applicants.content);
     const entryMatch = regex.exec(entry.content);
     if (!applicantsMatch || !entryMatch) {
@@ -142,6 +155,7 @@ export class PostService {
 
   async findNews(language: Language) {
     const regex: RegExp = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/;
+    // post 정보 불러오기
     const data = await this.postRepository.getNews(language);
     return data.map((item) => {
       const match = regex.exec(item.content);
@@ -160,9 +174,12 @@ export class PostService {
     updatePostDto: UpdatePostDto,
     files: Express.Multer.File[],
   ) {
+    // deleteFilePath 분리
     const { deleteFilePath, ...dto } = updatePostDto;
 
     const regex = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/g;
+
+    // 업데이트 할 글에 들어있는 image의 src 추출
     const imageInContent: string[] = [];
     let match: RegExpExecArray | null;
     while (
@@ -174,18 +191,21 @@ export class PostService {
       );
     }
 
+    // 기존에 저장된 이미지 확인
     const postImages = await this.postRepository.findImagesWithPostId(id);
-
     const oldImages = postImages.map((item) => item.filename);
 
+    // 기존 글엔 없지만 새로운 글엔 있는 이미지 찾기
     const newImages = imageInContent.filter(
       (item) => !oldImages.includes(item),
     );
 
+    // 새로운 글에 없지만 기존 글에 있던 이미지 찾기
     const deleteImages = oldImages.filter(
       (item) => !imageInContent.includes(item),
     );
 
+    // 새로 저장해야할 이미지의 파일 정보 찾기
     const imageData = await this.mediaService.findImage(newImages);
     // 업로드 파일이 있으면 업로드 후 메타데이터 저장
     const filesData = await Promise.all(
@@ -194,11 +214,13 @@ export class PostService {
       ),
     );
 
+    // deleteFilePath를 배열로 변환
     const raw = JSON.parse(deleteFilePath) as string[];
     if (!Array.isArray(raw) || !raw.every((v) => typeof v === "string")) {
       throw new BadRequestException("deleteTarget는 문자열 배열이어야 합니다.");
     }
 
+    // 업데이트
     await this.postRepository.update(
       id,
       dto,

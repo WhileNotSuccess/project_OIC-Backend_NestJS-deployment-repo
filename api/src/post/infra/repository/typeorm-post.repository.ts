@@ -66,7 +66,8 @@ export class TypeormPostRepository extends PostRepository {
         await Promise.all(
           imageData.map(async (item) => {
             return await queryRunner.manager.save(PostImageOrmEntity, {
-              ...item,
+              fileSize: item.size,
+              filename: item.filename,
               postId,
             });
           }),
@@ -83,6 +84,7 @@ export class TypeormPostRepository extends PostRepository {
         return post;
       },
     );
+
     const result = toDomainPost(postOrm);
     if (!result) {
       throw new InternalServerErrorException(
@@ -123,7 +125,8 @@ export class TypeormPostRepository extends PostRepository {
       await Promise.all(
         imageData.map(async (item) => {
           return await queryRunner.manager.save(PostImageOrmEntity, {
-            ...item,
+            filename: item.filename,
+            fileSize: item.size,
             postId: id,
           });
         }),

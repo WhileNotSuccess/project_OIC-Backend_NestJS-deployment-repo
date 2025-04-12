@@ -8,7 +8,7 @@ import { PostImage } from "src/post/domain/entities/post-image.entity";
 export const toDomainPost = (post: PostOrmEntity) => {
   const domain = new Post(
     post.title,
-    post.category,
+    post.content,
     post.userId,
     post.category,
     post.language,
