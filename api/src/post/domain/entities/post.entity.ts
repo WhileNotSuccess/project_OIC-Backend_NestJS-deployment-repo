@@ -1,11 +1,17 @@
+import { Language } from "../types/language";
+
 export class Post {
   constructor(
-    public title,
-    public content,
-    public author,
-    public id?,
+    public title: string,
+    public content: string,
+    public userId: number,
+    public category: string,
+    public language: Language,
+    public createdDate: Date,
+    public updatedDate: Date,
+    public id?: number,
   ) {}
-  isOwner(user: string) {
-    return user === this.author;
+  isOwner(userId: number) {
+    return userId === this.userId;
   }
 }

@@ -14,6 +14,9 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MediaModule } from "./media/media.module";
 import { CarouselModule } from "./carousel/carousel.model";
 import { PrideOfYjuModule } from "./pride-of-yju/pride-of-yju.module";
+import { PostImageOrmEntity } from "./post/infra/entities/post-image-orm-entity";
+import { AttachmentOrmEntity } from "./post/infra/entities/attachment-orm.entity";
+
 
 @Module({
   imports: [
@@ -29,7 +32,12 @@ import { PrideOfYjuModule } from "./pride-of-yju/pride-of-yju.module";
         username: config.getOrThrow<string>("DB_USERNAME"),
         password: config.getOrThrow<string>("DB_PASSWORD"),
         database: config.getOrThrow<string>("DB_DATABASE"),
-        entities: [StaffOrmEntity, PostOrmEntity],
+        entities: [
+          StaffOrmEntity,
+          PostOrmEntity,
+          PostImageOrmEntity,
+          AttachmentOrmEntity,
+        ],
         synchronize: true,
       }),
       inject: [ConfigService],

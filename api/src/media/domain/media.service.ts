@@ -1,9 +1,6 @@
-type UploadAttachmentReturn = {
-  originalname: string;
-  mimeType: string;
-  size: number;
-  url: string;
-};
+import { imageMetadata } from "./image-metadata";
+import { UploadAttachmentReturn } from "./upload-attachment";
+
 export abstract class MediaService {
   abstract uploadImage(
     file: Express.Multer.File,
@@ -13,5 +10,6 @@ export abstract class MediaService {
     file: Express.Multer.File,
     folder: string,
   ): Promise<UploadAttachmentReturn>;
+  abstract findImage(filenames: string[]): Promise<imageMetadata[]>;
   abstract delete(filePaths: string[]): Promise<void>;
 }

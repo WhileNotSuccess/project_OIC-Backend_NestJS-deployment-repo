@@ -8,6 +8,37 @@ import { MediaValidator } from "../utils/media-validator";
 @Injectable()
 export class LocalMediaService extends MediaService {
   private readonly uploadRoot = path.resolve(__dirname, "../../../../files");
+  async findImage(filenames: string[]) {
+    const results = await Promise.allSettled(
+      filenames.map(async (file) => {
+        const fileData = await fs.readFile(path.join(this.uploadRoot, file));
+        return {
+          size: fileData.buffer.byteLength,
+          filename: file,
+        };
+      }),
+    );
+
+    const successful = results
+      .filter(
+        (
+          result,
+        ): result is PromiseFulfilledResult<{
+          size: number;
+          filename: string;
+        }> => result.status === "fulfilled",
+      )
+      .map((result) => result.value);
+
+    results
+      .filter((result) => result.status === "rejected")
+      .forEach((result, i) => {
+        Logger.warn(`${filenames[i]} 파일을 로드하지 못했습니다.`);
+      });
+
+    return successful;
+  }
+
   async uploadImage(
     file: Express.Multer.File,
     folder: string,
@@ -20,7 +51,7 @@ export class LocalMediaService extends MediaService {
     await fs.mkdir(targetDir, { recursive: true });
     await fs.writeFile(targetPath, file.buffer);
 
-    return `/files/${folder}/${fileName}`;
+    return `/${folder}/${fileName}`;
   }
 
   async uploadAttachment(file: Express.Multer.File, folder: string) {
@@ -37,16 +68,14 @@ export class LocalMediaService extends MediaService {
       mimeType,
       size,
       originalname,
-      url: `/files/${folder}/${savedFileName}`,
+      url: `/${folder}/${savedFileName}`,
     };
   }
 
   async delete(filePaths: string[]): Promise<void> {
     const deletedPromises = filePaths.map(async (item) => {
-      const relativePath = item.replace(/^.*\/files\//, "");
       try {
-        console.log(path.join(this.uploadRoot, relativePath));
-        await fs.unlink(path.join(this.uploadRoot, relativePath));
+        await fs.unlink(path.join(this.uploadRoot, item));
       } catch {
         Logger.warn(`${item} 을 삭제하지 못했습니다.`);
       }
