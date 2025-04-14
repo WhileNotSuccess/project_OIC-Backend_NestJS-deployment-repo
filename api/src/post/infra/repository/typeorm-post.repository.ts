@@ -66,7 +66,8 @@ export class TypeormPostRepository extends PostRepository {
         await Promise.all(
           imageData.map(async (item) => {
             return await queryRunner.manager.save(PostImageOrmEntity, {
-              ...item,
+              fileSize: item.size,
+              filename: item.filename,
               postId,
             });
           }),
@@ -83,6 +84,7 @@ export class TypeormPostRepository extends PostRepository {
         return post;
       },
     );
+
     const result = toDomainPost(postOrm);
     if (!result) {
       throw new InternalServerErrorException(
@@ -123,7 +125,8 @@ export class TypeormPostRepository extends PostRepository {
       await Promise.all(
         imageData.map(async (item) => {
           return await queryRunner.manager.save(PostImageOrmEntity, {
-            ...item,
+            filename: item.filename,
+            fileSize: item.size,
             postId: id,
           });
         }),
@@ -179,7 +182,7 @@ export class TypeormPostRepository extends PostRepository {
       .from(PostOrmEntity, "posts")
       .where("category LIKE :category", { category: "news" })
       .andWhere("language LIKE :language", { language })
-      .orderBy("updatedDate", "DESC")
+      .orderBy("id", "DESC")
       .take(10)
       .getMany();
 
@@ -199,7 +202,9 @@ export class TypeormPostRepository extends PostRepository {
     limit: number,
   ): Promise<[Post[], number]> {
     const [rows, total] = await this.dataSource
-      .createQueryBuilder("post", "p")
+      .createQueryBuilder()
+      .select("p")
+      .from(PostOrmEntity, "p")
       .where(`p.${target} LIKE :word`, { word: `%${word}%` })
       .andWhere(`p.language = :language`, { language })
       .andWhere(`p.category = :category`, { category })

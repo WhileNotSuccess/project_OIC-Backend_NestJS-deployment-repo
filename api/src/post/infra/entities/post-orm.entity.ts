@@ -16,7 +16,7 @@ export class PostOrmEntity {
   id: number;
   @Column()
   title: string;
-  @Column()
+  @Column({ type: "longtext" })
   content: string;
   @Column()
   userId: number;
