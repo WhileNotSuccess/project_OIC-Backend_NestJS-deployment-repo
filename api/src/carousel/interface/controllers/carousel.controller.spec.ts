@@ -41,6 +41,7 @@ describe("CarouselController", () => {
           useValue: {
             create: jest.fn(),
             findAll: jest.fn(),
+            getOne: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
           },
@@ -57,67 +58,90 @@ describe("CarouselController", () => {
     expect(controller).toBeDefined();
   });
 
-  describe("create", () => {
-    // describe는 it(단일 동작)을 그룹화
-    it("should create a carousel", async () => {
-      service.create.mockResolvedValue(true); //mock 설정
-
-      const result = await controller.create(testingFile, {
-        ...(dto as CreateCarouselDto),
-      });
-
-      expect(result.message).toEqual("작성에 성공했습니다.");
-      // expect(service.create).toHaveBeenCalledWith(dto);
+  it("should create a carousel", async () => {
+    //mock 설정
+    service.create.mockResolvedValue(true);
+    // create 실행
+    const result = await controller.create(testingFile, {
+      ...(dto as CreateCarouselDto),
     });
+    //message 비교
+    expect(result.message).toEqual("작성에 성공했습니다.");
+    // expect(service.create).toHaveBeenCalledWith(dto);
   });
-  describe("findAll", () => {
-    it("should return all carousel", async () => {
-      const carouselList = [
-        new ReturnCarousel(
-          "/123456-image.jpg",
-          1,
-          dto.koreanTitle + "1",
-          dto.koreanDescription + "1",
-          1,
-        ),
-        new ReturnCarousel(
-          "/098765-image.jpg",
-          2,
-          dto.koreanTitle + "2",
-          dto.koreanDescription + "2",
-          2,
-        ),
-      ];
-      // document.cookie = "language=korean;path=/"; // 쿠키 설정
-      // const cookies = document.cookie;
-      // expect(cookies).toContain("language=korean"); // 쿠키가 설정됐는지 확인
-      const mockRequest = {
-        cookies: [{ language: "korean" }],
-      } as unknown as Request;
-      service.findAll.mockResolvedValue(carouselList);
-      const result = await controller.findAll(mockRequest);
-      expect(result.message).toBe("carousel을 불러왔습니다.");
-      expect(result.data.length).toBeGreaterThan(0);
-    });
-  });
-  describe("update", () => {
-    it("should patch one carousel", async () => {
-      service.update.mockResolvedValue(true);
-      const result = await controller.update(
+
+  it("should return all carousel", async () => {
+    // mock 배열
+    const carouselList = [
+      new ReturnCarousel(
+        "/carousel/123456-image.jpg",
         1,
-        {
-          koreanTitle: "수정된 한국어",
-        },
-        testingFile,
-      );
-      expect(result.message).toBe("수정에 성공했습니다.");
-    });
+        dto.koreanTitle + "1",
+        dto.koreanDescription + "1",
+        1,
+      ),
+      new ReturnCarousel(
+        "/carousel/098765-image.jpg",
+        2,
+        dto.koreanTitle + "2",
+        dto.koreanDescription + "2",
+        2,
+      ),
+    ];
+    // 요청에 넣을 cookie
+    const mockRequest = {
+      cookies: [{ language: "korean" }],
+    } as unknown as Request;
+    // mock 설정
+    service.findAll.mockResolvedValue(carouselList);
+    // findAll 실행
+    const result = await controller.findAll(mockRequest);
+    // 비교
+    expect(result.message).toBe("carousel을 불러왔습니다.");
+    expect(result.data.length).toBeGreaterThan(0);
   });
-  describe("delete", () => {
-    it("should delete one carousel", async () => {
-      service.update.mockResolvedValue(true);
-      const result = await controller.delete(1);
-      expect(result.message).toBe("삭제에 성공했습니다.");
-    });
+
+  it("should patch one carousel", async () => {
+    // mock 설정
+    service.update.mockResolvedValue(true);
+    // update 실행
+    const result = await controller.update(
+      1,
+      {
+        koreanTitle: "수정된 한국어",
+      },
+      testingFile,
+    );
+    // body.message 비교
+    expect(result.message).toBe("수정에 성공했습니다.");
+  });
+  it("should find one carousel", async () => {
+    // mock 객체
+    const carousel = new Carousel(
+      testingFile.path,
+      dto.postId!,
+      dto.koreanTitle!,
+      dto.koreanDescription!,
+      dto.englishTitle!,
+      dto.englishDescription!,
+      dto.japaneseTitle!,
+      dto.japaneseDescription!,
+      1,
+    );
+    // mock 설정
+    service.getOne.mockResolvedValue(carousel);
+    // getOne 실행 
+    const result = await controller.getOne(1);
+    // body.data 비교
+    expect(result.data).toStrictEqual(carousel);
+  });
+
+  it("should delete one carousel", async () => {
+    // mock 설정
+    service.update.mockResolvedValue(true);
+    // delete 실행
+    const result = await controller.delete(1);
+    // body.message 비교
+    expect(result.message).toBe("삭제에 성공했습니다.");
   });
 });

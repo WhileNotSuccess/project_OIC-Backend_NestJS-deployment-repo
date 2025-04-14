@@ -1,12 +1,12 @@
 import { DataSource } from "typeorm";
 import { TypeormCarouselRepository } from "./typeorm-carousel.repository";
 import { CarouselOrmEntity } from "../entites/carousel.entity";
-import { Carousel } from "src/carousel/domain/entities/carousel.entity";
 
 describe("TypeormCarouselRepository (Integration)", () => {
   let dataSource: DataSource;
   let repository: TypeormCarouselRepository;
-  const expectValue = {
+  let createdId: number;
+  const dto = {
     image: "/203846-92082392.jpg",
     postId: 1,
     koreanTitle: "한글",
@@ -18,6 +18,7 @@ describe("TypeormCarouselRepository (Integration)", () => {
   };
 
   beforeAll(async () => {
+    // 데이터베이스 생성
     dataSource = new DataSource({
       type: "sqlite",
       database: ":memory:",
@@ -32,20 +33,42 @@ describe("TypeormCarouselRepository (Integration)", () => {
   });
 
   it("should create and return a carousel", async () => {
-    const input = new Carousel(
-      expectValue.image,
-      expectValue.postId,
-      expectValue.koreanTitle,
-      expectValue.koreanDescription,
-      expectValue.englishTitle,
-      expectValue.englishDescription,
-      expectValue.japaneseTitle,
-      expectValue.japaneseDescription,
-      1,
-    );
-    const created = await repository.create(expectValue);
+    // 받은 dto를 저장
+    const result = await repository.create(dto);
 
-    expect(created).toStrictEqual(input);
+    expect(result.image).toContain(dto.image);
   });
-  it("should get all carousel", async () => {});
+  it("should get all carousel", async () => {
+    // 저장된 정보 호출
+    const result = await repository.getAll();
+    // 비교3개 실행
+    expect(result[0].koreanTitle).toBe(dto.koreanTitle);
+    expect(result[0].image).toContain(dto.image);
+    expect(result[0].englishDescription).toBe(dto.englishDescription);
+    // 생성된 id를 createdId에 등록
+    createdId = result[0].id!;
+  });
+  it("should get one carousel", async () => {
+    // carousel 하나 호출
+    const result = await repository.getOne(createdId);
+    // 비교
+    expect(result?.koreanDescription).toBe(dto.koreanDescription);
+    expect(result?.englishTitle).toBe(dto.englishTitle);
+    expect(result?.postId).toBe(dto.postId);
+    expect(result?.japaneseDescription).toBe(dto.japaneseDescription);
+  });
+  it("should update one carousel", async () => {
+    // 수정 요청
+    await repository.update(createdId, { koreanTitle: "수정된 한글" });
+    // 수정 후 호출
+    const result = await repository.getOne(createdId);
+    // 수정 됐는지 확인
+    expect(result?.koreanTitle).toBe("수정된 한글");
+  });
+  it("should delete one carousel", async () => {
+    // 삭제 요청
+    const result = await repository.delete(createdId);
+    // true면 삭제 완료
+    expect(result).toBe(true);
+  });
 });
