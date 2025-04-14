@@ -4,10 +4,34 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  DB_HOST: 127.0.0.1
+  DB_PORT: 3306
+  DB_USERNAME: test_user
+  DB_PASSWORD: test_pass
+  DB_DATABASE: test_db
+
 jobs:
   lint:
     name: lintCheckJob
     runs-on: ubuntu-latest
+
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_db
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_pass
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
       - name: Checkout repository
