@@ -7,6 +7,7 @@ import { imageMetadata } from "src/media/domain/image-metadata";
 import { UploadAttachmentReturn } from "src/media/domain/upload-attachment";
 import { AttachmentOrmEntity } from "../entities/attachment-orm.entity";
 import { PostImageOrmEntity } from "../entities/post-image-orm-entity";
+import { toSearchTargetEnum } from "src/common/utils/to-search-target-enum";
 
 describe("TypeormPostRepository (Integration)", () => {
   let dataSource: DataSource;
@@ -15,6 +16,7 @@ describe("TypeormPostRepository (Integration)", () => {
   let latestNotice: Post;
   let latestNew: Post;
   let createdNotices: Post[];
+  let createdNews: Post[];
 
   const createDtoNotice: Partial<Post>[] = [
     {
@@ -211,6 +213,7 @@ describe("TypeormPostRepository (Integration)", () => {
 
     // 생성된 결과 저장
     createdNotices = resultNotice;
+    createdNews = resultNews;
 
     expect(resultNews.length).toBe(createDtoNews.length);
     expect(resultNotice.length).toBe(createDtoNews.length);
@@ -345,7 +348,34 @@ describe("TypeormPostRepository (Integration)", () => {
     expect(attachment.length).toBeFalsy();
   });
 
-  it("getNews", async () => {});
+  it("getNews", async () => {
+    const result = await repository.getNews("korean");
+    expect(result).toMatchObject(
+      createdNews
+        .sort((a, b) => {
+          if (a.id && b.id) {
+            return b.id - a.id;
+          } else {
+            return 1;
+          }
+        })
+        .map((item) => ({
+          content: item.content,
+          postId: item.id,
+          title: item.title,
+        })),
+    );
+  });
 
-  it("search", async () => {});
+  it("search", async () => {
+    const result = await repository.search(
+      toSearchTargetEnum("title"),
+      "3",
+      toLanguageEnum("korean"),
+      "notice",
+      1,
+      10,
+    );
+    expect(result).toMatchObject([[createDtoNotice[2]], 1]);
+  });
 });

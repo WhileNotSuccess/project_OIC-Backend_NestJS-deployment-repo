@@ -214,10 +214,15 @@ export class PostService {
       ),
     );
 
+    let raw: string[] = [];
     // deleteFilePath를 배열로 변환
-    const raw = JSON.parse(deleteFilePath) as string[];
-    if (!Array.isArray(raw) || !raw.every((v) => typeof v === "string")) {
-      throw new BadRequestException("deleteTarget는 문자열 배열이어야 합니다.");
+    if (deleteFilePath) {
+      raw = JSON.parse(deleteFilePath) as string[];
+      if (!Array.isArray(raw) || !raw.every((v) => typeof v === "string")) {
+        throw new BadRequestException(
+          "deleteTarget는 문자열 배열이어야 합니다.",
+        );
+      }
     }
 
     // 업데이트

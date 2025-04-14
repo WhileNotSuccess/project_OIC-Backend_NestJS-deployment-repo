@@ -132,8 +132,8 @@ export class PostController {
       word,
       language,
       category,
-      page,
-      limit,
+      +page,
+      +limit,
     );
     return {
       message: "검색결과를 불러왔습니다.",
