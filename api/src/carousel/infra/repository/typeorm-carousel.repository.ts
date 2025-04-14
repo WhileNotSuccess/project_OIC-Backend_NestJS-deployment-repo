@@ -13,7 +13,8 @@ export class TypeormCarouselRepository extends CarouselRepository {
   }
 
   async create(carouselData: Partial<Carousel>): Promise<Carousel> {
-    const carousel = new Carousel( // entity 생성
+    // entity 객체 생성
+    const carousel = new Carousel(
       carouselData.image!,
       carouselData.postId!,
       carouselData.koreanTitle!,
@@ -25,7 +26,7 @@ export class TypeormCarouselRepository extends CarouselRepository {
       carouselData.id,
     );
     const orm = toOrmEntity(carousel);
-
+    // 저장
     const saved = await transactional<CarouselOrmEntity>(
       this.dataSource,
       async (queryRunner) => {
@@ -42,29 +43,9 @@ export class TypeormCarouselRepository extends CarouselRepository {
     });
     return orm ? toDomain(orm) : null;
   }
+
   async getAll(): Promise<Carousel[]> {
     const ormList = await this.dataSource.manager.find(CarouselOrmEntity);
-    // const queryBuilder = this.dataSource
-    //   .createQueryBuilder()
-    //   .from(CarouselOrmEntity, "caro")
-    //   .select("caro.id as id, caro.image as image, caro.postId as postId");
-    // switch (language) {
-    //   case "english":
-    //     queryBuilder.addSelect(
-    //       "caro.EnglishTitle as EnglishTitle, caro.EnglishDescription as EnglishDescription",
-    //     );
-    //     break;
-    //   case "japanese":
-    //     queryBuilder.addSelect(
-    //       "caro.JapaneseTitle as JapaneseTitle, caro.JapaneseDescription as JapaneseDescription",
-    //     );
-    //     break;
-    //   default:
-    //     queryBuilder.addSelect(
-    //       "caro.KoreanTitle as KoreanTitle, caro.KoreanDescription as KoreanDescription",
-    //     );
-    // }
-    // const ormList = await queryBuilder.getMany();
     return ormList.map(toDomain);
   }
 
@@ -75,7 +56,7 @@ export class TypeormCarouselRepository extends CarouselRepository {
     const existing = await this.getOne(id);
     if (!existing)
       throw new BadRequestException("해당 id의 캐러셀이 존재하지 않습니다.");
-
+    // 새로 저장될 정보 객체 생성
     const updated = new Carousel(
       carouselData.image ?? existing.image,
       carouselData.postId ?? existing.postId,
@@ -87,10 +68,13 @@ export class TypeormCarouselRepository extends CarouselRepository {
       carouselData.japaneseDescription ?? existing.japaneseDescription,
       id,
     );
+    // 엔티티 형식 매핑
     const orm = toOrmEntity(updated);
+    // 수정
     await transactional(this.dataSource, async (queryRunner) => {
       await queryRunner.manager.update(CarouselOrmEntity, { id }, orm);
     });
+    // 수정된 정보 반환
     const result = await this.getOne(id);
     return result;
   }

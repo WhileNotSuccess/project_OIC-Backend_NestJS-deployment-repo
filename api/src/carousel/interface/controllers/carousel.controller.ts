@@ -31,9 +31,16 @@ export class CarouselController {
     @UploadedFile() file: Express.Multer.File,
     @Body() createdto: CreateCarouselDto,
   ) {
+    // 이미지 없을 경우 400
     if (!file) throw new BadRequestException("이미지 하나를 꼭 첨부해주세요.");
-    await this.carouselService.create(createdto, file);
-    return { message: "작성에 성공했습니다." };
+    // 저장
+    const result = await this.carouselService.create(createdto, file);
+    return { message: `작성에 ${result ? "성공" : "실패"}했습니다.` };
+  }
+  @Get(":id")
+  async getOne(@Param("id") id: number) {
+    const data = await this.carouselService.getOne(id);
+    return { message: `${id}번 carousel을 불러왔습니다.`, data };
   }
 
   @Get()
