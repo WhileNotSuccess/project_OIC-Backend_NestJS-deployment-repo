@@ -2,8 +2,6 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import { Logger, LoggerService } from "@nestjs/common";
-
-import * as cookieParser from "cookie-parser";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";

@@ -10,6 +10,7 @@ env:
   DB_USERNAME: test_user
   DB_PASSWORD: test_pass
   DB_DATABASE: test_db
+  BACKEND_URL: http://localhost:3000
 
 jobs:
   lint:
