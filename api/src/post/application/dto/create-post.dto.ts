@@ -1,5 +1,5 @@
 import { IsString } from "class-validator";
-import { Language } from "src/post/domain/types/language";
+import { Language } from "src/common/types/language";
 
 export class CreatePostDto {
   @IsString()

@@ -23,11 +23,36 @@ describe("TypeormStaffRepository (Integration)", () => {
   });
 
   it("should create and return a staff", async () => {
-    const input = new Staff("홍길동", "01012345678", "admin");
+    const input = new Staff(
+      "a",
+      "position",
+      "phone",
+      "email",
+      "team1",
+      "position_jp",
+      "team_jp",
+      "position_en",
+      "team_en",
+      "role",
+      "role_en",
+      "role_jp",
+    );
     const created = await repository.create(input);
-
-    expect(created.id).toBeDefined();
-    expect(created.name).toBe("홍길동");
+    expect(created).toMatchObject({
+      name: "a",
+      position: "position",
+      phone: "phone",
+      email: "email",
+      team: "team1",
+      position_jp: "position_jp",
+      team_jp: "team_jp",
+      position_en: "position_en",
+      team_en: "team_en",
+      role: "role",
+      role_en: "role_en",
+      role_jp: "role_jp",
+      id: 1,
+    });
   });
 
   it("should get all staff", async () => {
@@ -35,25 +60,16 @@ describe("TypeormStaffRepository (Integration)", () => {
     expect(list.length).toBeGreaterThan(0);
   });
 
-  it("should get one staff by id", async () => {
-    const all = await repository.getAll();
-    const one = await repository.getOne(all[0].id!);
-    expect(one).toBeDefined();
-    expect(one?.name).toBe(all[0].name);
-  });
-
   it("should update a staff partially", async () => {
-    const [first] = await repository.getAll();
-    await repository.update(first.id!, { role: "staff" });
-    const updated = await repository.getOne(first.id!);
-    expect(updated?.role).toBe("staff");
+    await repository.update(1, { role: "staff" });
+    const updated = await repository.getAll();
+    expect(updated[0].role).toBe("staff");
   });
 
   it("should delete a staff", async () => {
-    const [first] = await repository.getAll();
-    const result = await repository.delete(first.id!);
+    const result = await repository.delete(1);
     expect(result).toBe(true);
-    const deleted = await repository.getOne(first.id!);
-    expect(deleted).toBeNull();
+    const deleted = await repository.getAll();
+    expect(deleted.length).toBe(0);
   });
 });

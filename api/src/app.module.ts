@@ -17,7 +17,6 @@ import { PrideOfYjuModule } from "./pride-of-yju/pride-of-yju.module";
 import { PostImageOrmEntity } from "./post/infra/entities/post-image-orm-entity";
 import { AttachmentOrmEntity } from "./post/infra/entities/attachment-orm.entity";
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({

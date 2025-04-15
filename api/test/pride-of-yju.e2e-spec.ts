@@ -42,9 +42,9 @@ describe("PrideOfYjuController (e2e)", () => {
   });
   afterAll(async () => {
     await app.close();
-        createdFilePath.map((item) => {
-          fs.unlinkSync(item);
-        });
+    createdFilePath.map((item) => {
+      fs.unlinkSync(item);
+    });
   });
   let createdId: number;
   it("/pride (POST) should create a pride-of-yju", async () => {

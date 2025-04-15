@@ -9,7 +9,7 @@ import { UpdatePostDto } from "../dto/update-post.dto";
 import { PostRepository } from "src/post/domain/repository/post.repository";
 import { searchTarget } from "src/post/domain/types/searchTarget";
 import { MediaService } from "src/media/domain/media.service";
-import { Language } from "src/post/domain/types/language";
+import { Language } from "src/common/types/language";
 
 @Injectable()
 export class PostService {

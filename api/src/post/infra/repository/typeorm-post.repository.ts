@@ -15,7 +15,7 @@ import {
 } from "../mapper/to-domain";
 import { transactional } from "src/common/utils/transaction-helper";
 import { PostImageOrmEntity } from "../entities/post-image-orm-entity";
-import { Language } from "src/post/domain/types/language";
+import { Language } from "src/common/types/language";
 import { PostImage } from "src/post/domain/entities/post-image.entity";
 import { Attachment } from "src/post/domain/entities/attachment.entity";
 

@@ -2,55 +2,49 @@ import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { StaffOrmEntity } from "../entities/staff.entity";
 import { StaffRepository } from "../../domain/repository/staff.repository";
-import { toDomain, toOrmEntity } from "../mappers/staff.mapper";
+import { toDomain } from "../mappers/staff.mapper";
 import { Staff } from "../../domain/entities/staff.entity";
+import { transactional } from "src/common/utils/transaction-helper";
 
 @Injectable()
 export class TypeormStaffRepository extends StaffRepository {
-  constructor(private readonly dataSource: DataSource) {
-    super();
+  async create(staffData: Partial<Staff>): Promise<Staff> {
+    const staff = await transactional<StaffOrmEntity>(
+      this.dataSource,
+      async (queryRunner) => {
+        const staff = await queryRunner.manager.save(StaffOrmEntity, staffData);
+        return staff;
+      },
+    );
+    return toDomain(staff);
   }
+  async update(id: number, staffData: Partial<Staff>): Promise<Staff | null> {
+    await transactional(this.dataSource, async (queryRunner) => {
+      await queryRunner.manager.update(StaffOrmEntity, { id }, staffData);
+    });
+    const staff = await this.dataSource.manager.findOneBy(StaffOrmEntity, {
+      id,
+    });
+    if (!staff) return null;
+    return toDomain(staff);
+  }
+  async delete(id: number): Promise<boolean> {
+    const deleteResult = await transactional<boolean>(
+      this.dataSource,
+      async (queryRunner) => {
+        const result = await queryRunner.manager.delete(StaffOrmEntity, id);
+        return typeof result.affected === "number" && result.affected > 0;
+      },
+    );
 
-  async getOne(id: number): Promise<Staff | null> {
-    const orm = await this.dataSource.manager.findOneBy(StaffOrmEntity, { id });
-    return orm ? toDomain(orm) : null;
+    return deleteResult;
   }
 
   async getAll(): Promise<Staff[]> {
-    const ormList = await this.dataSource.manager.find(StaffOrmEntity);
-    return ormList.map((item) => toDomain(item));
+    const result = await this.dataSource.manager.find(StaffOrmEntity);
+    return result.map((item) => toDomain(item));
   }
-
-  async create(staffData: Partial<Staff>): Promise<Staff> {
-    const staff = new Staff(
-      staffData.name!,
-      staffData.phoneNumber!,
-      staffData.role!,
-      staffData.id,
-    );
-    const orm = toOrmEntity(staff);
-    const saved = await this.dataSource.manager.save(orm);
-    return toDomain(saved);
-  }
-
-  async update(id: number, updateData: Partial<Staff>): Promise<Staff | null> {
-    const existing = await this.getOne(id);
-    if (!existing) return null;
-
-    const updated = new Staff(
-      updateData.name ?? existing.name,
-      updateData.phoneNumber ?? existing.phoneNumber,
-      updateData.role ?? existing.role,
-      id,
-    );
-    const orm = toOrmEntity(updated); // ✅ 여기도
-    await this.dataSource.manager.update(StaffOrmEntity, { id }, orm);
-
-    return this.getOne(id);
-  }
-
-  async delete(id: number): Promise<boolean> {
-    const result = await this.dataSource.manager.delete(StaffOrmEntity, { id });
-    return result.affected !== 0;
+  constructor(private readonly dataSource: DataSource) {
+    super();
   }
 }

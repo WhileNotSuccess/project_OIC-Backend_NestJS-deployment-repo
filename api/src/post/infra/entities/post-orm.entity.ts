@@ -1,4 +1,4 @@
-import { Language } from "src/post/domain/types/language";
+import { Language } from "src/common/types/language";
 import {
   Column,
   CreateDateColumn,
