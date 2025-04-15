@@ -138,7 +138,7 @@ describe("CarouselService", () => {
   });
 
   it("should find one carousel", async () => {
-    //mock 객체 생성 
+    //mock 객체 생성
     const mockedValue = new Carousel(
       testingFile.path,
       dto.postId!,

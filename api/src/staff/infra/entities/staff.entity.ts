@@ -7,7 +7,25 @@ export class StaffOrmEntity {
   @Column()
   name: string;
   @Column()
-  phoneNumber: string;
+  position: string;
   @Column()
+  phone: string;
+  @Column()
+  email: string;
+  @Column()
+  team: string;
+  @Column()
+  position_jp: string;
+  @Column()
+  team_jp: string;
+  @Column()
+  position_en: string;
+  @Column()
+  team_en: string;
+  @Column({ nullable: true })
   role: string;
+  @Column({ nullable: true })
+  role_en: string;
+  @Column({ nullable: true })
+  role_jp: string;
 }

@@ -130,7 +130,7 @@ describe("CarouselController", () => {
     );
     // mock 설정
     service.getOne.mockResolvedValue(carousel);
-    // getOne 실행 
+    // getOne 실행
     const result = await controller.getOne(1);
     // body.data 비교
     expect(result.data).toStrictEqual(carousel);

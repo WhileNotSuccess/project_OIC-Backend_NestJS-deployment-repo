@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { StaffService } from "./staff.service";
 import { StaffRepository } from "src/staff/domain/repository/staff.repository";
 import { Staff } from "src/staff/domain/entities/staff.entity";
+import { toLanguageEnum } from "src/common/utils/to-language-enum";
 
 describe("StaffService", () => {
   let service: StaffService;
@@ -34,8 +35,35 @@ describe("StaffService", () => {
 
   describe("create", () => {
     it("should create a staff member", async () => {
-      const dto = { name: "홍길동", phoneNumber: "01012345678", role: "admin" };
-      const created = new Staff(dto.name, dto.phoneNumber, dto.role, 1);
+      const dto = {
+        name: "홍길동",
+        position: "대장",
+        phone: "01012345678",
+        email: "hello@hello.com",
+        team: "팀1",
+        position_jp: "頭",
+        team_jp: "チーム1",
+        position_en: "head",
+        team_en: "team1",
+        role: "총괄",
+        role_en: "all",
+        role_jp: "全部",
+      };
+      const created = new Staff(
+        "홍길동",
+        "대장",
+        "01012345678",
+        "hello@hello.com",
+        "팀1",
+        "頭",
+        "チーム1",
+        "head",
+        "team1",
+        "총괄",
+        "all",
+        "全部",
+        1,
+      );
       repository.create.mockResolvedValue(created);
 
       const result = await service.create(dto);
@@ -49,34 +77,137 @@ describe("StaffService", () => {
   describe("findAll", () => {
     it("should return all staff", async () => {
       const list = [
-        new Staff("a", "01011112222", "staff", 1),
-        new Staff("b", "01033334444", "admin", 2),
+        new Staff(
+          "a",
+          "position",
+          "phone",
+          "email",
+          "team1",
+          "position_jp",
+          "team_jp",
+          "position_en",
+          "team_en1",
+          "role",
+          "role_en",
+          "role_jp",
+          1,
+        ),
+        new Staff(
+          "b",
+          "position",
+          "phone",
+          "email",
+          "team2",
+          "position_jp",
+          "team_jp",
+          "position_en",
+          "team_en1",
+          "role",
+          "role_en",
+          "role_jp",
+          2,
+        ),
+        new Staff(
+          "c",
+          "position",
+          "phone",
+          "email",
+          "team1",
+          "position_jp",
+          "team_jp",
+          "position_en",
+          "team_en2",
+          "role",
+          "role_en",
+          "role_jp",
+          3,
+        ),
+        new Staff(
+          "d",
+          "position",
+          "phone",
+          "email",
+          "team2",
+          "position_jp",
+          "team_jp",
+          "position_en",
+          "team_en2",
+          "role",
+          "role_en",
+          "role_jp",
+          4,
+        ),
       ];
       repository.getAll.mockResolvedValue(list);
 
-      const result = await service.findAll();
-      expect(result).toEqual(list);
-    });
-  });
-
-  describe("findOne", () => {
-    it("should return a staff by id", async () => {
-      const staff = new Staff("a", "01011112222", "staff", 1);
-      repository.getOne.mockResolvedValue(staff);
-
-      const result = await service.findOne(1);
-      expect(result).toEqual(staff);
+      const result = await service.findAll(toLanguageEnum("english"));
+      expect(result).toMatchObject({
+        team_en1: [
+          {
+            name: "a",
+            phone: "phone",
+            email: "email",
+            position: "position_en",
+            team: "team_en1",
+            role: "role_en",
+            id: 1,
+          },
+          {
+            name: "b",
+            phone: "phone",
+            email: "email",
+            position: "position_en",
+            team: "team_en1",
+            role: "role_en",
+            id: 2,
+          },
+        ],
+        team_en2: [
+          {
+            name: "c",
+            phone: "phone",
+            email: "email",
+            position: "position_en",
+            team: "team_en2",
+            role: "role_en",
+            id: 3,
+          },
+          {
+            name: "d",
+            phone: "phone",
+            email: "email",
+            position: "position_en",
+            team: "team_en2",
+            role: "role_en",
+            id: 4,
+          },
+        ],
+      });
     });
   });
 
   describe("update", () => {
     it("should update staff info", async () => {
-      const updated = new Staff("updated", "01000000000", "admin", 1);
+      const updated = new Staff(
+        "updated",
+        "대장",
+        "01000000000",
+        "hello@hello.com",
+        "팀1",
+        "頭",
+        "チーム1",
+        "head",
+        "team1",
+        "admin",
+        "all",
+        "全部",
+        1,
+      );
       repository.update.mockResolvedValue(updated);
 
       const result = await service.update(1, {
         name: "updated",
-        phoneNumber: "01000000000",
+        phone: "01000000000",
         role: "admin",
       });
       expect(result).toEqual(updated);

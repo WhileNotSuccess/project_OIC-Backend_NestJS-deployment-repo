@@ -3,7 +3,7 @@ import { Post } from "../entities/post.entity";
 import { News } from "../types/news";
 import { searchTarget } from "../types/searchTarget";
 import { UploadAttachmentReturn } from "src/media/domain/upload-attachment";
-import { Language } from "../types/language";
+import { Language } from "../../../common/types/language";
 import { PostImage } from "../entities/post-image.entity";
 import { Attachment } from "../entities/attachment.entity";
 

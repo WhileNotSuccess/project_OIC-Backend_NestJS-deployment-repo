@@ -53,6 +53,7 @@ describe("PrideOfYjuController (e2e)", () => {
     await app.init();
   });
   afterAll(async () => {
+
     //e2e 테스트로 생성된 파일의 삭제
     await Promise.all(
       createdFilePath.map((item) => {
@@ -62,6 +63,7 @@ describe("PrideOfYjuController (e2e)", () => {
       }),
     );
     await app.close();
+
   });
   let createdId: number;
 

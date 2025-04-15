@@ -5,11 +5,11 @@ on:
     branches: [main]
 
 env:
-  DB_HOST: 127.0.0.1
-  DB_PORT: 3306
-  DB_USERNAME: test_user
-  DB_PASSWORD: test_pass
-  DB_DATABASE: test_db
+  TEST_DB_HOST: 127.0.0.1
+  TEST_DB_PORT: 3306
+  TEST_DB_USERNAME: root
+  TEST_DB_PASSWORD: 1234
+  TEST_DB_DATABASE: db
   BACKEND_URL: http://localhost:3000
 
 jobs:
@@ -19,13 +19,11 @@ jobs:
 
     
     services:
-      mysql:
+      db:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test_db
-          MYSQL_USER: test_user
-          MYSQL_PASSWORD: test_pass
+          MYSQL_ROOT_PASSWORD: 1234
+          MYSQL_DATABASE: db
         ports:
           - 3306:3306
         options: >-

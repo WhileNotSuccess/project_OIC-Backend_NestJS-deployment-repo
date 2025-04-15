@@ -4,6 +4,7 @@ import { StaffService } from "../application/service/staff.service";
 import { CreateStaffDto } from "../application/dto/create-staff.dto";
 import { UpdateStaffDto } from "../application/dto/update-staff.dto";
 import { Staff } from "src/staff/domain/entities/staff.entity";
+import { RequestWithCookies } from "src/common/request-with-cookies";
 
 describe("StaffController", () => {
   let controller: StaffController;
@@ -18,7 +19,7 @@ describe("StaffController", () => {
           useValue: {
             create: jest.fn(),
             findAll: jest.fn(),
-            findOne: jest.fn(),
+            findAllWithoutLanguage: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
           },
@@ -37,28 +38,61 @@ describe("StaffController", () => {
   describe("create", () => {
     it("should call service.create and return result", async () => {
       const dto: CreateStaffDto = {
-        name: "홍길동",
-        phoneNumber: "01012345678",
-        role: "admin",
+        name: "name",
+        position: "position",
+        phone: "phone",
+        email: "email",
+        team: "team",
+        position_jp: "position_jp",
+        team_jp: "team_jp",
+        position_en: "position_en",
+        team_en: "team_en",
       };
-      const created = new Staff(dto.name, dto.phoneNumber, dto.role, 1);
+      const created = new Staff(
+        "name",
+        "position",
+        "phone",
+        "email",
+        "team",
+        "position_jp",
+        "team_jp",
+        "position_en",
+        "team_en",
+      );
       service.create.mockResolvedValue(created);
 
       const result = await controller.create(dto);
-      expect(result).toEqual(created);
+      expect(result).toMatchObject({
+        message: "생성이 완료되었습니다.",
+      });
       expect(service.create).toHaveBeenCalledWith(dto);
     });
   });
 
   describe("findAll", () => {
     it("should return all staff", async () => {
-      const staffList = [
-        new Staff("A", "01011112222", "admin", 1),
-        new Staff("B", "01022223333", "staff", 2),
-      ];
-      service.findAll.mockResolvedValue(staffList);
+      const staffList = {
+        test: [
+          new Staff(
+            "name",
+            "position",
+            "phone",
+            "email",
+            "team",
+            "position_jp",
+            "team_jp",
+            "position_en",
+            "team_en",
+          ),
+        ],
+      };
 
-      const result = await controller.findAll();
+      service.findAll.mockResolvedValue(staffList);
+      const mockRequest = {
+        cookies: { language: "korean" },
+      } as unknown as RequestWithCookies;
+      const result = await controller.findAll(mockRequest);
+      expect(service.findAll).toHaveBeenCalledWith("korean");
       expect(result).toEqual({
         message: "직원 목록을 불러왔습니다",
         data: staffList,
@@ -66,29 +100,54 @@ describe("StaffController", () => {
     });
   });
 
-  describe("findOne", () => {
-    it("should return one staff by id", async () => {
-      const staff = new Staff("A", "01011112222", "admin", 1);
-      service.findOne.mockResolvedValue(staff);
+  describe("findAllForAdmin", () => {
+    it("should return all staff", async () => {
+      const staffList = {
+        test: [
+          new Staff(
+            "name",
+            "position",
+            "phone",
+            "email",
+            "team",
+            "position_jp",
+            "team_jp",
+            "position_en",
+            "team_en",
+          ),
+        ],
+      };
 
-      const result = await controller.findOne("1");
-      expect(result).toEqual(staff);
-      expect(service.findOne).toHaveBeenCalledWith(1);
+      service.findAllWithoutLanguage.mockResolvedValue(staffList);
+
+      const result = await controller.findAllForAdmin();
+      expect(result).toEqual({
+        message: "직원 목록을 불러왔습니다",
+        data: staffList,
+      });
     });
   });
 
   describe("update", () => {
     it("should update staff and return result", async () => {
       const dto: UpdateStaffDto = {
-        name: "Updated Name",
-        phoneNumber: "01099998888",
-        role: "staff",
+        name: "hi",
       };
-      const updated = new Staff(dto.name!, dto.phoneNumber!, dto.role!, 1);
+      const updated = new Staff(
+        "hi",
+        "position",
+        "phone",
+        "email",
+        "team",
+        "position_jp",
+        "team_jp",
+        "position_en",
+        "team_en",
+      );
       service.update.mockResolvedValue(updated);
 
       const result = await controller.update("1", dto);
-      expect(result).toEqual(updated);
+      expect(result).toMatchObject({ message: "수정이 완료되었습니다." });
       expect(service.update).toHaveBeenCalledWith(1, dto);
     });
   });
@@ -97,7 +156,7 @@ describe("StaffController", () => {
     it("should remove staff and return result", async () => {
       service.remove.mockResolvedValue(true);
       const result = await controller.remove("1");
-      expect(result).toBe(true);
+      expect(result).toMatchObject({ message: "삭제가 완료되었습니다." });
       expect(service.remove).toHaveBeenCalledWith(1);
     });
   });

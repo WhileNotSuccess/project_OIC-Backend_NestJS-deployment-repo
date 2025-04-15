@@ -98,7 +98,7 @@ describe("CarouselController (e2e)", () => {
     const res = await request(server)
       .get("/carousel")
       // 쿠키 설정
-      .set("Cookie", "language=korean")
+      .set("Cookie", ["language=korean"])
       .expect(200);
     const body = res.body as CarouselArrayResponse;
     expect(body.message).toBe("carousel을 불러왔습니다.");

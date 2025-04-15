@@ -32,9 +32,9 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("doc", app, document);
-
-  app.use(cookieParser());
+  SwaggerModule.setup("doc", app, document, {
+    useGlobalPrefix: true,
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }

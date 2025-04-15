@@ -27,7 +27,7 @@ import {
 import { searchTarget } from "../domain/types/searchTarget";
 import { RequestWithCookies } from "src/common/request-with-cookies";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { Language } from "../domain/types/language";
+import { Language } from "../../common/types/language";
 import { toLanguageEnum } from "src/common/utils/to-language-enum";
 
 @Controller("post")
