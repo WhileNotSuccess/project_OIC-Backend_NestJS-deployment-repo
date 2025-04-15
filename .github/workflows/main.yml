@@ -7,9 +7,9 @@ on:
 env:
   TEST_DB_HOST: 127.0.0.1
   TEST_DB_PORT: 3306
-  TEST_DB_USERNAME: test_user
-  TEST_DB_PASSWORD: test_pass
-  TEST_DB_DATABASE: test_db
+  TEST_DB_USERNAME: root
+  TEST_DB_PASSWORD: 1234
+  TEST_DB_DATABASE: db
   BACKEND_URL: http://localhost:3000
 
 jobs:
