@@ -9,9 +9,14 @@ describe("TypeormStaffRepository (Integration)", () => {
 
   beforeAll(async () => {
     dataSource = new DataSource({
-      type: "sqlite",
-      database: ":memory:",
+      type: "mysql",
+      host: process.env.TEST_DB_HOST,
+      port: Number(process.env.TEST_DB_PORT),
+      username: process.env.TEST_DB_USERNAME,
+      password: process.env.TEST_DB_PASSWORD,
+      database: process.env.TEST_DB_DATABASE,
       synchronize: true,
+      dropSchema: true, // 테스트 후 테이블 초기화
       entities: [StaffOrmEntity],
     });
     await dataSource.initialize();
