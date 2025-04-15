@@ -7,7 +7,10 @@ interface PrideOfYju {
 }
 export interface PrideOfYjuResponse {
   message: string;
-  data?: PrideOfYju;
+  data: PrideOfYju;
+}
+export interface PrideOfYjuOKResponse {
+  message: string;
 }
 export interface PrideOfYjuArrayResponse {
   message: string;

@@ -69,7 +69,7 @@ describe("CarouselService", () => {
   it("should create a carousel", async () => {
     // repository mock 객체 생성
     const returnCarousel = new Carousel(
-      dto.image!,
+      testingFile.path,
       dto.postId!,
       dto.koreanTitle!,
       dto.koreanDescription!,
@@ -178,7 +178,7 @@ describe("CarouselService", () => {
       { koreanTitle: "수정된 한글" },
       testingFile,
     );
-    expect(result).toEqual(true);
+    expect(result).toBe(true);
   });
 
   it("should delete a carousel", async () => {

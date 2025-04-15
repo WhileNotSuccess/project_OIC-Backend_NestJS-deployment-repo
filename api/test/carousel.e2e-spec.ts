@@ -30,11 +30,22 @@ describe("CarouselController (e2e)", () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        // TypeOrmModule.forRoot({
+        //   type: "sqlite",
+        //   database: ":memory:",
+        //   entities: [CarouselOrmEntity],
+        //   synchronize: true,
+        // }),
         TypeOrmModule.forRoot({
-          type: "sqlite",
-          database: ":memory:",
-          entities: [CarouselOrmEntity],
+          type: "mysql",
+          host: process.env.DB_HOST,
+          port: Number(process.env.DB_PORT),
+          username: process.env.DB_USERNAME,
+          password: process.env.DB_PASSWORD,
+          database: process.env.DB_DATABASE,
           synchronize: true,
+          dropSchema: true, // 테스트 후 테이블 초기화
+          entities: [CarouselOrmEntity],
         }),
         CarouselModule,
       ],

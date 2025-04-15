@@ -54,7 +54,7 @@ describe("prideOfYjuController", () => {
         { ...(dto as CreatePrideOfYjuDto) },
         testingFile,
       );
-      expect(result.message).toEqual("작성에 성공했습니다.");
+      expect(result.message).toEqual("PridOfYju 작성에 성공했습니다.");
     });
   });
   describe("findAll", () => {
@@ -103,14 +103,14 @@ describe("prideOfYjuController", () => {
         { Korean: "수정된 한글" },
         testingFile,
       );
-      expect(result.message).toBe("수정에 성공했습니다.");
+      expect(result.message).toBe("PridOfYju 수정에 성공했습니다.");
     });
   });
   describe("delete", () => {
     it("should delete one PrideOfYju", async () => {
       service.update.mockResolvedValue(true);
       const result = await controller.delete(1);
-      expect(result.message).toBe("삭제에 성공했습니다.");
+      expect(result.message).toBe("PridOfYju 삭제에 성공했습니다.");
     });
   });
 });
