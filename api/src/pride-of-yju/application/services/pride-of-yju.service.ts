@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrideOfYjuRepository } from "../../domain/repository/pride-of-yju.repository";
 import { CreatePrideOfYjuDto } from "../dto/create-pride-of-yju.dto";
 import { PrideOfYju } from "src/pride-of-yju/domain/entities/pride-of-yju.entity";
@@ -48,7 +48,7 @@ export class PrideOfYjuService {
   async getOne(id: number) {
     const result = await this.POYRepository.getOne(id);
     if (!result)
-      throw new NotFoundException("해당 pride of yju는 존재하지 않습니다.");
+      throw new BadRequestException("해당 pride of yju는 존재하지 않습니다.");
     return result;
   }
 }

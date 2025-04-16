@@ -53,17 +53,23 @@ describe("PrideOfYjuController (e2e)", () => {
     await app.init();
   });
   afterAll(async () => {
-
     //e2e 테스트로 생성된 파일의 삭제
-    await Promise.all(
-      createdFilePath.map((item) => {
-        fs.promises.unlink(`/files${item}`).catch((e: unknown) => {
-          Logger.warn(`파일 삭제 실패: ${item}`, e);
-        });
-      }),
-    );
+    await Promise.all([
+      // createdFilePath.map((item) => {
+      //   fs.promises.unlink(`/files${item}`).catch((e: unknown) => {
+      //     Logger.warn(`파일 삭제 실패: ${item}`, e);
+      //   });
+      // }),
+      await fs.promises
+        .rm("/files/pride", {
+          recursive: true, // 내부 파일도 지우기
+          force: true, // 폴더 존재유무에 상관하지 않음
+        })
+        .catch((e: unknown) => {
+          Logger.warn(`폴더 삭제 실패:`, e);
+        }),
+    ]);
     await app.close();
-
   });
   let createdId: number;
 
@@ -139,6 +145,6 @@ describe("PrideOfYjuController (e2e)", () => {
     expect((res.body as PrideOfYjuResponse).message).toBe(
       "PridOfYju 삭제에 성공했습니다.",
     );
-    await request(server).get(`/pride/${createdId}`).expect(404);
+    await request(server).get(`/pride/${createdId}`).expect(400);
   });
 });
