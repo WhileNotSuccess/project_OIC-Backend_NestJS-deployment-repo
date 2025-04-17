@@ -3,8 +3,10 @@ import { CarouselService } from "../../application/services/carousel.service";
 import { Test, TestingModule } from "@nestjs/testing";
 import { CreateCarouselDto } from "../../application/dto/create-carousel.dto";
 import { Request } from "express";
-import { ReturnCarousel } from "../../domain/entities/carousel-return.entiry";
-import { Carousel } from "../../domain/entities/carousel.entity";
+import {
+  Carousel,
+  ReturnCarousel,
+} from "../../domain/entities/carousel.entity";
 import { Readable } from "stream";
 
 describe("CarouselController", () => {
@@ -72,21 +74,21 @@ describe("CarouselController", () => {
 
   it("should return all carousel", async () => {
     // mock 배열
-    const carouselList = [
-      new ReturnCarousel(
-        "/carousel/123456-image.jpg",
-        1,
-        dto.koreanTitle + "1",
-        dto.koreanDescription + "1",
-        1,
-      ),
-      new ReturnCarousel(
-        "/carousel/098765-image.jpg",
-        2,
-        dto.koreanTitle + "2",
-        dto.koreanDescription + "2",
-        2,
-      ),
+    const carouselList: ReturnCarousel[] = [
+      {
+        image: "/carousel/123456-image.jpg",
+        postId: 1,
+        title: dto.koreanTitle + "1",
+        description: dto.koreanDescription + "1",
+        id: 1,
+      },
+      {
+        image: "/carousel/098765-image.jpg",
+        postId: 2,
+        title: dto.koreanTitle + "2",
+        description: dto.koreanDescription + "2",
+        id: 2,
+      },
     ];
     // 요청에 넣을 cookie
     const mockRequest = {
@@ -99,6 +101,35 @@ describe("CarouselController", () => {
     // 비교
     expect(result.message).toBe("carousel을 불러왔습니다.");
     expect(result.data.length).toBeGreaterThan(0);
+  });
+  it("should return all raw carousel", async () => {
+    const carouselList = [
+      new Carousel(
+        testingFile.path,
+        dto.postId!,
+        dto.koreanTitle!,
+        dto.koreanDescription!,
+        dto.englishTitle!,
+        dto.englishDescription!,
+        dto.japaneseTitle!,
+        dto.japaneseDescription!,
+        1,
+      ),
+      new Carousel(
+        testingFile.path,
+        dto.postId!,
+        dto.koreanTitle!,
+        dto.koreanDescription!,
+        dto.englishTitle!,
+        dto.englishDescription!,
+        dto.japaneseTitle!,
+        dto.japaneseDescription!,
+        2,
+      ),
+    ];
+    service.getRawAll.mockResolvedValue(carouselList);
+    const result = await controller.getRawAll();
+    expect(result).toStrictEqual(carouselList);
   });
 
   it("should patch one carousel", async () => {
@@ -115,6 +146,7 @@ describe("CarouselController", () => {
     // body.message 비교
     expect(result.message).toBe("수정에 성공했습니다.");
   });
+
   it("should find one carousel", async () => {
     // mock 객체
     const carousel = new Carousel(

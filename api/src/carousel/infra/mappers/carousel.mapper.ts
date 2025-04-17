@@ -1,5 +1,5 @@
 import { Carousel } from "../../domain/entities/carousel.entity";
-import { CarouselOrmEntity } from "../entites/carousel.entity";
+import { CarouselOrmEntity } from "../entities/carousel.entity";
 
 // export const toDomain = (orm: CarouselOrmEntity): ReturnCarousel => {
 //   return new ReturnCarousel(

@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { TypeormCarouselRepository } from "./typeorm-carousel.repository";
-import { CarouselOrmEntity } from "../entites/carousel.entity";
+import { CarouselOrmEntity } from "../entities/carousel.entity";
 
 describe("TypeormCarouselRepository (Integration)", () => {
   let dataSource: DataSource;

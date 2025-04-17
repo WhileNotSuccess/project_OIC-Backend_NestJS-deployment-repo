@@ -1,14 +1,14 @@
 import { INestApplication, Logger } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { CarouselModule } from "src/carousel/carousel.model";
+import { CarouselModule } from "src/carousel/carousel.module";
 import * as request from "supertest";
 import {
   CarouselArrayResponse,
   CarouselOKResponse,
   CarouselResponse,
 } from "./types/carousel-response";
-import { CarouselOrmEntity } from "src/carousel/infra/entites/carousel.entity";
+import { CarouselOrmEntity } from "src/carousel/infra/entities/carousel.entity";
 import * as cookieParser from "cookie-parser";
 // import { Carousel } from "src/carousel/domain/entities/carousel.entity";
 import * as path from "path";
@@ -16,7 +16,12 @@ import * as fs from "fs";
 
 describe("CarouselController (e2e)", () => {
   let app: INestApplication;
-  const testfilePath = path.join(__dirname, "../..", "files/141735.png");
+  const testfilePath = path.join(
+    __dirname,
+    "__fixtures__",
+    "pride",
+    "141735.png",
+  );
   const createdFilePath: string[] = [];
   // const dto: Partial<Carousel> = {
   //   postId: 1,
@@ -38,11 +43,11 @@ describe("CarouselController (e2e)", () => {
         // }),
         TypeOrmModule.forRoot({
           type: "mysql",
-          host: process.env.DB_HOST,
-          port: Number(process.env.DB_PORT),
-          username: process.env.DB_USERNAME,
-          password: process.env.DB_PASSWORD,
-          database: process.env.DB_DATABASE,
+          host: process.env.TEST_DB_HOST,
+          port: Number(process.env.TEST_DB_PORT),
+          username: process.env.TEST_DB_USERNAME,
+          password: process.env.TEST_DB_PASSWORD,
+          database: process.env.TEST_DB_DATABASE,
           synchronize: true,
           dropSchema: true, // 테스트 후 테이블 초기화
           entities: [CarouselOrmEntity],
@@ -86,7 +91,7 @@ describe("CarouselController (e2e)", () => {
       .attach("file", testfilePath)
       .expect(201); // post 요청 성공 확인
     expect((createRes.body as CarouselOKResponse).message).toBe(
-      "작성에 성공했습니다.",
+      "carousel 작성에 성공했습니다.",
     );
   });
 
@@ -136,7 +141,9 @@ describe("CarouselController (e2e)", () => {
       .field("koreanTitle", "수정된 한글")
       .expect(200);
 
-    expect((res.body as CarouselResponse).message).toBe(`수정에 성공했습니다.`);
+    expect((res.body as CarouselResponse).message).toBe(
+      `carousel 수정에 성공했습니다.`,
+    );
     // 수정 됐는지 확인
     const resTest = await request(server)
       .get(`/carousel/${createdId}`)
@@ -152,6 +159,6 @@ describe("CarouselController (e2e)", () => {
     // 삭제 요청
     await request(server).delete(`/carousel/${createdId}`).expect(200);
     // 확인
-    await request(server).get(`/carousel/${createdId}`).expect(400);
+    await request(server).get(`/carousel/${createdId}`).expect(404);
   });
 });

@@ -10,8 +10,12 @@ export class Carousel {
     public japaneseDescription: string,
     public id?: number,
   ) {}
+}
 
-  isImage() {
-    return this.image === "carousel/123456-image.jpg";
-  }
+export interface ReturnCarousel {
+  image: string;
+  postId: number;
+  title: string;
+  description: string;
+  id: number;
 }
