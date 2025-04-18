@@ -15,8 +15,12 @@ import { PrideOfYjuModule } from "src/pride-of-yju/pride-of-yju.module";
 
 describe("PrideOfYjuController (e2e)", () => {
   let app: INestApplication;
-  const testfilePath = path.join(__dirname, "../..", "files/141735.png");
-  const createdFilePath: string[] = [];
+  const testfilePath = path.join(
+    __dirname,
+    "__fixtures__",
+    "pride",
+    "141735.png",
+  );
 
   // const dto: Partial<PrideOfYju> = {
   //   image: "pride/123456-789012.jpg",
@@ -36,11 +40,11 @@ describe("PrideOfYjuController (e2e)", () => {
         // }),
         TypeOrmModule.forRoot({
           type: "mysql",
-          host: process.env.DB_HOST,
-          port: Number(process.env.DB_PORT),
-          username: process.env.DB_USERNAME,
-          password: process.env.DB_PASSWORD,
-          database: process.env.DB_DATABASE,
+          host: process.env.TEST_DB_HOST,
+          port: Number(process.env.TEST_DB_PORT),
+          username: process.env.TEST_DB_USERNAME,
+          password: process.env.TEST_DB_PASSWORD,
+          database: process.env.TEST_DB_DATABASE,
           synchronize: true,
           dropSchema: true, // 테스트 후 테이블 초기화
           entities: [PrideOfYjuOrmEntity],
@@ -53,17 +57,21 @@ describe("PrideOfYjuController (e2e)", () => {
     await app.init();
   });
   afterAll(async () => {
-
     //e2e 테스트로 생성된 파일의 삭제
-    await Promise.all(
-      createdFilePath.map((item) => {
-        fs.promises.unlink(`/files${item}`).catch((e: unknown) => {
-          Logger.warn(`파일 삭제 실패: ${item}`, e);
-        });
-      }),
-    );
-    await app.close();
+    // await Promise.all(
+    //   createdFilePath.map((item) => {
+    //     fs.promises.unlink(`/files${item}`).catch((e: unknown) => {
+    //       Logger.warn(`파일 삭제 실패: ${item}`, e);
+    //     });
+    //   }),
+    // );
+    try {
+      await fs.promises.rm("/files/pride", { recursive: true, force: true });
+    } catch (e) {
+      Logger.warn(`파일 삭제 실패: `, e);
+    }
 
+    await app.close();
   });
   let createdId: number;
 
@@ -98,10 +106,6 @@ describe("PrideOfYjuController (e2e)", () => {
     expect(body.data.length).toBeGreaterThan(0);
     // 생성된 열 id 저장(아마 1)
     createdId = body.data[0].id;
-    // 생성된 파일 이름 저장
-    body.data.map((item) => {
-      createdFilePath.push(item.image);
-    });
   });
 
   it("/pride/:id (GET) should return one pride-of-yju", async () => {

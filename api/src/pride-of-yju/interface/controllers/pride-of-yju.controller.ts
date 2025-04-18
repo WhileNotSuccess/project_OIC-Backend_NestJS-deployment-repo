@@ -115,6 +115,7 @@ export class PrideOfYjuController {
     const result = await this.POYservice.getOne(id);
     return { message: "pride of yju를 불러왔습니다.", data: result };
   }
+
   @ApiOperation({ summary: "모든 PrideOfyju를 불러오기" })
   @ApiResponse({
     example: {
