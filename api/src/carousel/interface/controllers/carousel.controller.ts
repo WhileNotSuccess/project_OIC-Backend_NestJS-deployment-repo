@@ -24,7 +24,7 @@ import {
   ApiResponse,
 } from "@nestjs/swagger";
 import { ReturnCarousel } from "src/carousel/domain/entities/carousel.entity";
-import { Language } from "src/post/domain/types/language";
+import { Language } from "src/common/types/language";
 
 interface Req extends Request {
   cookies: { [key: string]: string };
