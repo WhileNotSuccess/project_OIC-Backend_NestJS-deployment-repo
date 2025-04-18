@@ -3,7 +3,7 @@ import { Carousel } from "../../domain/entities/carousel.entity";
 import { CarouselRepository } from "../../domain/repository/carousel.repository";
 import { DataSource } from "typeorm";
 import { toDomain, toOrmEntity } from "../mappers/carousel.mapper";
-import { CarouselOrmEntity } from "../entites/carousel.entity";
+import { CarouselOrmEntity } from "../entities/carousel.entity";
 import { transactional } from "src/common/utils/transaction-helper";
 
 @Injectable()
