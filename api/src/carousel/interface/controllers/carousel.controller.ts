@@ -72,7 +72,7 @@ export class CarouselController {
   @ApiOperation({ summary: "carousel를 가공없이 불러오기" })
   @ApiResponse({
     example: {
-      message: "carousel을 불러왔습니다.",
+      message: "carousel을 열을 가공없이 불러왔습니다.",
       data: [
         {
           id: 1,

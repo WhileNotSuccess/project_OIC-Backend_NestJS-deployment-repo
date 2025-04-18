@@ -44,6 +44,7 @@ describe("CarouselController", () => {
             create: jest.fn(),
             findAll: jest.fn(),
             getOne: jest.fn(),
+            getRawAll: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
           },
@@ -68,7 +69,7 @@ describe("CarouselController", () => {
       ...(dto as CreateCarouselDto),
     });
     //message 비교
-    expect(result.message).toEqual("작성에 성공했습니다.");
+    expect(result.message).toEqual("carousel 작성에 성공했습니다.");
     // expect(service.create).toHaveBeenCalledWith(dto);
   });
 
@@ -103,6 +104,7 @@ describe("CarouselController", () => {
     expect(result.data.length).toBeGreaterThan(0);
   });
   it("should return all raw carousel", async () => {
+    //mock 설정
     const carouselList = [
       new Carousel(
         testingFile.path,
@@ -128,8 +130,10 @@ describe("CarouselController", () => {
       ),
     ];
     service.getRawAll.mockResolvedValue(carouselList);
+    // getRawAll 실행
     const result = await controller.getRawAll();
-    expect(result).toStrictEqual(carouselList);
+    // 비교
+    expect(result.data).toStrictEqual(carouselList);
   });
 
   it("should patch one carousel", async () => {
@@ -144,7 +148,7 @@ describe("CarouselController", () => {
       testingFile,
     );
     // body.message 비교
-    expect(result.message).toBe("수정에 성공했습니다.");
+    expect(result.message).toBe("carousel 수정에 성공했습니다.");
   });
 
   it("should find one carousel", async () => {
@@ -174,6 +178,6 @@ describe("CarouselController", () => {
     // delete 실행
     const result = await controller.delete(1);
     // body.message 비교
-    expect(result.message).toBe("삭제에 성공했습니다.");
+    expect(result.message).toBe("carousel 삭제에 성공했습니다.");
   });
 });
