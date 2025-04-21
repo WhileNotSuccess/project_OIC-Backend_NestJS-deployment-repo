@@ -21,9 +21,9 @@ describe("prideOfYjuController", () => {
     stream: new Readable(),
   };
   const dto: Partial<PrideOfYju> = {
-    Korean: "한국어",
-    English: "영어",
-    Japanese: "일본어",
+    korean: "한국어",
+    english: "영어",
+    japanese: "일본어",
   };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -54,7 +54,7 @@ describe("prideOfYjuController", () => {
         { ...(dto as CreatePrideOfYjuDto) },
         testingFile,
       );
-      expect(result.message).toEqual("PridOfYju 작성에 성공했습니다.");
+      expect(result.message).toEqual("PrideOfYju 작성에 성공했습니다.");
     });
   });
   describe("findAll", () => {
@@ -62,16 +62,16 @@ describe("prideOfYjuController", () => {
       const POYList = [
         new PrideOfYju(
           testingFile.path,
-          dto.Korean!,
-          dto.English!,
-          dto.Japanese!,
+          dto.korean!,
+          dto.english!,
+          dto.japanese!,
           1,
         ),
         new PrideOfYju(
           testingFile.path,
-          dto.Korean!,
-          dto.English!,
-          dto.Japanese!,
+          dto.korean!,
+          dto.english!,
+          dto.japanese!,
           2,
         ),
       ];
@@ -85,9 +85,9 @@ describe("prideOfYjuController", () => {
     it("should return one PrideOfYju", async () => {
       const POYMock = new PrideOfYju(
         testingFile.path,
-        dto.Korean!,
-        dto.English!,
-        dto.Japanese!,
+        dto.korean!,
+        dto.english!,
+        dto.japanese!,
         1,
       );
       service.getOne.mockResolvedValue(POYMock);
@@ -100,17 +100,17 @@ describe("prideOfYjuController", () => {
       service.update.mockResolvedValue(true);
       const result = await controller.update(
         1,
-        { Korean: "수정된 한글" },
+        { korean: "수정된 한글" },
         testingFile,
       );
-      expect(result.message).toBe("PridOfYju 수정에 성공했습니다.");
+      expect(result.message).toBe("PrideOfYju 수정에 성공했습니다.");
     });
   });
   describe("delete", () => {
     it("should delete one PrideOfYju", async () => {
       service.update.mockResolvedValue(true);
       const result = await controller.delete(1);
-      expect(result.message).toBe("PridOfYju 삭제에 성공했습니다.");
+      expect(result.message).toBe("PrideOfYju 삭제에 성공했습니다.");
     });
   });
 });

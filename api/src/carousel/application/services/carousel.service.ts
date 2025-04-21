@@ -62,7 +62,7 @@ export class CarouselService {
     }) as ReturnCarousel[];
     return returnCarousel;
   }
-  
+
   async getOne(id: number) {
     const carousel = await this.carouselRepository.getOne(id);
     // null일 경우 id가 잘못됐다는 400에러
