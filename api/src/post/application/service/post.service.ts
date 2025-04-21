@@ -10,7 +10,7 @@ import { PostRepository } from "src/post/domain/repository/post.repository";
 import { searchTarget } from "src/post/domain/types/searchTarget";
 import { MediaService } from "src/media/domain/media.service";
 import { Language } from "src/common/types/language";
-
+import { JSDOM } from "jsdom";
 @Injectable()
 export class PostService {
   constructor(
@@ -180,13 +180,14 @@ export class PostService {
       10,
       language,
     );
-    const parser = new DOMParser();
 
-    return data.map((item) => {
+    const resultReturn = data.map((item) => {
       let result: string = "";
       const content = item.content;
-      const doc = parser.parseFromString(content, "text/html");
-      const paragraphs = doc.querySelectorAll("p");
+
+      // jsdom을 사용하여 HTML 파싱
+      const { document } = new JSDOM(content).window;
+      const paragraphs = document.querySelectorAll("p");
       for (let i = 0; i < paragraphs.length; i++) {
         const paragraph = paragraphs[i];
         const imgTag = paragraph.querySelector("img"); // p 태그 안에 img 태그가 있는지 확인
@@ -197,12 +198,15 @@ export class PostService {
           break;
         }
       }
+
       return {
         postId: item.id,
         title: item.title,
         content: result,
       };
     });
+
+    return resultReturn;
   }
 
   async update(
