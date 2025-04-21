@@ -359,6 +359,100 @@ describe("PostService", () => {
     });
   });
 
+  describe("should get notice", () => {
+    it("findNews", async () => {
+      const now = new Date();
+      const notices: Post[] = [
+        new Post(
+          "안녕",
+          `<p>감사해요</p>
+    <p>잘있어요</p>
+    <p>다시만나요</p>
+    <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
+    `,
+          1,
+          "notice",
+          toLanguageEnum("korean"),
+          now,
+          now,
+        ),
+        new Post(
+          "안녕1",
+          `<p>감사해요</p>
+    <p>잘있어요</p>
+    <p>다시만나요</p>
+    <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
+    `,
+          1,
+          "notice",
+          toLanguageEnum("korean"),
+          now,
+          now,
+        ),
+        new Post(
+          "안녕2",
+          `<p>감사해요</p>
+    <p>잘있어요</p>
+    <p>다시만나요</p>
+    <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
+    `,
+          1,
+          "notice",
+          toLanguageEnum("korean"),
+          now,
+          now,
+        ),
+        new Post(
+          "안녕3",
+          `<p>감사해요</p>
+    <p>잘있어요</p>
+    <p>다시만나요</p>
+    <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
+    `,
+          1,
+          "notice",
+          toLanguageEnum("korean"),
+          now,
+          now,
+        ),
+        new Post(
+          "안녕4",
+          `<p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
+          <p>감사해요</p>
+    <p>잘있어요</p>
+    <p>다시만나요</p>
+    `,
+          1,
+          "notice",
+          toLanguageEnum("korean"),
+          now,
+          now,
+        ),
+      ];
+
+      // news 결과 모킹
+      jest
+        .spyOn(repository, "getAllForCategory")
+        .mockResolvedValue([notices, 5]);
+      const result = await service.findNotice(toLanguageEnum("korean"));
+      // 파리미터 확인
+      expect(repository.getAllForCategory).toHaveBeenCalledWith(
+        "notice",
+        1,
+        10,
+        toLanguageEnum("korean"),
+      );
+      // 결과 확인
+      expect(result).toMatchObject(
+        notices.map((item) => ({
+          postId: item.id,
+          title: item.title,
+          content: "감사해요",
+        })),
+      );
+    });
+  });
+
   describe("should update post", () => {
     it("update", async () => {
       // 기존 이미지 찾기 결과 모킹

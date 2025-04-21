@@ -17,6 +17,10 @@ export class PostService {
     private readonly postRepository: PostRepository,
     private readonly mediaService: MediaService,
   ) {}
+  async uploadImage(image: Express.Multer.File) {
+    const url = await this.mediaService.uploadImage(image, "post-image");
+    return url;
+  }
 
   async create(
     createPostDto: CreatePostDto,
@@ -166,6 +170,38 @@ export class PostService {
           imageUrl: match[1].replace(`${process.env.BACKEND_URL}/files`, ""),
         };
       }
+    });
+  }
+
+  async findNotice(language: Language) {
+    const [data] = await this.postRepository.getAllForCategory(
+      "notice",
+      1,
+      10,
+      language,
+    );
+    const parser = new DOMParser();
+
+    return data.map((item) => {
+      let result: string = "";
+      const content = item.content;
+      const doc = parser.parseFromString(content, "text/html");
+      const paragraphs = doc.querySelectorAll("p");
+      for (let i = 0; i < paragraphs.length; i++) {
+        const paragraph = paragraphs[i];
+        const imgTag = paragraph.querySelector("img"); // p 태그 안에 img 태그가 있는지 확인
+
+        // img 태그가 없으면 텍스트를 반환하고 종료
+        if (!imgTag && paragraph.textContent) {
+          result = paragraph.textContent.trim(); // 텍스트 내용 반환 (앞뒤 공백 제거)
+          break;
+        }
+      }
+      return {
+        postId: item.id,
+        title: item.title,
+        content: result,
+      };
     });
   }
 

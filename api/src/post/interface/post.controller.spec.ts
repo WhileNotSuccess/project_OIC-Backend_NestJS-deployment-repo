@@ -7,6 +7,7 @@ import { Post } from "../domain/entities/post.entity";
 import { toSearchTargetEnum } from "src/common/utils/to-search-target-enum";
 import { CreatePostDto } from "../application/dto/create-post.dto";
 import { UpdatePostDto } from "../application/dto/update-post.dto";
+import { Readable } from "typeorm/platform/PlatformTools";
 
 describe("PostController", () => {
   let controller: PostController;
@@ -41,6 +42,8 @@ describe("PostController", () => {
             update: jest.fn(),
             remove: jest.fn(),
             search: jest.fn(),
+            uploadImage: jest.fn(),
+            findNotice: jest.fn(),
           },
         },
       ],
@@ -143,6 +146,31 @@ describe("PostController", () => {
           {
             postId: 1,
             imageUrl: "https://example.com/api/files/hello.png",
+            title: "게시글 제목",
+          },
+        ],
+      });
+    });
+  });
+
+  describe("getNotice", () => {
+    it("should return notices", async () => {
+      service.findNotice.mockResolvedValue([
+        {
+          postId: 1,
+          content: "https://example.com/api/files/hello.png",
+          title: "게시글 제목",
+        },
+      ]);
+
+      const result = await controller.getNotices(mockRequest);
+      expect(service.findNotice).toHaveBeenCalledWith("korean");
+      expect(result).toMatchObject({
+        message: "공지를 성공적으로 가져왔습니다.",
+        data: [
+          {
+            postId: 1,
+            content: "https://example.com/api/files/hello.png",
             title: "게시글 제목",
           },
         ],
@@ -252,6 +280,30 @@ describe("PostController", () => {
       expect(result).toMatchObject({
         message: "삭제가 완료되었습니다.",
       });
+    });
+  });
+
+  describe("upload image", () => {
+    it("should save image and return url", async () => {
+      const dummyImage: Express.Multer.File = {
+        fieldname: "",
+        originalname: "",
+        encoding: "",
+        mimetype: "",
+        size: 0,
+        stream: new Readable(),
+        destination: "",
+        filename: "",
+        path: "",
+        buffer: Buffer.from("fake image content"),
+      };
+      service.uploadImage.mockResolvedValue("hello.png");
+      const result = await controller.uploadImage([dummyImage]);
+      expect(result).toMatchObject({
+        message: "이미지 업로드에 성공했습니다.",
+        url: "hello.png",
+      });
+      expect(service.uploadImage).toHaveBeenCalledWith(dummyImage);
     });
   });
 });

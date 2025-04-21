@@ -9,7 +9,10 @@ export interface PostOneResponse {
   data: Post;
   files: Attachment[];
 }
-
+export interface PostImageUploadResponse {
+  message: string;
+  url: string;
+}
 export interface GetApplicantsResponse {
   message: string;
   applicants: {

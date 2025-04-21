@@ -34,6 +34,39 @@ import { toLanguageEnum } from "src/common/utils/to-language-enum";
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
+  @ApiOperation({ summary: "에디터에서 사용할 이미지 업로드 api" })
+  @ApiResponse({
+    example: {
+      message: "이미지 업로드에 성공했습니다.",
+      url: "/image/hello.png",
+    },
+  })
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        image: {
+          type: "string",
+          format: "binary",
+          description: "이미지 파일",
+        },
+      },
+    },
+  })
+  @UseInterceptors(FilesInterceptor("image"))
+  @Post("image")
+  async uploadImage(
+    @UploadedFiles() image: Express.Multer.File[],
+    // @Req() req: RequestWithCookies,
+  ) {
+    const url = await this.postService.uploadImage(image[0]);
+    return {
+      message: "이미지 업로드에 성공했습니다.",
+      url,
+    };
+  }
+
   @ApiOperation({
     summary:
       "메인에서 사용, 모집요강 파일 이름과 사진, 입학신청서 파일 이름과 사진을 받아 올 수 있다.",
@@ -162,6 +195,32 @@ export class PostController {
     const result = await this.postService.findNews(language);
     return {
       message: "알림을 성공적으로 가져왔습니다.",
+      data: result,
+    };
+  }
+
+  @ApiOperation({ summary: "메인화면 공지 슬라이드" })
+  @ApiResponse({
+    example: {
+      message: "공지를 성공적으로 가져왔습니다.",
+      data: [
+        {
+          postId: 1,
+          content:
+            "2025년 상반기 은평구민 장학생을 다음과 같이 모집하오니 해당 학생은 많은 신청바랍니다.",
+          title: "게시글 제목",
+        },
+      ],
+    },
+  })
+  @Get("main/notices")
+  async getNotices(@Req() req: RequestWithCookies) {
+    const rawLang = req.cookies["language"] || "korean";
+    const language: Language = toLanguageEnum(rawLang);
+
+    const result = await this.postService.findNotice(language);
+    return {
+      message: "공지를 성공적으로 가져왔습니다.",
       data: result,
     };
   }

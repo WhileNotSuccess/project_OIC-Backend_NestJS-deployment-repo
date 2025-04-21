@@ -8,6 +8,7 @@ import {
   GetApplicantsResponse,
   GetNewsResponse,
   GetPaginationResponse,
+  PostImageUploadResponse,
   PostOKResponse,
   PostOneResponse,
 } from "./types/post-response";
@@ -47,7 +48,10 @@ describe("PostController (e2e)", () => {
       recursive: true,
       force: true,
     });
-
+    await fs.promises.rm(path.resolve(__dirname, "../../files", "post-image"), {
+      recursive: true,
+      force: true,
+    });
     await app.close();
   });
 
@@ -371,5 +375,25 @@ describe("PostController (e2e)", () => {
     expect(body.message).toBe("삭제가 완료되었습니다.");
 
     await request(server).get("/post/one/id/1").expect(404);
+  });
+
+  it("/post/image (POST) should upload image", async () => {
+    const server = app.getHttpServer() as unknown as Parameters<
+      typeof request
+    >[0];
+    const testfilePath = path.join(
+      __dirname,
+      "__fixtures__",
+      "pride",
+      "141735.png",
+    );
+    const res = await request(server)
+      .post("/post/image")
+      .type("form")
+      .attach("image", testfilePath)
+      .expect(201);
+    const body = res.body as PostImageUploadResponse;
+    expect(body.message).toBe("이미지 업로드에 성공했습니다.");
+    expect(body.url.length).toBeGreaterThan(0);
   });
 });

@@ -49,6 +49,7 @@ export class LocalMediaService extends MediaService {
     const targetPath = path.join(targetDir, fileName);
 
     await fs.mkdir(targetDir, { recursive: true });
+
     await fs.writeFile(targetPath, file.buffer);
 
     return `/${folder}/${fileName}`;
