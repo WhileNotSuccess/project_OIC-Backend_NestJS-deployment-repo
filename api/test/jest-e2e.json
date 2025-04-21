@@ -9,5 +9,8 @@
     "^src/(.*)$": "<rootDir>/src/$1"
   },
   "testEnvironment": "jsdom",
-  "maxWorkers": 1
+  "maxWorkers": 1,
+  "setupFiles": [
+    "<rootDir>/src/jest.setup.ts"  
+  ]
 }

@@ -90,6 +90,9 @@
     "testEnvironment": "jsdom",
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/src/$1"
-    }
+    },
+    "setupFiles": [
+      "<rootDir>/src/jest.setup.ts" 
+    ]
   }
 }
