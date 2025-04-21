@@ -1,4 +1,4 @@
-import { Language } from "src/common/types/language";
+import { Language } from "../../../common/types/language";
 import {
   Column,
   CreateDateColumn,
@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { AttachmentOrmEntity } from "./attachment-orm.entity";
-import { PostImageOrmEntity } from "./post-image-orm-entity";
+import { PostImageOrmEntity } from "./post-image-orm.entity";
 
 @Entity()
 export class PostOrmEntity {

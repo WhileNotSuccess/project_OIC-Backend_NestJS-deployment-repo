@@ -14,7 +14,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MediaModule } from "./media/media.module";
 import { CarouselModule } from "./carousel/carousel.module";
 import { PrideOfYjuModule } from "./pride-of-yju/pride-of-yju.module";
-import { PostImageOrmEntity } from "./post/infra/entities/post-image-orm-entity";
+import { PostImageOrmEntity } from "./post/infra/entities/post-image-orm.entity";
 import { AttachmentOrmEntity } from "./post/infra/entities/attachment-orm.entity";
 import { CorporationModule } from "./corporation/corporation.module";
 
@@ -38,7 +38,7 @@ import { CorporationModule } from "./corporation/corporation.module";
           PostImageOrmEntity,
           AttachmentOrmEntity,
         ],
-        synchronize: true,
+        synchronize: false,
       }),
       inject: [ConfigService],
     }),

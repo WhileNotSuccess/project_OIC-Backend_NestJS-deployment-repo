@@ -6,7 +6,7 @@ import { toLanguageEnum } from "src/common/utils/to-language-enum";
 import { imageMetadata } from "src/media/domain/image-metadata";
 import { UploadAttachmentReturn } from "src/media/domain/upload-attachment";
 import { AttachmentOrmEntity } from "../entities/attachment-orm.entity";
-import { PostImageOrmEntity } from "../entities/post-image-orm-entity";
+import { PostImageOrmEntity } from "../entities/post-image-orm.entity";
 import { toSearchTargetEnum } from "src/common/utils/to-search-target-enum";
 
 describe("TypeormPostRepository (Integration)", () => {
