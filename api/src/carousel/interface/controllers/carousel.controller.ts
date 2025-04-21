@@ -45,7 +45,9 @@ export class CarouselController {
           format: "binary",
           description: "이미지 파일, 필수",
         },
-        postId: { type: "number", description: "이동할 글 ID" },
+        koreanPostId: { type: "number", description: "이동할 한국어 글 ID" },
+        englishPostId: { type: "number", description: "이동할 영어어 글 ID" },
+        japanesePostId: { type: "number", description: "이동할 일본어 글 ID" },
         koreanTitle: { type: "string", description: "한국어 글" },
         koreanDescription: { type: "string", description: "한국어 설명" },
         englishTitle: { type: "string", description: "영어 글" },
@@ -77,7 +79,9 @@ export class CarouselController {
         {
           id: 1,
           image: "/carousel/141735.png",
-          postId: 1,
+          koreanPostId: 1,
+          englishPostId: 2,
+          japanesePostId: 3,
           koreanTitle: "한국어 글",
           koreanDescription: "한국어 설명",
           englishTitle: "영어 글",
@@ -102,7 +106,9 @@ export class CarouselController {
       data: {
         id: 1,
         image: "/carousel/141735.png",
-        postId: 1,
+        koreanPostId: 1,
+        englishPostId: 2,
+        japanesePostId: 3,
         koreanTitle: "한국어 글",
         koreanDescription: "한국어 설명",
         englishTitle: "영어 글",
@@ -153,7 +159,18 @@ export class CarouselController {
           format: "binary",
           description: "이미지 파일, 필수 아님",
         },
-        postId: { type: "number", description: "이동할 글 ID, 필수 아님" },
+        koreanPostId: {
+          type: "number",
+          description: "이동할 한국어 글 ID, 필수 아님",
+        },
+        englishPostId: {
+          type: "number",
+          description: "이동할 영어 글 ID, 필수 아님",
+        },
+        japanesePostId: {
+          type: "number",
+          description: "이동할 일본어 글 ID, 필수 아님",
+        },
         koreanTitle: { type: "string", description: "한국어 글, 필수 아님" },
         koreanDescription: {
           type: "string",

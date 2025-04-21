@@ -1,7 +1,9 @@
 export class Carousel {
   constructor(
     public image: string,
-    public postId: number,
+    public koreanPostId: number,
+    public englishPostId: number,
+    public japanesePostId: number,
     public koreanTitle: string,
     public koreanDescription: string,
     public englishTitle: string,

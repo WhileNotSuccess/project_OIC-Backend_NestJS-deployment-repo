@@ -25,7 +25,9 @@ describe("CarouselController", () => {
     stream: new Readable(),
   };
   const dto: Partial<Carousel> = {
-    postId: 1,
+    koreanPostId: 1,
+    englishPostId: 2,
+    japanesePostId: 3,
     koreanTitle: "한글",
     koreanDescription: "한글설명",
     englishTitle: "영어",
@@ -108,7 +110,9 @@ describe("CarouselController", () => {
     const carouselList = [
       new Carousel(
         testingFile.path,
-        dto.postId!,
+        dto.koreanPostId!,
+        dto.englishPostId!,
+        dto.japanesePostId!,
         dto.koreanTitle!,
         dto.koreanDescription!,
         dto.englishTitle!,
@@ -119,7 +123,9 @@ describe("CarouselController", () => {
       ),
       new Carousel(
         testingFile.path,
-        dto.postId!,
+        dto.koreanPostId!,
+        dto.englishPostId!,
+        dto.japanesePostId!,
         dto.koreanTitle!,
         dto.koreanDescription!,
         dto.englishTitle!,
@@ -155,7 +161,9 @@ describe("CarouselController", () => {
     // mock 객체
     const carousel = new Carousel(
       testingFile.path,
-      dto.postId!,
+      dto.koreanPostId!,
+      dto.englishPostId!,
+      dto.japanesePostId!,
       dto.koreanTitle!,
       dto.koreanDescription!,
       dto.englishTitle!,

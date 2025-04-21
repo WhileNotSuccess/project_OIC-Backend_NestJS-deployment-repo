@@ -2,7 +2,11 @@ import { IsNumber, IsString } from "class-validator";
 
 export class CreateCarouselDto {
   @IsNumber()
-  postId: number;
+  koreaPostId: number;
+  @IsNumber()
+  englishPostId: number;
+  @IsNumber()
+  japanesePostId: number;
   @IsString()
   koreanTitle: string;
   @IsString()

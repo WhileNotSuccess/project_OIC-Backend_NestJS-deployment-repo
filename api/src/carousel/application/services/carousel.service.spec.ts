@@ -25,7 +25,9 @@ describe("CarouselService", () => {
   };
   const dto: Partial<Carousel> = {
     // image: "/203846-92082392.jpg",
-    postId: 1,
+    koreanPostId: 1,
+    englishPostId: 2,
+    japanesePostId: 3,
     koreanTitle: "한글",
     koreanDescription: "한글설명",
     englishTitle: "영어",
@@ -70,7 +72,9 @@ describe("CarouselService", () => {
     // repository mock 객체 생성
     const returnCarousel = new Carousel(
       testingFile.path,
-      dto.postId!,
+      dto.koreanPostId!,
+      dto.englishPostId!,
+      dto.japanesePostId!,
       dto.koreanTitle!,
       dto.koreanDescription!,
       dto.englishTitle!,
@@ -92,7 +96,9 @@ describe("CarouselService", () => {
     const returnList = [
       new Carousel(
         testingFile.path,
-        dto.postId!,
+        dto.koreanPostId!,
+        dto.englishPostId!,
+        dto.japanesePostId!,
         dto.koreanTitle!,
         dto.koreanDescription!,
         dto.englishTitle!,
@@ -103,7 +109,9 @@ describe("CarouselService", () => {
       ),
       new Carousel(
         testingFile.path,
-        dto.postId!,
+        dto.koreanPostId!,
+        dto.englishPostId!,
+        dto.japanesePostId!,
         dto.koreanTitle!,
         dto.koreanDescription!,
         dto.englishTitle!,
@@ -118,14 +126,14 @@ describe("CarouselService", () => {
       {
         id: 1,
         image: testingFile.path,
-        postId: dto.postId,
+        postId: dto.koreanPostId,
         title: dto.koreanTitle,
         description: dto.koreanDescription,
       },
       {
         id: 2,
         image: testingFile.path,
-        postId: dto.postId,
+        postId: dto.koreanPostId,
         title: dto.koreanTitle,
         description: dto.koreanDescription,
       },
@@ -141,7 +149,9 @@ describe("CarouselService", () => {
     //mock 객체 생성
     const mockedValue = new Carousel(
       testingFile.path,
-      dto.postId!,
+      dto.koreanPostId!,
+      dto.englishPostId!,
+      dto.japanesePostId!,
       dto.koreanTitle!,
       dto.koreanDescription!,
       dto.englishTitle!,
@@ -160,7 +170,9 @@ describe("CarouselService", () => {
     const returnList = [
       new Carousel(
         testingFile.path,
-        dto.postId!,
+        dto.koreanPostId!,
+        dto.englishPostId!,
+        dto.japanesePostId!,
         dto.koreanTitle!,
         dto.koreanDescription!,
         dto.englishTitle!,
@@ -171,7 +183,9 @@ describe("CarouselService", () => {
       ),
       new Carousel(
         testingFile.path,
-        dto.postId!,
+        dto.koreanPostId!,
+        dto.englishPostId!,
+        dto.japanesePostId!,
         dto.koreanTitle!,
         dto.koreanDescription!,
         dto.englishTitle!,
@@ -188,8 +202,10 @@ describe("CarouselService", () => {
   it("should update a carousel", async () => {
     // mock 객체 생성
     const returnCarousel = new Carousel(
-      dto.image!,
-      dto.postId!,
+      testingFile.path,
+      dto.koreanPostId!,
+      dto.englishPostId!,
+      dto.japanesePostId!,
       "수정된 한글",
       dto.koreanDescription!,
       dto.englishTitle!,

@@ -7,7 +7,11 @@ export class CarouselOrmEntity {
   @Column()
   image: string;
   @Column()
-  postId: number;
+  koreanPostId: number;
+  @Column()
+  englishPostId: number;
+  @Column()
+  japanesePostId: number;
   @Column()
   koreanTitle: string;
   @Column()
