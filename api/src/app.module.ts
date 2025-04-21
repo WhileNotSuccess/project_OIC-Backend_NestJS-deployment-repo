@@ -21,9 +21,13 @@ import { CarouselOrmEntity } from "./carousel/infra/entities/carousel.entity";
 import { CorporationOrmEntity } from "./corporation/infra/entities/corporation.entity";
 import { CountryOrmEntity } from "./corporation/infra/entities/country.entity";
 import { PrideOfYjuOrmEntity } from "./pride-of-yju/infra/entities/pride-of-yju.entity";
-
+import { ServeStaticModule } from "@nestjs/serve-static";
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: "/files",
+      serveRoot: "/api/files",
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
