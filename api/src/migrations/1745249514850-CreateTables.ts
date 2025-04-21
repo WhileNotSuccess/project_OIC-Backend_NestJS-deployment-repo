@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateTables1745205379717 implements MigrationInterface {
-  name = "CreateTables1745205379717";
+export class CreateTables1745249514850 implements MigrationInterface {
+  name = "CreateTables1745249514850";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -27,7 +27,7 @@ export class CreateTables1745205379717 implements MigrationInterface {
       `CREATE TABLE \`country_orm_entity\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`englishName\` varchar(255) NOT NULL, \`japaneseName\` varchar(255) NOT NULL, \`x\` int NOT NULL, \`y\` int NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`carousel_orm_entity\` (\`id\` int NOT NULL AUTO_INCREMENT, \`image\` varchar(255) NOT NULL, \`postId\` int NOT NULL, \`koreanTitle\` varchar(255) NOT NULL, \`koreanDescription\` varchar(255) NOT NULL, \`englishTitle\` varchar(255) NOT NULL, \`englishDescription\` varchar(255) NOT NULL, \`japaneseTitle\` varchar(255) NOT NULL, \`japaneseDescription\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`carousel_orm_entity\` (\`id\` int NOT NULL AUTO_INCREMENT, \`image\` varchar(255) NOT NULL, \`koreanPostId\` int NOT NULL, \`englishPostId\` int NOT NULL, \`japanesePostId\` int NOT NULL, \`koreanTitle\` varchar(255) NOT NULL, \`koreanDescription\` varchar(255) NOT NULL, \`englishTitle\` varchar(255) NOT NULL, \`englishDescription\` varchar(255) NOT NULL, \`japaneseTitle\` varchar(255) NOT NULL, \`japaneseDescription\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
       `ALTER TABLE \`attachment_orm_entity\` ADD CONSTRAINT \`FK_5831c8d770ea525c5a44613a329\` FOREIGN KEY (\`postId\`) REFERENCES \`post_orm_entity\`(\`id\`) ON DELETE CASCADE ON UPDATE NO ACTION`,
