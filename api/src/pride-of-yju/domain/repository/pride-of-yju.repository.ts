@@ -1,7 +1,7 @@
 import { PrideOfYju } from "../entities/pride-of-yju.entity";
 
 export abstract class PrideOfYjuRepository {
-  abstract create(POY: Partial<PrideOfYju>): Promise<PrideOfYju>;
+  abstract create(dto: Partial<PrideOfYju>): Promise<PrideOfYju>;
   abstract update(
     id: number,
     POY: Partial<PrideOfYju>,

@@ -20,15 +20,17 @@ export class TypeormPrideOfYjuRepository extends PrideOfYjuRepository {
   }
   async getAll(): Promise<PrideOfYju[]> {
     const ormList = await this.dataSource.manager.find(PrideOfYjuOrmEntity);
+
     return ormList.map(toDomain);
+
     // 테이블에서 전부 꺼내 map으로 ormEntity에서 domainEntity로 변환, 반환
   }
   async create(POY: Partial<PrideOfYju>): Promise<PrideOfYju> {
     const pride = new PrideOfYju(
       POY.image!,
-      POY.Korean!,
-      POY.English!,
-      POY.Japanese!,
+      POY.korean!,
+      POY.english!,
+      POY.japanese!,
       POY.id,
     );
     const orm = toOrmEntity(pride);
@@ -46,9 +48,9 @@ export class TypeormPrideOfYjuRepository extends PrideOfYjuRepository {
 
     const updated = new PrideOfYju(
       POY.image ?? existing.image,
-      POY.Korean ?? existing.Korean,
-      POY.English ?? existing.English,
-      POY.Japanese ?? existing.Japanese,
+      POY.korean ?? existing.korean,
+      POY.english ?? existing.english,
+      POY.japanese ?? existing.japanese,
       id,
     );
     const orm = toOrmEntity(updated);
