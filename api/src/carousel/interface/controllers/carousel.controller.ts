@@ -125,10 +125,9 @@ export class CarouselController {
   }
 
   @ApiOperation({ summary: "carousel을 가공하여 불러오기" })
-  @ApiParam({ name: "id", example: 1 })
   @ApiResponse({
     example: {
-      message: "1번 carousel을 불러왔습니다.",
+      message: "carousel을 불러왔습니다.",
       data: [
         {
           id: 1,
