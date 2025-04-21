@@ -13,7 +13,9 @@ import { CarouselOrmEntity } from "../entities/carousel.entity";
 export const toDomain = (orm: CarouselOrmEntity): Carousel => {
   return new Carousel(
     orm.image,
-    orm.postId,
+    orm.koreanPostId,
+    orm.englishPostId,
+    orm.japanesePostId,
     orm.koreanTitle,
     orm.koreanDescription,
     orm.englishTitle,
@@ -30,7 +32,9 @@ export const toOrmEntity = (carousel: Carousel): CarouselOrmEntity => {
     orm.id = carousel.id;
   }
   orm.image = carousel.image;
-  orm.postId = carousel.postId;
+  orm.koreanPostId = carousel.koreanPostId;
+  orm.englishPostId = carousel.englishPostId;
+  orm.japanesePostId = carousel.japanesePostId;
   orm.koreanTitle = carousel.koreanTitle;
   orm.koreanDescription = carousel.koreanDescription;
   orm.englishTitle = carousel.englishTitle;

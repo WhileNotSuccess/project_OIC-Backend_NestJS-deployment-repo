@@ -33,22 +33,29 @@ export class CarouselService {
     // 언어에 맞춰 title, description열을 재생성
     // korean--, english--, japanese-- 중 하나를 title, description열로 만들어 return
     const returnCarousel = carousel.map((item) => {
-      let languageObject: { title: string; description: string };
+      let languageObject: {
+        title: string;
+        description: string;
+        postId: number;
+      };
       switch (language) {
         case "english":
           languageObject = {
+            postId: item.englishPostId,
             title: item.englishTitle,
             description: item.englishDescription,
           };
           break;
         case "japanese":
           languageObject = {
+            postId: item.japanesePostId,
             title: item.japaneseTitle,
             description: item.japaneseDescription,
           };
           break;
         default:
           languageObject = {
+            postId: item.koreanPostId,
             title: item.koreanTitle,
             description: item.koreanDescription,
           };
@@ -57,7 +64,6 @@ export class CarouselService {
         ...languageObject,
         id: item.id,
         image: item.image,
-        postId: item.postId,
       };
     }) as ReturnCarousel[];
     return returnCarousel;

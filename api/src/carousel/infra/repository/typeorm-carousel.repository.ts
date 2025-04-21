@@ -16,7 +16,9 @@ export class TypeormCarouselRepository extends CarouselRepository {
     // entity 객체 생성
     const carousel = new Carousel(
       carouselData.image!,
-      carouselData.postId!,
+      carouselData.koreanPostId!,
+      carouselData.englishPostId!,
+      carouselData.japanesePostId!,
       carouselData.koreanTitle!,
       carouselData.koreanDescription!,
       carouselData.englishTitle!,
@@ -59,7 +61,9 @@ export class TypeormCarouselRepository extends CarouselRepository {
     // 새로 저장될 정보 객체 생성
     const updated = new Carousel(
       carouselData.image ?? existing.image,
-      carouselData.postId ?? existing.postId,
+      carouselData.koreanPostId ?? existing.koreanPostId,
+      carouselData.englishPostId ?? existing.englishPostId,
+      carouselData.japanesePostId ?? existing.japanesePostId,
       carouselData.koreanTitle ?? existing.koreanTitle,
       carouselData.koreanDescription ?? existing.koreanDescription,
       carouselData.englishTitle ?? existing.englishTitle,

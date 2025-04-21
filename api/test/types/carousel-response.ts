@@ -8,7 +8,9 @@ interface impressedCarousel {
 interface Carousel {
   id: number;
   image: string;
-  postId: number;
+  koreanPostId: number;
+  englishPostId: number;
+  japanesePostId: number;
   koreanTitle: string;
   koreanDescription: string;
   englishTitle: string;

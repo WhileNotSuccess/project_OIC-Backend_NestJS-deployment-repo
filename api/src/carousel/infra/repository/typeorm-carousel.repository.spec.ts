@@ -8,7 +8,9 @@ describe("TypeormCarouselRepository (Integration)", () => {
   let createdId: number;
   const dto = {
     image: "/203846-92082392.jpg",
-    postId: 1,
+    koreanPostId: 1,
+    englishPostId: 2,
+    japanesePostId: 3,
     koreanTitle: "한글",
     koreanDescription: "한글설명",
     englishTitle: "영어",
@@ -65,7 +67,7 @@ describe("TypeormCarouselRepository (Integration)", () => {
     // 비교
     expect(result?.koreanDescription).toBe(dto.koreanDescription);
     expect(result?.englishTitle).toBe(dto.englishTitle);
-    expect(result?.postId).toBe(dto.postId);
+    expect(result?.koreanPostId).toBe(dto.koreanPostId);
     expect(result?.japaneseDescription).toBe(dto.japaneseDescription);
   });
   it("should update one carousel", async () => {

@@ -87,7 +87,9 @@ describe("CarouselController (e2e)", () => {
       .post("/carousel")
       // .send(dto)
       // .attach(첨부파일)를 사용 -> multipart 형식이므로 .send 대신 .field 사용해야함
-      .field("postId", 1)
+      .field("koreanPostId", 1)
+      .field("englishPostId", 1)
+      .field("japanesePostId", 1)
       .field("koreanTitle", "한글")
       .field("koreanDescription", "한글설명")
       .field("englishTitle", "영어")
