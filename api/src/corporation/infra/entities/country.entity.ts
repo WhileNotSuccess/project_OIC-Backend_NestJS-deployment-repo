@@ -8,6 +8,10 @@ export class CountryOrmEntity {
   @Column()
   name: string;
   @Column()
+  englishName: string;
+  @Column()
+  japaneseName: string;
+  @Column()
   x: number;
   @Column()
   y: number;

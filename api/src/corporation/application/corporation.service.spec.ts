@@ -179,6 +179,13 @@ describe("CorporationService", () => {
   });
   it("getCorporationByCountry", async () => {
     jest
+      .spyOn(repository, "getAllCountry")
+      .mockResolvedValue([
+        new Country("한국", "korea", "韓国", 1, 1, 1),
+        new Country("일본", "japan", "日本", 1, 1, 2),
+        new Country("중국", "china", "中国", 1, 1, 3),
+      ]);
+    jest
       .spyOn(repository, "getCorporationByCountryId")
       .mockResolvedValue([
         new Corporation("한국국전문대학교", "korea", "대학", 1, 1),
@@ -186,7 +193,7 @@ describe("CorporationService", () => {
       ]);
     const resultKorean = await service.getCorporationByCountry(
       toLanguageEnum("korean"),
-      1,
+      "한국",
     );
     const expectedResultKorean = [
       { name: "한국국전문대학교", corporationType: "대학", id: 1 },
@@ -195,11 +202,11 @@ describe("CorporationService", () => {
     expect(resultKorean).toMatchObject(expectedResultKorean);
     const resultJapan = await service.getCorporationByCountry(
       toLanguageEnum("japanese"),
-      1,
+      "韓国",
     );
     const resultEng = await service.getCorporationByCountry(
       toLanguageEnum("english"),
-      1,
+      "korea",
     );
 
     const expectedResultJapanAndEng = [

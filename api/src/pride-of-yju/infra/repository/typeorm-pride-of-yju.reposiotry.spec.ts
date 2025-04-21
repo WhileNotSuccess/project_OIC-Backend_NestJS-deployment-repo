@@ -44,7 +44,7 @@ describe("PrideOfYjuRepository (Integration)", () => {
     expect(result[0].Korean).toBe(dto.Korean);
     expect(result[0].image).toBe(dto.image);
     expect(result[0].Japanese).toBe(dto.Japanese);
-    // 생성된 id 저장 
+    // 생성된 id 저장
     createdId = result[0].id!;
   });
   it("should get one PrideOfYju", async () => {

@@ -5,6 +5,7 @@ import { UpdateCountryDto } from "./dto/update-country.dto";
 import { CreateCountryDto } from "./dto/create-county.dto";
 import { CorporationRepository } from "../domain/repository/corporation.repository";
 import { Language } from "src/common/types/language";
+import { Country } from "../domain/entities/country.entity";
 
 @Injectable()
 export class CorporationService {
@@ -65,7 +66,25 @@ export class CorporationService {
     return result;
   }
 
-  async getCorporationByCountry(language: Language, countryId: number) {
+  async getCorporationByCountry(language: Language, country: string) {
+    const countries = await this.repository.getAllCountry();
+
+    let target: Country[];
+    if (language === Language.english) {
+      target = countries.filter((item) => item.englishName === country);
+    } else if (language === Language.japanese) {
+      target = countries.filter((item) => item.japaneseName === country);
+    } else {
+      target = countries.filter((item) => item.name === country);
+    }
+
+    const countryId = target[0].id;
+
+    if (!countryId) {
+      throw new InternalServerErrorException(
+        "getCorporationByCountry 메소드에서 에러",
+      );
+    }
     const corporation =
       await this.repository.getCorporationByCountryId(countryId);
     const result = corporation.map((item) => {

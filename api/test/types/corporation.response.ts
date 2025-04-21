@@ -5,7 +5,17 @@ export interface CorporationResponse {
   data: Corporation[];
 }
 
-export interface CorporationNamesResponse {
+export interface CountryNamesResponse {
   message: string;
-  data: string[];
+  data: Country[];
+}
+interface Country {
+  id: number;
+  name: string;
+  x: number;
+  y: number;
+}
+
+export interface MessageResponse {
+  message: string;
 }
