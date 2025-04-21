@@ -1,7 +1,7 @@
 import { Post } from "src/post/domain/entities/post.entity";
 import { PostOrmEntity } from "../entities/post-orm.entity";
 import { AttachmentOrmEntity } from "../entities/attachment-orm.entity";
-import { PostImageOrmEntity } from "../entities/post-image-orm-entity";
+import { PostImageOrmEntity } from "../entities/post-image-orm.entity";
 import { Attachment } from "src/post/domain/entities/attachment.entity";
 import { PostImage } from "src/post/domain/entities/post-image.entity";
 

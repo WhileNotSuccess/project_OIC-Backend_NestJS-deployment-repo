@@ -12,7 +12,7 @@ import {
   PostOneResponse,
 } from "./types/post-response";
 import { AttachmentOrmEntity } from "src/post/infra/entities/attachment-orm.entity";
-import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm-entity";
+import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm.entity";
 import * as path from "path";
 import * as cookieParser from "cookie-parser";
 import * as fs from "fs";
