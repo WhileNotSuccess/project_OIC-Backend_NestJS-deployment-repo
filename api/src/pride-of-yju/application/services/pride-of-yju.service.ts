@@ -16,9 +16,9 @@ export class PrideOfYjuService {
     const imagePath = await this.mediaService.uploadImage(file, "pride");
     const completedDto = new PrideOfYju(
       imagePath,
-      dto.Korean,
-      dto.English,
-      dto.Japanese,
+      dto.korean,
+      dto.english,
+      dto.japanese,
     );
     const result = await this.POYRepository.create(completedDto);
     return !!result;

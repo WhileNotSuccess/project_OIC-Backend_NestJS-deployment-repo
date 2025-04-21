@@ -2,9 +2,9 @@ import { IsString } from "class-validator";
 
 export class CreatePrideOfYjuDto {
   @IsString()
-  Korean: string;
+  korean: string;
   @IsString()
-  English: string;
+  english: string;
   @IsString()
-  Japanese: string;
+  japanese: string;
 }

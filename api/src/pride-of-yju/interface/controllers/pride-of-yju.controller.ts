@@ -36,15 +36,15 @@ export class PrideOfYjuController {
           format: "binary",
           description: "이미지 파일, 필수",
         },
-        Korean: { type: "string", description: "한국어 설명, 필수" },
-        English: { type: "string", description: "영어 설명, 필수" },
-        Japanese: { type: "string", description: "일본어 설명, 필수" },
+        korean: { type: "string", description: "한국어 설명, 필수" },
+        english: { type: "string", description: "영어 설명, 필수" },
+        japanese: { type: "string", description: "일본어 설명, 필수" },
       },
     },
   })
   @ApiResponse({
     example: {
-      message: "PridOfYju 작성에 성공했습니다.",
+      message: "PrideOfYju 작성에 성공했습니다.",
     },
   })
   @Post()
@@ -54,7 +54,7 @@ export class PrideOfYjuController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     await this.POYservice.create(file, dto);
-    return { message: "PridOfYju 작성에 성공했습니다." };
+    return { message: "PrideOfYju 작성에 성공했습니다." };
   }
 
   @ApiOperation({ summary: "PrideOfYju 수정 요청, 이미지 수정시 첨부할 것" })
@@ -69,13 +69,13 @@ export class PrideOfYjuController {
           format: "binary",
           description: "이미지 파일, 수정하지 않을 경우 필수 아님",
         },
-        Korean: { type: "string", description: "글의 카테고리, 필수 아님" },
-        English: { type: "string", description: "글의 제목, 필수 아님" },
-        Japanese: { type: "string", description: "글의 내용, 필수 아님" },
+        korean: { type: "string", description: "글의 카테고리, 필수 아님" },
+        english: { type: "string", description: "글의 제목, 필수 아님" },
+        japanese: { type: "string", description: "글의 내용, 필수 아님" },
       },
     },
   })
-  @ApiResponse({ example: { message: "PridOfYju 수정에 성공했습니다." } })
+  @ApiResponse({ example: { message: "PrideOfYju 수정에 성공했습니다." } })
   @Patch(":id")
   @UseInterceptors(FileInterceptor("file"))
   async update(
@@ -84,16 +84,16 @@ export class PrideOfYjuController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     await this.POYservice.update(id, file, dto);
-    return { message: "PridOfYju 수정에 성공했습니다." };
+    return { message: "PrideOfYju 수정에 성공했습니다." };
   }
 
   @ApiOperation({ summary: "PrideOfYju 삭제 요청" })
   @ApiParam({ name: "id", example: 1 })
-  @ApiResponse({ example: { message: "PridOfYju 삭제에 성공했습니다." } })
+  @ApiResponse({ example: { message: "PrideOfYju 삭제에 성공했습니다." } })
   @Delete(":id")
   async delete(@Param("id") id: number) {
     await this.POYservice.delete(id);
-    return { message: "PridOfYju 삭제에 성공했습니다." };
+    return { message: "PrideOfYju 삭제에 성공했습니다." };
   }
 
   @ApiOperation({ summary: "1개의 PrideOfYju를 불러오기" })
@@ -104,9 +104,9 @@ export class PrideOfYjuController {
       data: {
         id: 1,
         image: "/carousel/141735.png",
-        Korean: "한글 설명",
-        English: "영어 설명",
-        Japanese: "일본어 설명",
+        korean: "한글 설명",
+        english: "영어 설명",
+        japanese: "일본어 설명",
       },
     },
   })
@@ -124,9 +124,9 @@ export class PrideOfYjuController {
         {
           id: 1,
           image: "/carousel/141735.png",
-          Korean: "한글 설명",
-          English: "영어 설명",
-          Japanese: "일본어 설명",
+          korean: "한글 설명",
+          english: "영어 설명",
+          japanese: "일본어 설명",
         },
       ],
     },

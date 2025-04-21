@@ -22,9 +22,9 @@ describe("PrideOfYjuService", () => {
     stream: new Readable(),
   };
   const dto = {
-    Korean: "한글",
-    English: "영어",
-    Japanese: "일본어",
+    korean: "한글",
+    english: "영어",
+    japanese: "일본어",
   };
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -62,9 +62,9 @@ describe("PrideOfYjuService", () => {
     // mock 설정
     const returnPride = new PrideOfYju(
       testingFile.path,
-      dto.Korean,
-      dto.English,
-      dto.Japanese,
+      dto.korean,
+      dto.english,
+      dto.japanese,
       1,
     );
     repository.create.mockResolvedValue(returnPride);
@@ -78,16 +78,16 @@ describe("PrideOfYjuService", () => {
     const returnPride = [
       new PrideOfYju(
         testingFile.path,
-        dto.Korean,
-        dto.English,
-        dto.Japanese,
+        dto.korean,
+        dto.english,
+        dto.japanese,
         1,
       ),
       new PrideOfYju(
         testingFile.path,
-        dto.Korean,
-        dto.English,
-        dto.Japanese,
+        dto.korean,
+        dto.english,
+        dto.japanese,
         2,
       ),
     ];
@@ -95,15 +95,15 @@ describe("PrideOfYjuService", () => {
     // getAll 실행후 결과 확인
     const result = await service.getAll();
     expect(result[0].image).toBe(testingFile.path);
-    expect(result[0].English).toBe(dto.English);
+    expect(result[0].english).toBe(dto.english);
   });
   it("should return one PrideOfYju", async () => {
     // mock 설정
     const returnPride = new PrideOfYju(
       testingFile.path,
-      dto.Korean,
-      dto.English,
-      dto.Japanese,
+      dto.korean,
+      dto.english,
+      dto.japanese,
       1,
     );
     repository.getOne.mockResolvedValue(returnPride);
@@ -116,15 +116,15 @@ describe("PrideOfYjuService", () => {
     const returnPride = new PrideOfYju(
       testingFile.path,
       "수정된 한글",
-      dto.English,
-      dto.Japanese,
+      dto.english,
+      dto.japanese,
       1,
     );
     repository.update.mockResolvedValue(returnPride);
     media.uploadImage.mockResolvedValue(testingFile.path);
     // update 실행후 결과 확인
     const result = await service.update(1, testingFile, {
-      Korean: "수정된 한글",
+      korean: "수정된 한글",
     });
     expect(result).toBe(true);
   });

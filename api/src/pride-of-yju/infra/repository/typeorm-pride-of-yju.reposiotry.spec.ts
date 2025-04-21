@@ -8,9 +8,9 @@ describe("PrideOfYjuRepository (Integration)", () => {
   let createdId: number;
   const dto = {
     image: "/pride/123456.jpg",
-    Korean: "한글",
-    English: "영어",
-    Japanese: "일본어",
+    korean: "한글",
+    english: "영어",
+    japanese: "일본어",
   };
   beforeAll(async () => {
     dataSource = new DataSource({
@@ -41,9 +41,9 @@ describe("PrideOfYjuRepository (Integration)", () => {
     // getAll 실행
     const result = await repository.getAll();
     // 비교
-    expect(result[0].Korean).toBe(dto.Korean);
+    expect(result[0].korean).toBe(dto.korean);
     expect(result[0].image).toBe(dto.image);
-    expect(result[0].Japanese).toBe(dto.Japanese);
+    expect(result[0].japanese).toBe(dto.japanese);
     // 생성된 id 저장
     createdId = result[0].id!;
   });
@@ -51,15 +51,15 @@ describe("PrideOfYjuRepository (Integration)", () => {
     // getOne 실행
     const result = await repository.getOne(createdId);
     // 비교
-    expect(result?.English).toBe(dto.English);
+    expect(result?.english).toBe(dto.english);
     expect(result?.id).toBe(createdId);
   });
   it("should update one carousel", async () => {
     // update 실행
-    await repository.update(createdId, { Korean: "수정된 한글" });
+    await repository.update(createdId, { korean: "수정된 한글" });
     // getOne 실행 후 수정된 열 비교
     const result = await repository.getOne(createdId);
-    expect(result?.Korean).toBe("수정된 한글");
+    expect(result?.korean).toBe("수정된 한글");
   });
   it("should delete one carousel", async () => {
     // delete 실행

@@ -7,9 +7,9 @@ export class PrideOfYjuOrmEntity {
   @Column()
   image: string;
   @Column()
-  Korean: string;
+  korean: string;
   @Column()
-  English: string;
+  english: string;
   @Column()
-  Japanese: string;
+  japanese: string;
 }

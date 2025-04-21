@@ -15,6 +15,7 @@ import { PrideOfYjuModule } from "src/pride-of-yju/pride-of-yju.module";
 
 describe("PrideOfYjuController (e2e)", () => {
   let app: INestApplication;
+
   const testfilePath = path.join(
     __dirname,
     "__fixtures__",
@@ -24,9 +25,9 @@ describe("PrideOfYjuController (e2e)", () => {
 
   // const dto: Partial<PrideOfYju> = {
   //   image: "pride/123456-789012.jpg",
-  //   Korean: "한국어",
-  //   English: "영어",
-  //   Japanese: "일본어",
+  //   korean: "한국어",
+  //   english: "영어",
+  //   japanese: "일본어",
   // };
   beforeAll(async () => {
     // module 생성, 데이터베이스 생성
@@ -65,10 +66,9 @@ describe("PrideOfYjuController (e2e)", () => {
       Logger.warn(`파일 삭제 실패: `, e);
     }
 
-
     await app.close();
   });
-  let createdId: number;
+  let createdId: number = 1;
 
   it("/pride (POST) should create a pride-of-yju", async () => {
     const server = app.getHttpServer() as unknown as Parameters<
@@ -78,13 +78,13 @@ describe("PrideOfYjuController (e2e)", () => {
       .post("/pride")
       // .send(dto)
       // .attach(첨부파일)를 사용 -> multipart 형식이므로 .send 대신 .field 사용해야함
-      .field("Korean", "한국어")
-      .field("English", "영어")
-      .field("Japanese", "일본어")
+      .field("korean", "한국어")
+      .field("english", "영어")
+      .field("japanese", "일본어")
       .attach("file", testfilePath)
       .expect(201);
     expect((res.body as PrideOfYjuOKResponse).message).toBe(
-      "PridOfYju 작성에 성공했습니다.",
+      "PrideOfYju 작성에 성공했습니다.",
     );
   });
 
@@ -96,10 +96,19 @@ describe("PrideOfYjuController (e2e)", () => {
     const res = await request(server).get("/pride").expect(200);
     const body = res.body as PrideOfYjuArrayResponse;
     // 비교 실행
+
     expect(body.message).toBe("pride of yju를 불러왔습니다.");
-    expect(body.data[0].image).toContain(`141735.png`);
-    expect(body.data.length).toBeGreaterThan(0);
-    // 생성된 열 id 저장(아마 1)
+    expect(body.data[0]).toMatchObject({
+      korean: "한국어",
+      english: "영어",
+      japanese: "일본어",
+    });
+
+    expect(typeof body.data[0].image).toBe("string");
+    expect(body.data[0].image.length).toBeGreaterThan(0);
+
+    expect(body.data.length).toBe(1);
+
     createdId = body.data[0].id;
   });
 
@@ -109,7 +118,14 @@ describe("PrideOfYjuController (e2e)", () => {
     >[0];
     // 요청후 비교
     const res = await request(server).get(`/pride/${createdId}`).expect(200);
-    expect((res.body as PrideOfYjuResponse).data.Korean).toBe("한국어");
+    const body = res.body as PrideOfYjuResponse;
+    expect(body.data).toMatchObject({
+      korean: "한국어",
+      english: "영어",
+      japanese: "일본어",
+    });
+    expect(typeof body.data.image).toBe("string");
+    expect(body.data.image.length).toBeGreaterThan(0);
   });
 
   it("/pride (PATCH) should update one pride-of-yju", async () => {
@@ -119,24 +135,31 @@ describe("PrideOfYjuController (e2e)", () => {
     // patch 요청
     const res = await request(server)
       .patch(`/pride/${createdId}`)
-      .send({ Korean: "수정된 한국어" })
+      .field({ korean: "수정된 한국어" })
       .expect(200);
     expect((res.body as PrideOfYjuResponse).message).toBe(
-      "PridOfYju 수정에 성공했습니다.",
+      "PrideOfYju 수정에 성공했습니다.",
     );
+
     // get 요청으로 확인
     const getRes = await request(server).get(`/pride/${createdId}`).expect(200);
-    expect((getRes.body as PrideOfYjuResponse).data?.Korean).toBe(
-      "수정된 한국어",
-    );
+    const body = getRes.body as PrideOfYjuResponse;
+    expect(body.data).toMatchObject({
+      korean: "수정된 한국어",
+      english: "영어",
+      japanese: "일본어",
+    });
+    expect(typeof body.data.image).toBe("string");
+    expect(body.data.image.length).toBeGreaterThan(0);
   });
   it("/pride (DELETE) should delete one pride-of-yju", async () => {
     const server = app.getHttpServer() as unknown as Parameters<
       typeof request
     >[0];
+
     const res = await request(server).delete(`/pride/${createdId}`).expect(200);
     expect((res.body as PrideOfYjuResponse).message).toBe(
-      "PridOfYju 삭제에 성공했습니다.",
+      "PrideOfYju 삭제에 성공했습니다.",
     );
     await request(server).get(`/pride/${createdId}`).expect(404);
   });

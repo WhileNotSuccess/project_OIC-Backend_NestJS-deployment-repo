@@ -1,9 +1,9 @@
 interface PrideOfYju {
   id: number;
   image: string;
-  Korean: number;
-  English: number;
-  Japanese: number;
+  korean: number;
+  english: number;
+  japanese: number;
 }
 export interface PrideOfYjuResponse {
   message: string;
