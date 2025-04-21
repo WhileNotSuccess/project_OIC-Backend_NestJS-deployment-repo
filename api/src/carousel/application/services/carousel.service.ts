@@ -1,8 +1,13 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateCarouselDto } from "../dto/create-carousel.dto";
 import { CarouselRepository } from "../../domain/repository/carousel.repository";
 import { UpdateCarouselDto } from "../dto/update-carousel.dto";
 import { MediaService } from "src/media/domain/media.service";
+import { ReturnCarousel } from "src/carousel/domain/entities/carousel.entity";
 
 @Injectable()
 export class CarouselService {
@@ -18,6 +23,8 @@ export class CarouselService {
       ...createdto,
       image: fileURL,
     });
+    if (!carousel)
+      throw new BadRequestException("carousel 작성에 실패했습니다.");
 
     return !!carousel;
   }
@@ -52,14 +59,19 @@ export class CarouselService {
         image: item.image,
         postId: item.postId,
       };
-    });
+    }) as ReturnCarousel[];
     return returnCarousel;
   }
+  
   async getOne(id: number) {
     const carousel = await this.carouselRepository.getOne(id);
     // null일 경우 id가 잘못됐다는 400에러
     if (!carousel)
-      throw new BadRequestException("해당 id의 carousel이 존재하지 않습니다.");
+      throw new NotFoundException("해당 id의 carousel이 존재하지 않습니다.");
+    return carousel;
+  }
+  async getRawAll() {
+    const carousel = await this.carouselRepository.getAll();
     return carousel;
   }
 
@@ -69,17 +81,17 @@ export class CarouselService {
     file: Express.Multer.File,
   ) {
     // 이미지가 있을 경우 저장 후 경로 받아오기
-    let imageUrl: string;
+    let imageUrl: string | undefined;
     if (file) imageUrl = await this.mediaService.uploadImage(file, "carousel");
     // 수정, 내부에서 이미지 경로가 없을 경우 기존 경로를 사용하도록 되어있음
     const carousel = await this.carouselRepository.update(id, {
       ...updatedto,
-      image: imageUrl!,
+      image: imageUrl,
     });
     return !!carousel;
   }
   async delete(id: number) {
-    const carousel = await this.carouselRepository.delete(id);
-    return carousel;
+    const deleteResult = await this.carouselRepository.delete(id);
+    return deleteResult;
   }
 }

@@ -156,6 +156,35 @@ describe("CarouselService", () => {
     const result = await service.getOne(1);
     expect(result).toStrictEqual(mockedValue);
   });
+  it("should return all raw carousel", async () => {
+    const returnList = [
+      new Carousel(
+        testingFile.path,
+        dto.postId!,
+        dto.koreanTitle!,
+        dto.koreanDescription!,
+        dto.englishTitle!,
+        dto.englishDescription!,
+        dto.japaneseTitle!,
+        dto.japaneseDescription!,
+        1,
+      ),
+      new Carousel(
+        testingFile.path,
+        dto.postId!,
+        dto.koreanTitle!,
+        dto.koreanDescription!,
+        dto.englishTitle!,
+        dto.englishDescription!,
+        dto.japaneseTitle!,
+        dto.japaneseDescription!,
+        2,
+      ),
+    ];
+    repository.getAll.mockResolvedValue(returnList);
+    const result = await service.getRawAll();
+    expect(result).toStrictEqual(returnList);
+  });
   it("should update a carousel", async () => {
     // mock 객체 생성
     const returnCarousel = new Carousel(
