@@ -16,6 +16,7 @@ import { CarouselModule } from "./carousel/carousel.module";
 import { PrideOfYjuModule } from "./pride-of-yju/pride-of-yju.module";
 import { PostImageOrmEntity } from "./post/infra/entities/post-image-orm-entity";
 import { AttachmentOrmEntity } from "./post/infra/entities/attachment-orm.entity";
+import { CorporationModule } from "./corporation/corporation.module";
 
 @Module({
   imports: [
@@ -90,6 +91,7 @@ import { AttachmentOrmEntity } from "./post/infra/entities/attachment-orm.entity
     MediaModule,
     CarouselModule,
     PrideOfYjuModule,
+    CorporationModule,
   ],
   controllers: [AppController],
   providers: [

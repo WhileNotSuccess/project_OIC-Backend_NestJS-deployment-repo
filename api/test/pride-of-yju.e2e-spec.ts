@@ -58,18 +58,13 @@ describe("PrideOfYjuController (e2e)", () => {
   });
   afterAll(async () => {
     //e2e 테스트로 생성된 파일의 삭제
-    // await Promise.all(
-    //   createdFilePath.map((item) => {
-    //     fs.promises.unlink(`/files${item}`).catch((e: unknown) => {
-    //       Logger.warn(`파일 삭제 실패: ${item}`, e);
-    //     });
-    //   }),
-    // );
+
     try {
       await fs.promises.rm("/files/pride", { recursive: true, force: true });
     } catch (e) {
       Logger.warn(`파일 삭제 실패: `, e);
     }
+
 
     await app.close();
   });
