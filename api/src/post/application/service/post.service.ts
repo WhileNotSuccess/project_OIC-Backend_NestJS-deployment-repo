@@ -202,6 +202,7 @@ export class PostService {
       return {
         postId: item.id,
         title: item.title,
+        date: item.createdDate,
         content: result,
       };
     });
