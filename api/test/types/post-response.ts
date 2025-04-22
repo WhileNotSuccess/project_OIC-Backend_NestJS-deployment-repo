@@ -54,3 +54,14 @@ export interface GetNewsResponse {
   message: string;
   data: News[];
 }
+
+interface Notice {
+  postId: number;
+  title: string;
+  date: string;
+  content: string;
+}
+export interface GetNoticeResponse {
+  message: string;
+  data: Notice[];
+}

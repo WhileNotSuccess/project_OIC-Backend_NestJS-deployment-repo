@@ -160,11 +160,13 @@ describe("PostController", () => {
           postId: 1,
           content: "https://example.com/api/files/hello.png",
           title: "게시글 제목",
+          date: new Date(),
         },
       ]);
 
       const result = await controller.getNotices(mockRequest);
       expect(service.findNotice).toHaveBeenCalledWith("korean");
+      expect(typeof result.data[0].date).toBe("object");
       expect(result).toMatchObject({
         message: "공지를 성공적으로 가져왔습니다.",
         data: [

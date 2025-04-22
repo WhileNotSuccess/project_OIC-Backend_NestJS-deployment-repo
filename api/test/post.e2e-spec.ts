@@ -7,6 +7,7 @@ import { PostModule } from "src/post/post.module";
 import {
   GetApplicantsResponse,
   GetNewsResponse,
+  GetNoticeResponse,
   GetPaginationResponse,
   PostImageUploadResponse,
   PostOKResponse,
@@ -250,6 +251,62 @@ describe("PostController (e2e)", () => {
     expect(body.message).toBe("알림을 성공적으로 가져왔습니다.");
     expect(body.data.length).toBe(2);
     expect(body.data[0].imageUrl).toBe("/post/filename1.png");
+  });
+
+  it("/post/main/notices (GET) should return notices", async () => {
+    const server = app.getHttpServer() as unknown as Parameters<
+      typeof request
+    >[0];
+
+    await request(server)
+      .post("/post")
+      .type("form")
+      .field("category", "notice")
+      .field("title", "News1")
+      .field(
+        "content",
+        `<p>감사해요</p>
+<p>잘있어요</p>
+<p>다시만나요</p>
+<img src="http://localhost:3000/files/post/filename1.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename2.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename3.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename4.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename5.png" alt="" width="190" height="162">`,
+      )
+      .field("language", "korean")
+      .expect(201);
+    await request(server)
+      .post("/post")
+      .type("form")
+      .field("category", "notice")
+      .field("title", "News2")
+      .field(
+        "content",
+        `<p>감사해요</p>
+<p>잘있어요</p>
+<p>다시만나요</p>
+<img src="http://localhost:3000/files/post/filename1.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename2.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename3.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename4.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename5.png" alt="" width="190" height="162">`,
+      )
+      .field("language", "korean")
+      .expect(201);
+
+    const res = await request(server)
+      .get("/post/main/notices")
+      .set("Cookie", ["language=korean"])
+      .expect(200);
+    const body = res.body as GetNoticeResponse;
+    expect(body.message).toBe("공지를 성공적으로 가져왔습니다.");
+    expect(body.data.length).toBe(2);
+    expect(body.data[0].content).toBe("감사해요");
+    expect(typeof body.data[0].date).toBe("string");
+    const date = new Date(body.data[0].date);
+    const isValidDate = !isNaN(date.getTime());
+    expect(isValidDate).toBeTruthy();
   });
 
   it("/post/:category (GET) should return posts", async () => {

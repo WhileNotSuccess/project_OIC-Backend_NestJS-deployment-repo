@@ -450,6 +450,7 @@ describe("PostService", () => {
           content: "감사해요",
         })),
       );
+      expect(typeof result[0].date).toBe("object");
     });
   });
 
