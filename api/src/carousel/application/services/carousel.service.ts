@@ -6,18 +6,17 @@ import {
 import { CreateCarouselDto } from "../dto/create-carousel.dto";
 import { CarouselRepository } from "../../domain/repository/carousel.repository";
 import { UpdateCarouselDto } from "../dto/update-carousel.dto";
-import { MediaService } from "src/media/domain/media.service";
 import { ReturnCarousel } from "src/carousel/domain/entities/carousel.entity";
-
+import { MediaServicePort } from "src/media/application/media-service.port";
 @Injectable()
 export class CarouselService {
   constructor(
     private readonly carouselRepository: CarouselRepository,
-    private readonly mediaService: MediaService,
+    private readonly MediaServicePort: MediaServicePort,
   ) {}
   async create(createdto: CreateCarouselDto, file: Express.Multer.File) {
     // 파일 경로
-    const fileURL = await this.mediaService.uploadImage(file, "carousel");
+    const fileURL = await this.MediaServicePort.uploadImage(file, "carousel");
     // db 저장
     const carousel = await this.carouselRepository.create({
       ...createdto,
@@ -88,7 +87,8 @@ export class CarouselService {
   ) {
     // 이미지가 있을 경우 저장 후 경로 받아오기
     let imageUrl: string | undefined;
-    if (file) imageUrl = await this.mediaService.uploadImage(file, "carousel");
+    if (file)
+      imageUrl = await this.MediaServicePort.uploadImage(file, "carousel");
     // 수정, 내부에서 이미지 경로가 없을 경우 기존 경로를 사용하도록 되어있음
     const carousel = await this.carouselRepository.update(id, {
       ...updatedto,

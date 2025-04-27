@@ -24,11 +24,12 @@ import {
   ApiQuery,
   ApiResponse,
 } from "@nestjs/swagger";
-import { searchTarget } from "../domain/types/searchTarget";
+import { SearchTarget } from "../domain/types/search-target.enum";
 import { RequestWithCookies } from "src/common/request-with-cookies";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { Language } from "../../common/types/language";
 import { toLanguageEnum } from "src/common/utils/to-language-enum";
+import { SearchPostQueryDto } from "./dto/search-post-query.dto";
 
 @Controller("post")
 export class PostController {
@@ -105,8 +106,8 @@ export class PostController {
   })
   @ApiQuery({
     name: "target",
-    example: "검색 대상",
-    description: "title, author, date 중 하나",
+    enum: SearchTarget,
+    description: "검색대상 title, author, date 중 하나",
     required: false,
   })
   @ApiQuery({
@@ -154,9 +155,9 @@ export class PostController {
     @Query("limit", new DefaultValuePipe(10)) limit: number,
     @Query("page", new DefaultValuePipe(1)) page: number,
     @Query("category") category: string,
-    @Query("target") target: searchTarget,
-    @Query("word") word: string,
+    @Query() query: SearchPostQueryDto,
   ) {
+    const { target, word } = query;
     const rawLang = req.cookies["language"] || "korean";
     const language: Language = toLanguageEnum(rawLang);
 

@@ -4,12 +4,12 @@ import { Carousel } from "../../domain/entities/carousel.entity";
 import { Test, TestingModule } from "@nestjs/testing";
 import { CreateCarouselDto } from "../dto/create-carousel.dto";
 import { Readable } from "stream";
-import { MediaService } from "src/media/domain/media.service";
+import { MediaServicePort } from "src/media/application/media-service.port";
 
 describe("CarouselService", () => {
   let service: CarouselService;
   let repository: jest.Mocked<CarouselRepository>;
-  let media: jest.Mocked<MediaService>;
+  let media: jest.Mocked<MediaServicePort>;
   // multer.file 더미데이터
   const testingFile: Express.Multer.File = {
     fieldname: "file",
@@ -50,7 +50,7 @@ describe("CarouselService", () => {
           },
         },
         {
-          provide: MediaService,
+          provide: MediaServicePort,
           useValue: {
             uploadImage: jest.fn(),
             uploadAttachment: jest.fn(),
@@ -61,7 +61,7 @@ describe("CarouselService", () => {
     }).compile();
     service = module.get<CarouselService>(CarouselService);
     repository = module.get(CarouselRepository);
-    media = module.get(MediaService);
+    media = module.get(MediaServicePort);
   });
   it("should be defined", () => {
     expect(service).toBeDefined();

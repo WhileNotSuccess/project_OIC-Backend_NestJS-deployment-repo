@@ -8,6 +8,7 @@ import { toSearchTargetEnum } from "src/common/utils/to-search-target-enum";
 import { CreatePostDto } from "../application/dto/create-post.dto";
 import { UpdatePostDto } from "../application/dto/update-post.dto";
 import { Readable } from "typeorm/platform/PlatformTools";
+import { SearchPostQueryDto } from "./dto/search-post-query.dto";
 
 describe("PostController", () => {
   let controller: PostController;
@@ -93,13 +94,15 @@ describe("PostController", () => {
         totalPage: 10,
       });
 
+      const query = new SearchPostQueryDto();
+      query.target = toSearchTargetEnum("title");
+      query.word = "hello";
       const result = await controller.search(
         mockRequest,
         1,
         2,
         "category",
-        toSearchTargetEnum("title"),
-        "hello",
+        query,
       );
       expect(service.search).toHaveBeenCalledWith(
         "title",

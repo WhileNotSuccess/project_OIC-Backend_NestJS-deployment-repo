@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsEnum, IsString } from "class-validator";
 import { Language } from "src/common/types/language";
 
 export class CreatePostDto {
@@ -6,7 +6,7 @@ export class CreatePostDto {
   title: string;
   @IsString()
   content: string;
-  @IsString()
+  @IsEnum(Language)
   language: Language;
   @IsString()
   category: string;

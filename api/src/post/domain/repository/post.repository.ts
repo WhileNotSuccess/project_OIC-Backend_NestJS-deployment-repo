@@ -1,7 +1,7 @@
 import { imageMetadata } from "src/media/domain/image-metadata";
 import { Post } from "../entities/post.entity";
 import { News } from "../types/news";
-import { searchTarget } from "../types/searchTarget";
+import { SearchTarget } from "../types/search-target.enum";
 import { UploadAttachmentReturn } from "src/media/domain/upload-attachment";
 import { Language } from "../../../common/types/language";
 import { PostImage } from "../entities/post-image.entity";
@@ -40,7 +40,7 @@ export abstract class PostRepository {
   abstract getNews(language: Language): Promise<News[]>;
 
   abstract search(
-    target: searchTarget,
+    target: SearchTarget,
     word: string,
     language: Language,
     category: string,

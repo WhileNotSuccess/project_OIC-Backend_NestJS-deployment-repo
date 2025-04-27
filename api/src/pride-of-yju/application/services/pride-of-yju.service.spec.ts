@@ -1,14 +1,14 @@
 import { PrideOfYjuRepository } from "src/pride-of-yju/domain/repository/pride-of-yju.repository";
 import { PrideOfYjuService } from "./pride-of-yju.service";
-import { MediaService } from "src/media/domain/media.service";
 import { Readable } from "stream";
 import { Test, TestingModule } from "@nestjs/testing";
 import { PrideOfYju } from "src/pride-of-yju/domain/entities/pride-of-yju.entity";
+import { MediaServicePort } from "src/media/application/media-service.port";
 
 describe("PrideOfYjuService", () => {
   let service: PrideOfYjuService;
   let repository: jest.Mocked<PrideOfYjuRepository>;
-  let media: jest.Mocked<MediaService>;
+  let media: jest.Mocked<MediaServicePort>;
   const testingFile: Express.Multer.File = {
     fieldname: "file",
     originalname: "test-image.jpg",
@@ -41,7 +41,7 @@ describe("PrideOfYjuService", () => {
           },
         },
         {
-          provide: MediaService,
+          provide: MediaServicePort,
           useValue: {
             uploadImage: jest.fn(),
             uploadAttachment: jest.fn(),
@@ -52,7 +52,7 @@ describe("PrideOfYjuService", () => {
     }).compile();
     service = module.get<PrideOfYjuService>(PrideOfYjuService);
     repository = module.get(PrideOfYjuRepository);
-    media = module.get(MediaService);
+    media = module.get(MediaServicePort);
   });
   it("should be defined", () => {
     expect(service).toBeDefined();
