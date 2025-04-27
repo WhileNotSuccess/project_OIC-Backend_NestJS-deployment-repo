@@ -1,14 +1,14 @@
 import { Module } from "@nestjs/common";
-import { MediaService } from "./domain/media.service";
 import { LocalMediaService } from "./infra/local-media.service";
+import { MediaServicePort } from "./application/media-service.port";
 
 @Module({
   providers: [
     {
-      provide: MediaService,
+      provide: MediaServicePort,
       useClass: LocalMediaService,
     },
   ],
-  exports: [MediaService],
+  exports: [MediaServicePort],
 })
 export class MediaModule {}

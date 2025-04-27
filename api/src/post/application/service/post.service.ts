@@ -7,18 +7,19 @@ import {
 import { CreatePostDto } from "../dto/create-post.dto";
 import { UpdatePostDto } from "../dto/update-post.dto";
 import { PostRepository } from "src/post/domain/repository/post.repository";
-import { searchTarget } from "src/post/domain/types/searchTarget";
-import { MediaService } from "src/media/domain/media.service";
+import { SearchTarget } from "src/post/domain/types/search-target.enum";
 import { Language } from "src/common/types/language";
-import { JSDOM } from "jsdom";
+import { MediaServicePort } from "src/media/application/media-service.port";
+import { HtmlParserPort } from "../port/html-parser.port";
 @Injectable()
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
-    private readonly mediaService: MediaService,
+    private readonly MediaServicePort: MediaServicePort,
+    private readonly htmlParser: HtmlParserPort,
   ) {}
   async uploadImage(image: Express.Multer.File) {
-    const url = await this.mediaService.uploadImage(image, "post-image");
+    const url = await this.MediaServicePort.uploadImage(image, "post-image");
     return url;
   }
 
@@ -37,11 +38,11 @@ export class PostService {
       );
     }
     // 서버에 저장된 이미지 정보 찾기
-    const imageData = await this.mediaService.findImage(createFilenames);
+    const imageData = await this.MediaServicePort.findImage(createFilenames);
     // 업로드 파일이 있으면 업로드 후 메타데이터 저장
     const filesData = await Promise.all(
       files.map(async (item) =>
-        this.mediaService.uploadAttachment(item, "attachment"),
+        this.MediaServicePort.uploadAttachment(item, "attachment"),
       ),
     );
     // 이미지, 첨부파일의 메타데이터와 포스트를 전부 각각의 테이블에 저장
@@ -182,28 +183,16 @@ export class PostService {
     );
 
     const resultReturn = data.map((item) => {
-      let result: string = "";
-      const content = item.content;
+      const html = item.content;
 
       // jsdom을 사용하여 HTML 파싱
-      const { document } = new JSDOM(content).window;
-      const paragraphs = document.querySelectorAll("p");
-      for (let i = 0; i < paragraphs.length; i++) {
-        const paragraph = paragraphs[i];
-        const imgTag = paragraph.querySelector("img"); // p 태그 안에 img 태그가 있는지 확인
-
-        // img 태그가 없으면 텍스트를 반환하고 종료
-        if (!imgTag && paragraph.textContent) {
-          result = paragraph.textContent.trim(); // 텍스트 내용 반환 (앞뒤 공백 제거)
-          break;
-        }
-      }
+      const preview = this.htmlParser.extractFirstParagraphText(html);
 
       return {
         postId: item.id,
         title: item.title,
         date: item.createdDate,
-        content: result,
+        content: preview,
       };
     });
 
@@ -247,11 +236,11 @@ export class PostService {
     );
 
     // 새로 저장해야할 이미지의 파일 정보 찾기
-    const imageData = await this.mediaService.findImage(newImages);
+    const imageData = await this.MediaServicePort.findImage(newImages);
     // 업로드 파일이 있으면 업로드 후 메타데이터 저장
     const filesData = await Promise.all(
       files.map(async (item) =>
-        this.mediaService.uploadAttachment(item, "attachment"),
+        this.MediaServicePort.uploadAttachment(item, "attachment"),
       ),
     );
 
@@ -283,7 +272,7 @@ export class PostService {
   }
 
   async search(
-    target: searchTarget,
+    target: SearchTarget,
     word: string,
     language: Language,
     category: string,

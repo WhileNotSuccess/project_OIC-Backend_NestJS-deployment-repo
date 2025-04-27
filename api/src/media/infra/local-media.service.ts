@@ -2,11 +2,11 @@ import { Injectable, Logger } from "@nestjs/common";
 import * as path from "path";
 import { promises as fs } from "fs";
 import { v4 as uuid } from "uuid";
-import { MediaService } from "../domain/media.service";
 import { MediaValidator } from "../utils/media-validator";
+import { MediaServicePort } from "../application/media-service.port";
 
 @Injectable()
-export class LocalMediaService extends MediaService {
+export class LocalMediaService extends MediaServicePort {
   private readonly uploadRoot = path.resolve(__dirname, "../../../../files");
   async findImage(filenames: string[]) {
     const results = await Promise.allSettled(

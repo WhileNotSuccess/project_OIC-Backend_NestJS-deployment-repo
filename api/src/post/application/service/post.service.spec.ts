@@ -4,16 +4,18 @@ import { PostRepository } from "src/post/domain/repository/post.repository";
 import { Post } from "src/post/domain/entities/post.entity";
 import { CreatePostDto } from "../dto/create-post.dto";
 import { toLanguageEnum } from "src/common/utils/to-language-enum";
-import { MediaService } from "src/media/domain/media.service";
 import { Readable } from "stream";
 import { News } from "src/post/domain/types/news";
 import { UpdatePostDto } from "../dto/update-post.dto";
 import { toSearchTargetEnum } from "src/common/utils/to-search-target-enum";
+import { MediaServicePort } from "src/media/application/media-service.port";
+import { HtmlParserPort } from "../port/html-parser.port";
 
 describe("PostService", () => {
   let service: PostService;
   let repository: jest.Mocked<PostRepository>;
-  let media: MediaService;
+  let media: MediaServicePort;
+  let parser: HtmlParserPort;
   // 페이지네이션 결과에서 나올 배열
   let postsPagination: Post[];
 
@@ -134,6 +136,12 @@ describe("PostService", () => {
       providers: [
         PostService,
         {
+          provide: HtmlParserPort,
+          useValue: {
+            extractFirstParagraphText: jest.fn(),
+          },
+        },
+        {
           provide: PostRepository,
           useValue: {
             getOneById: jest.fn(),
@@ -149,7 +157,7 @@ describe("PostService", () => {
           },
         },
         {
-          provide: MediaService,
+          provide: MediaServicePort,
           useValue: {
             uploadImage: jest.fn(),
             uploadAttachment: jest.fn(),
@@ -159,10 +167,10 @@ describe("PostService", () => {
         },
       ],
     }).compile();
-
+    parser = module.get(HtmlParserPort);
     service = module.get<PostService>(PostService);
     repository = module.get(PostRepository);
-    media = module.get<MediaService>(MediaService);
+    media = module.get<MediaServicePort>(MediaServicePort);
   });
 
   it("should be defined", () => {
@@ -171,7 +179,7 @@ describe("PostService", () => {
 
   describe("should create a post", () => {
     it("create post", async () => {
-      // mediaService findImage 결과 생성
+      // MediaServicePort findImage 결과 생성
       const mockUploadImageResult = [
         {
           size: 5000,
@@ -180,7 +188,7 @@ describe("PostService", () => {
         },
       ];
 
-      // mediaService uploadAttachment 결과 생성
+      // MediaServicePort uploadAttachment 결과 생성
       const mockUploadAttachmentResult = [
         {
           originalname: testingFile.filename,
@@ -360,7 +368,7 @@ describe("PostService", () => {
   });
 
   describe("should get notice", () => {
-    it("findNews", async () => {
+    it("findNotice", async () => {
       const now = new Date();
       const notices: Post[] = [
         new Post(
@@ -434,7 +442,11 @@ describe("PostService", () => {
       jest
         .spyOn(repository, "getAllForCategory")
         .mockResolvedValue([notices, 5]);
+      jest
+        .spyOn(parser, "extractFirstParagraphText")
+        .mockReturnValue("감사해요");
       const result = await service.findNotice(toLanguageEnum("korean"));
+
       // 파리미터 확인
       expect(repository.getAllForCategory).toHaveBeenCalledWith(
         "notice",
@@ -450,7 +462,27 @@ describe("PostService", () => {
           content: "감사해요",
         })),
       );
+
       expect(typeof result[0].date).toBe("object");
+      expect(parser.extractFirstParagraphText).toHaveBeenCalledTimes(
+        notices.length,
+      );
+      expect(parser.extractFirstParagraphText).toHaveBeenNthCalledWith(
+        5,
+        `<p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
+          <p>감사해요</p>
+    <p>잘있어요</p>
+    <p>다시만나요</p>
+    `,
+      );
+      expect(parser.extractFirstParagraphText).toHaveBeenNthCalledWith(
+        1,
+        `<p>감사해요</p>
+    <p>잘있어요</p>
+    <p>다시만나요</p>
+    <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
+    `,
+      );
     });
   });
 
@@ -544,6 +576,7 @@ describe("PostService", () => {
     it("search", async () => {
       // 검색 결과 모킹
       jest.spyOn(repository, "search").mockResolvedValue([postsPagination, 5]);
+
       // 서비스 호출
       const result = await service.search(
         toSearchTargetEnum("author"),

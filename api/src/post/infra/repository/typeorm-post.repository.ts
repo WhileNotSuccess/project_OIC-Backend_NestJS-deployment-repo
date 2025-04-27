@@ -5,7 +5,7 @@ import { PostOrmEntity } from "../entities/post-orm.entity";
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { imageMetadata } from "src/media/domain/image-metadata";
 import { News } from "src/post/domain/types/news";
-import { searchTarget } from "src/post/domain/types/searchTarget";
+import { SearchTarget } from "src/post/domain/types/search-target.enum";
 import { UploadAttachmentReturn } from "src/media/domain/upload-attachment";
 import { AttachmentOrmEntity } from "../entities/attachment-orm.entity";
 import {
@@ -194,7 +194,7 @@ export class TypeormPostRepository extends PostRepository {
   }
 
   async search(
-    target: searchTarget,
+    target: SearchTarget,
     word: string,
     language: Language,
     category: string,
