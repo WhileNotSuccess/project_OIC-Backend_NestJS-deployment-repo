@@ -22,6 +22,10 @@ import { CorporationOrmEntity } from "./corporation/infra/entities/corporation.e
 import { CountryOrmEntity } from "./corporation/infra/entities/country.entity";
 import { PrideOfYjuOrmEntity } from "./pride-of-yju/infra/entities/pride-of-yju.entity";
 import { ServeStaticModule } from "@nestjs/serve-static";
+import { UserOrmEntity } from "./users/infra/entities/user.entity";
+import { AuthOrmEntity } from "./auth/infra/entities/auth.entity";
+import { AuthModule } from "./auth/auth.module";
+import { UserModule } from "./users/user.module";
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -49,6 +53,8 @@ import { ServeStaticModule } from "@nestjs/serve-static";
           CorporationOrmEntity,
           CountryOrmEntity,
           PrideOfYjuOrmEntity,
+          UserOrmEntity,
+          AuthOrmEntity,
         ],
         synchronize: false,
       }),
@@ -104,6 +110,8 @@ import { ServeStaticModule } from "@nestjs/serve-static";
     CarouselModule,
     PrideOfYjuModule,
     CorporationModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [
