@@ -1,11 +1,15 @@
-import { Column, Entity } from "typeorm";
+import { UserOrmEntity } from "../../../users/infra/entities/user.entity";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 
 @Entity({ name: "auth" })
 export class AuthOrmEntity {
-  @Column()
-  userId: string;
-  @Column()
+  @PrimaryColumn()
+  userId: number;
+  @Column({ nullable: true })
   hashedPassword: string;
-  @Column()
+  @Column({ nullable: true })
   googleId: string;
+  @OneToOne(() => UserOrmEntity)
+  @JoinColumn({ name: "userId" })
+  user: UserOrmEntity;
 }

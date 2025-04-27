@@ -10,29 +10,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const jwtSecret = configService.get<string>("JWT_SECRET");
     if (!jwtSecret) throw new Error("토큰 시크릿키를 확인해주세요");
     super({
-      // jwtFromRequest: ExtractJwt.fromExtractors([
-      //   (request) => {
-      //     let token = null;
-      //     if (request && request.cookies) {
-      //       token = request.cookies['access_token'];
-      //     }
-      //     return token;
-      //   },
-      // ]),
-      // ignoreExpiration: false,
-      // secretOrKey: process.env.JWT_SECRET,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) =>
-          (request.cookies["access_token"] as string) ?? null,
+          (request.cookies?.["access_token"] as string) ?? null,
       ]),
       ignoreExpiration: false,
       secretOrKey: jwtSecret,
     });
   }
 
-  validate(payload: { sub: string; name: string; email: string }) {
+  validate(payload: { id: number; name: string; email: string }) {
     return {
-      id: payload.sub,
+      id: payload.id,
       name: payload.name,
       email: payload.email,
     };

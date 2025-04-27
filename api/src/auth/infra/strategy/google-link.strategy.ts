@@ -15,18 +15,18 @@ export class GoogleLinkStrategy extends PassportStrategy(
     if (!clientID || !clientSecret || !callbackURL)
       throw new Error("oauth관련 환경변수를 확인해 주십시오.");
     super({
-      // clientID: process.env.GOOGLE_CLIENT_ID,
-      // clientSecret: process.env.GOOGLE_SECRET,
-      // callbackURL: process.env.GOOGLE_CALLBACK_LINK_URL,
       clientID,
       clientSecret,
       callbackURL,
       scope: ["profile", "email"],
-      passReqToCallback: true,
     });
   }
 
-  validate(accessToken: string, refreshToken: string, profile: Profile) {
+  validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+  ): string {
     return profile.id;
   }
 }

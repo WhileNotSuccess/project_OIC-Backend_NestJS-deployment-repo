@@ -1,6 +1,6 @@
 export class Auth {
   constructor(
-    public readonly userId: string,
+    public readonly userId: number,
     public hashedPassword?: string,
     public googleId?: string,
   ) {}

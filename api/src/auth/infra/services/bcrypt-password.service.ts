@@ -11,10 +11,10 @@ export class BcryptPasswordService implements PasswordService {
   }
 
   async hash(password: string): Promise<string> {
-    return bcrypt.hash(password, this.saltRounds);
+    return await bcrypt.hash(password, +this.saltRounds);
   }
 
   async compare(plain: string, hashedPassword: string): Promise<boolean> {
-    return bcrypt.compare(plain, hashedPassword);
+    return await bcrypt.compare(plain, hashedPassword);
   }
 }

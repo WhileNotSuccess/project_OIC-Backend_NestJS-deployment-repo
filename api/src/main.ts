@@ -13,7 +13,18 @@ async function bootstrap() {
   const logger = app.get<LoggerService>(WINSTON_MODULE_NEST_PROVIDER);
   app.useLogger(logger);
   Logger.overrideLogger(logger);
-
+  app.enableCors({
+    origin: [
+      'https://www.bapull.store',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://www.localhost.com',
+      'https://localhost.com',
+    ],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: "Content-Type, Accept, Authorization",
+    credentials: true,
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
