@@ -18,16 +18,19 @@ export class LoginUseCase {
     input: LoginInput,
   ): Promise<{ userId: number; accessToken: string }> {
     const user = await this.userRepository.findByEmail(input.email);
-    if (!user?.id) throw new BadRequestException("이메일이 존재하지 않습니다.");
+    if (!user?.id)
+      throw new BadRequestException("아이디나 비밀번호가 틀렸습니다.");
     const credential = await this.authRepository.findByUserId(user.id);
-    if (!credential) throw new BadRequestException("인증 정보가 없습니다.");
+    if (!credential)
+      throw new BadRequestException("아이디나 비밀번호가 틀렸습니다.");
     if (!credential.hashedPassword)
       throw new BadRequestException("해당 이메일은 google로그인 계정입니다.");
     const isValid = await this.passwordService.compare(
       input.password,
       credential.hashedPassword,
     );
-    if (!isValid) throw new BadRequestException("비밀번호가 틀렸습니다.");
+    if (!isValid)
+      throw new BadRequestException("아이디나 비밀번호가 틀렸습니다.");
 
     const accessToken = await this.tokenService.generateAccessToken(
       user.id,

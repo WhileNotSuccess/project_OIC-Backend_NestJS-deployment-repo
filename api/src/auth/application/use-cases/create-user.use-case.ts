@@ -27,7 +27,7 @@ export class CreateUserUseCase {
     const exists = await this.userRepository.findByEmail(input.email);
     if (exists) throw new Error("사용중인 이메일 입니다.");
 
-    const CreatedUser = await transactional<User>(
+    const createdUser = await transactional<User>(
       this.dataSource,
       async (queryRunner) => {
         // 없으면 받은 input 정보의 name, email을 user 테이블에 저장
@@ -43,6 +43,6 @@ export class CreateUserUseCase {
         return user;
       },
     );
-    return CreatedUser;
+    return createdUser;
   }
 }

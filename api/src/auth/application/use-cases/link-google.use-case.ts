@@ -13,7 +13,7 @@ export class LinkGoogleUseCase {
     private readonly tokenService: TokenService,
     private readonly dataSource: DataSource,
   ) {}
-  async execute(jwtUser: Express.User, googleUser:string) {
+  async execute(jwtUser: Express.User, googleUser: string) {
     const userId = jwtUser.id;
     const googleId = googleUser;
     if (!userId || !googleId) throw new Error("정보가 잘못 되었습니다.");

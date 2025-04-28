@@ -6,7 +6,7 @@ import { Auth } from "src/auth/domain/entities/auth.entity";
 import { transactional } from "src/common/utils/transaction-helper";
 import { DataSource } from "typeorm";
 
-export interface createGoogleUserInput {
+export interface CreateGoogleUserInput {
   name: string;
   email: string;
   googleId: string;
@@ -20,7 +20,7 @@ export class CreateGoogleUserUseCase {
     private readonly dataSource: DataSource,
   ) {}
 
-  async execute(input: createGoogleUserInput): Promise<User> {
+  async execute(input: CreateGoogleUserInput): Promise<User> {
     // 같은 email의 사용자가 존재하는지 확인
     const exists = await this.userRepository.findByEmail(input.email);
     if (exists) throw new BadRequestException("사용중인 이메일 입니다.");
