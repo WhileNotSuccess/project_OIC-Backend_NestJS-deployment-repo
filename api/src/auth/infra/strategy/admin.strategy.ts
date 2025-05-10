@@ -29,7 +29,7 @@ export class AdminStrategy extends PassportStrategy(Strategy, "admin") {
 
   validate(payload: { id: number; name: string; email: string }) {
     const adminEmail = this.configService.get<string>(
-      process.env.NODE_ENV == "test" ? "ADMIN_EMAIL" : "ADMIN_TEST_EMAIL",
+      process.env.NODE_ENV == "test" ? "ADMIN_TEST_EMAIL" : "ADMIN_EMAIL",
     );
     if (payload.email !== adminEmail) {
       throw new UnauthorizedException("관리자만 접근 가능합니다.");
