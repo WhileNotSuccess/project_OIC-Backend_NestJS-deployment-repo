@@ -32,14 +32,14 @@ describe("AdminStrategy", () => {
     const payload = {
       id: 1,
       name: "Admin",
-      email: "yju.intl@gmail.com",
+      email: "user@gmail.com",
     };
 
     const result = strategy.validate(payload);
     expect(result).toEqual({
       id: 1,
       name: "Admin",
-      email: "yju.intl@gmail.com",
+      email: "user@gmail.com",
       admin: true,
     });
   });

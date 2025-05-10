@@ -12,6 +12,7 @@ env:
   TEST_DB_DATABASE: db
   BACKEND_URL: http://localhost:3000
   JWT_TEST_SECRET: iehmlgdjifdsnfsk
+  ADMIN_TEST_EMAIL: user@gmail.com
 
 jobs:
   lint:

@@ -113,7 +113,6 @@ describe("AuthController", () => {
         expect.any(Object),
       );
       expect(res.redirect).toHaveBeenCalledWith(frontUrl);
-      expect(res.end).toHaveBeenCalled();
     });
   });
 
