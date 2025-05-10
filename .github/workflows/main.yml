@@ -11,6 +11,7 @@ env:
   TEST_DB_PASSWORD: 1234
   TEST_DB_DATABASE: db
   BACKEND_URL: http://localhost:3000
+  JWT_TEST_SECRET: iehmlgdjifdsnfsk
 
 jobs:
   lint:

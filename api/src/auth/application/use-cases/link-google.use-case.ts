@@ -2,8 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { AuthRepository } from "src/auth/domain/repositories/user-credential.repository";
 import { UserRepository } from "src/users/domain/repositories/user.repository";
 import { TokenService } from "../services/token.service";
-import { DataSource } from "typeorm";
-import { transactional } from "src/common/utils/transaction-helper";
+import { TransactionManager } from "src/common/ports/transaction-manager.port";
 
 @Injectable()
 export class LinkGoogleUseCase {
@@ -11,7 +10,7 @@ export class LinkGoogleUseCase {
     private readonly authRepository: AuthRepository,
     private readonly userRepository: UserRepository,
     private readonly tokenService: TokenService,
-    private readonly dataSource: DataSource,
+    private readonly transaction: TransactionManager,
   ) {}
   async execute(jwtUser: Express.User, googleUser: string) {
     const userId = jwtUser.id;
@@ -30,7 +29,7 @@ export class LinkGoogleUseCase {
     if (!authInfo) throw new Error("auth 정보가 등록되어 있지 않습니다.");
     authInfo?.linkGoogleId(googleId);
 
-    await transactional(this.dataSource, async (queryRunner) => {
+    await this.transaction.execute(async (queryRunner) => {
       await this.authRepository.save(queryRunner, authInfo);
     });
 

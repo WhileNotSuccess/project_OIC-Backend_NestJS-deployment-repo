@@ -49,7 +49,7 @@ describe("LoginUseCase", () => {
     userRepository.findByEmail.mockResolvedValue(null);
 
     await expect(useCase.execute(loginInput)).rejects.toThrow(
-      new BadRequestException("이메일이 존재하지 않습니다."),
+      new BadRequestException("아이디나 비밀번호가 틀렸습니다."),
     );
   });
 
@@ -58,7 +58,7 @@ describe("LoginUseCase", () => {
     authRepository.findByUserId.mockResolvedValue(null);
 
     await expect(useCase.execute(loginInput)).rejects.toThrow(
-      new BadRequestException("인증 정보가 없습니다."),
+      new BadRequestException("아이디나 비밀번호가 틀렸습니다."),
     );
   });
 
@@ -81,7 +81,7 @@ describe("LoginUseCase", () => {
     passwordService.compare.mockResolvedValue(false);
 
     await expect(useCase.execute(loginInput)).rejects.toThrow(
-      new BadRequestException("비밀번호가 틀렸습니다."),
+      new BadRequestException("아이디나 비밀번호가 틀렸습니다."),
     );
   });
 

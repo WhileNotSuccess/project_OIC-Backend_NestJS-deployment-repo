@@ -9,9 +9,6 @@ import { JwtStrategy } from "./infra/strategy/jwt.strategy";
 import { GoogleStrategy } from "./infra/strategy/google.strategy";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
-import { AdminGuard } from "./infra/guards/admin.guard";
-import { AuthGuard } from "./infra/guards/auth.guard";
-import { GoogleAuthGuard } from "./infra/guards/google.guard";
 import { PassportModule } from "@nestjs/passport";
 import { UserModule } from "src/users/user.module";
 import { PasswordService } from "./domain/services/password.service";
@@ -20,23 +17,26 @@ import { LinkGoogleUseCase } from "./application/use-cases/link-google.use-case"
 import { CreateUserUseCase } from "./application/use-cases/create-user.use-case";
 import { CreateGoogleUserUseCase } from "./application/use-cases/create-user-google.use-case";
 import { GoogleLinkStrategy } from "./infra/strategy/google-link.strategy";
-import { GoogleLinkAuthGuard } from "./infra/guards/google-link.guard";
-import { JwtLinkGuard } from "./infra/guards/jwt-link.guard";
 import { AdminStrategy } from "./infra/strategy/admin.strategy";
+import { CommonModule } from "src/common/common.module";
+import { ChangePasswordUseCase } from "./application/use-cases/change-password.use-case";
 
 @Module({
   imports: [
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>("JWT_SECRET"),
+        secret: configService.get<string>(
+          process.env.NODE_ENV === "test" ? "JWT_TEST_SECRET" : "JWT_SECRET",
+        ),
         signOptions: { expiresIn: "1h" },
       }),
       inject: [ConfigService],
     }),
     PassportModule,
     UserModule,
+    CommonModule,
   ],
-  exports: [JwtModule, AuthGuard, GoogleAuthGuard, AdminGuard],
+  exports: [JwtModule],
   controllers: [AuthController],
   providers: [
     // 전략
@@ -50,16 +50,12 @@ import { AdminStrategy } from "./infra/strategy/admin.strategy";
     // 유저생성 use-case
     CreateUserUseCase,
     CreateGoogleUserUseCase,
+    // 비밀번호 변경 use-case
+    ChangePasswordUseCase,
     // 구글연동 use-case
     LinkGoogleUseCase,
     // 토큰발급 서비스
     TokenService,
-    // 가드
-    AuthGuard,
-    GoogleAuthGuard,
-    GoogleLinkAuthGuard,
-    JwtLinkGuard,
-    AdminGuard,
 
     { provide: AuthRepository, useClass: TypeormAuthRepository },
     { provide: PasswordService, useClass: BcryptPasswordService },

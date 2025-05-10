@@ -26,7 +26,7 @@ describe("Auth & UserController (e2e)", () => {
   const adminInfo = {
     name: "관리자",
     email: "yju.intl@gmail.com",
-    password: "Yju_143!",
+    password: "123456",
   };
 
   let userCookie: string;
@@ -46,9 +46,11 @@ describe("Auth & UserController (e2e)", () => {
           dropSchema: true,
           entities: [AuthOrmEntity, UserOrmEntity],
         }),
-        ConfigModule.forRoot({ isGlobal: true }),
         UserModule,
         AuthModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+        }),
       ],
     }).compile();
 
@@ -120,15 +122,30 @@ describe("Auth & UserController (e2e)", () => {
       expect(accessTokenCookie).toContain("access_token=");
       expect(accessAdminTokenCookie).toContain("access_token=");
     });
+    it("/auth/ch-pw (PATCH) 비밀번호 변경", async () => {
+      const server = app.getHttpServer() as unknown as Parameters<
+        typeof request
+      >[0];
+
+      const res = await request(server)
+        .patch("/auth/ch-pw")
+        .set("Cookie", [userCookie])
+        .send({ exPassword: userInfo.password, newPassword: "password" })
+        .expect(200);
+      expect(res.body).toStrictEqual({
+        message: "비밀번호가 변경되었습니다.",
+        result: true,
+      });
+    });
   });
 
   describe("UsersController", () => {
-    it("/user (GET) 유저 정보 조회", async () => {
+    it("/users (GET) 유저 정보 조회", async () => {
       const server = app.getHttpServer() as unknown as Parameters<
         typeof request
       >[0];
       const res = await request(server)
-        .get("/user")
+        .get("/users")
         .set("Cookie", [userCookie])
         .expect(200);
 
@@ -138,12 +155,12 @@ describe("Auth & UserController (e2e)", () => {
       );
     });
 
-    it("/user (PATCH) 이름 변경", async () => {
+    it("/users (PATCH) 이름 변경", async () => {
       const server = app.getHttpServer() as unknown as Parameters<
         typeof request
       >[0];
       const res = await request(server)
-        .patch("/user")
+        .patch("/users")
         .set("Cookie", [userCookie])
         .send({ name: "아무개" })
         .expect(200);
@@ -153,34 +170,34 @@ describe("Auth & UserController (e2e)", () => {
       expect(resBody.userInfo.name).toBe("아무개");
     });
 
-    it("/user/admin (GET) 일반 유저는 관리자 접근 불가", async () => {
+    it("/users/admin (GET) 일반 유저는 관리자 접근 불가", async () => {
       const server = app.getHttpServer() as unknown as Parameters<
         typeof request
       >[0];
       await request(server)
-        .get("/user/admin")
+        .get("/users/admin")
         .set("Cookie", [userCookie])
         .expect(401);
     });
 
-    it("/user/admin (GET) - 관리자 권한으로 접근", async () => {
+    it("/users/admin (GET) - 관리자 권한으로 접근", async () => {
       const server = app.getHttpServer() as unknown as Parameters<
         typeof request
       >[0];
       const res = await request(server)
-        .get("/user/admin")
+        .get("/users/admin")
         .set("Cookie", [adminCookie])
         .expect(200);
 
       expect((res.body as AdminCheckResponse).result).toBe(true);
     });
 
-    it("/user/users/info (GET) - 관리자만 전체 유저 조회 가능", async () => {
+    it("/users/info (GET) - 관리자만 전체 유저 조회 가능", async () => {
       const server = app.getHttpServer() as unknown as Parameters<
         typeof request
       >[0];
       const res = await request(server)
-        .get("/user/users/info")
+        .get("/users/info")
         .set("Cookie", [adminCookie])
         .expect(200);
 

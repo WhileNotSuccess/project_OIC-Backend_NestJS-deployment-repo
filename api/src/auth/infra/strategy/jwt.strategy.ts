@@ -7,8 +7,13 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) {
-    const jwtSecret = configService.get<string>("JWT_SECRET");
+    // JwtModule에서 secret을 꺼내올 수 없다해서
+    // ConfigService에서 다시 받아옴
+    const jwtSecret = configService.get<string>(
+      process.env.NODE_ENV === "test" ? "JWT_TEST_SECRET" : "JWT_SECRET",
+    );
     if (!jwtSecret) throw new Error("토큰 시크릿키를 확인해주세요");
+
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) =>

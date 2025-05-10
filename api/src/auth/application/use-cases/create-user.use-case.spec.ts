@@ -3,30 +3,23 @@ import { CreateUserUseCase } from "./create-user.use-case";
 import { UserRepository } from "src/users/domain/repositories/user.repository";
 import { AuthRepository } from "src/auth/domain/repositories/user-credential.repository";
 import { PasswordService } from "src/auth/domain/services/password.service";
-import { DataSource, QueryRunner } from "typeorm";
 import { User } from "src/users/domain/entities/user.entity";
 import { Auth } from "src/auth/domain/entities/auth.entity";
+import { TransactionManager } from "src/common/ports/transaction-manager.port";
+import { QueryRunner } from "typeorm";
 
 describe("CreateUserUseCase", () => {
   let useCase: CreateUserUseCase;
   let userRepository: jest.Mocked<UserRepository>;
   let authRepository: jest.Mocked<AuthRepository>;
   let passwordService: jest.Mocked<PasswordService>;
+  let transaction: jest.Mocked<TransactionManager>;
 
   const userDto = {
     name: "Tester",
     email: "test@gmail.com",
     plainPassword: "1234",
   };
-
-  const mockQueryRunner = {
-    manager: {},
-    connect: jest.fn(),
-    startTransaction: jest.fn(),
-    commitTransaction: jest.fn(),
-    rollbackTransaction: jest.fn(),
-    release: jest.fn(),
-  } as unknown as QueryRunner;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,10 +31,7 @@ describe("CreateUserUseCase", () => {
         },
         { provide: AuthRepository, useValue: { save: jest.fn() } },
         { provide: PasswordService, useValue: { hash: jest.fn() } },
-        {
-          provide: DataSource,
-          useValue: { createQueryRunner: jest.fn(() => mockQueryRunner) },
-        },
+        { provide: TransactionManager, useValue: { execute: jest.fn() } },
       ],
     }).compile();
 
@@ -49,6 +39,7 @@ describe("CreateUserUseCase", () => {
     userRepository = module.get(UserRepository);
     authRepository = module.get(AuthRepository);
     passwordService = module.get(PasswordService);
+    transaction = module.get(TransactionManager);
   });
 
   it("should be defined", () => {
@@ -79,6 +70,10 @@ describe("CreateUserUseCase", () => {
     passwordService.hash.mockResolvedValue("hashed-password");
 
     authRepository.save.mockResolvedValue(true);
+    transaction.execute.mockImplementation(async (cb) => {
+      const queryRunner = {} as QueryRunner;
+      return cb(queryRunner);
+    });
 
     const result = await useCase.execute({
       ...mockUser,

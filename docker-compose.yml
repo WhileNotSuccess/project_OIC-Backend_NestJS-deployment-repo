@@ -23,6 +23,7 @@ services:
       - COOKIE_DOMAIN=${COOKIE_DOMAIN}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - JWT_SECRET=${JWT_SECRET}
+      - JWT_TEST_SECRET=${JWT_TEST_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
     ports:
       - "3001:3000"
