@@ -2,8 +2,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { GetAllUsersUseCase } from "src/users/application/use-cases/get-all-users.use-case";
 import { GetUserInfo } from "src/users/application/use-cases/get-user-info.use-case";
 import { ChangeUserName } from "src/users/application/use-cases/change-user-name-use-case";
-import { AdminGuard } from "src/auth/infra/guards/admin.guard";
-import { AuthGuard } from "src/auth/infra/guards/auth.guard";
+import { AdminGuard } from "src/shared/guards/admin.guard";
+import { AuthGuard } from "src/shared/guards/auth.guard";
 import { CustomRequest, UsersController } from "./user.controller";
 import { FindAllUsersOptions } from "src/users/domain/repositories/user.repository";
 

@@ -4,10 +4,12 @@ import { LoginWithGoogleUseCase } from "src/auth/application/use-cases/login-wit
 import { ConfigService } from "@nestjs/config";
 import { LoginUseCase } from "src/auth/application/use-cases/login.use-case";
 import { CreateUserUseCase } from "src/auth/application/use-cases/create-user.use-case";
-import { Response } from "express";
+import { Request, Response } from "express";
 import { LoginInput } from "src/auth/application/dto/login-input.dto";
 import { RegisterInput } from "src/auth/application/dto/register-input.dto";
 import { LinkGoogleUseCase } from "src/auth/application/use-cases/link-google.use-case";
+import { ChangePasswordUseCase } from "src/auth/application/use-cases/change-password.use-case";
+import { changePWDto } from "src/auth/application/dto/change-password.dto";
 
 describe("AuthController", () => {
   let controller: AuthController;
@@ -15,6 +17,7 @@ describe("AuthController", () => {
   let loginJwt: LoginUseCase;
   let createUser: CreateUserUseCase;
   let frontUrl: string;
+  let changePW: ChangePasswordUseCase;
 
   const mockConfigService = {
     get: jest.fn((key: string) => {
@@ -31,7 +34,7 @@ describe("AuthController", () => {
     return res as Response;
   };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
@@ -40,6 +43,7 @@ describe("AuthController", () => {
         { provide: CreateUserUseCase, useValue: { execute: jest.fn() } },
         { provide: LinkGoogleUseCase, useValue: { execute: jest.fn() } },
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: ChangePasswordUseCase, useValue: { execute: jest.fn() } },
       ],
     }).compile();
     frontUrl = process.env.FRONT_URL ?? "https://localhost.com/api";
@@ -48,6 +52,7 @@ describe("AuthController", () => {
     loginGoogle = module.get<LoginWithGoogleUseCase>(LoginWithGoogleUseCase);
     loginJwt = module.get<LoginUseCase>(LoginUseCase);
     createUser = module.get<CreateUserUseCase>(CreateUserUseCase);
+    changePW = module.get(ChangePasswordUseCase);
   });
 
   it("should be defined", () => {
@@ -63,9 +68,9 @@ describe("AuthController", () => {
 
   describe("GET /google/redirect", () => {
     it("should set cookie and redirect", async () => {
-      const req: any = {
+      const req = {
         user: { sub: "google-user-id" },
-      };
+      } as unknown as Request;
       const res = mockResponse();
 
       jest.spyOn(loginGoogle, "execute").mockResolvedValue({
@@ -108,7 +113,6 @@ describe("AuthController", () => {
         expect.any(Object),
       );
       expect(res.redirect).toHaveBeenCalledWith(frontUrl);
-      expect(res.end).toHaveBeenCalled();
     });
   });
 
@@ -136,6 +140,28 @@ describe("AuthController", () => {
       });
 
       expect(result).toEqual({ message: "회원가입되었습니다." });
+    });
+  });
+  describe("PATCH /ch-pw", () => {
+    it("should call changePassword with correct parameters", async () => {
+      const req = {
+        user: { id: 1, email: "user@example.com" },
+      } as unknown as Request;
+      const body: changePWDto = {
+        exPassword: "oldPass",
+        newPassword: "newPass",
+      };
+
+      jest.spyOn(changePW, "execute").mockResolvedValue(true);
+
+      const result = await controller.changePassword(req, body);
+
+      expect(changePW.execute).toHaveBeenCalledWith(
+        req.user,
+        body.exPassword,
+        body.newPassword,
+      );
+      expect(result.message).toBe("비밀번호가 변경되었습니다.");
     });
   });
 });

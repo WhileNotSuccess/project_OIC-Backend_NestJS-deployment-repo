@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  Patch,
   Post,
   Req,
   Res,
@@ -13,13 +14,16 @@ import { Request, Response } from "express";
 import { LinkGoogleUseCase } from "src/auth/application/use-cases/link-google.use-case";
 import { LoginWithGoogleUseCase } from "src/auth/application/use-cases/login-with-google.use-case";
 import { LoginUseCase } from "src/auth/application/use-cases/login.use-case";
-import { GoogleLinkAuthGuard } from "src/auth/infra/guards/google-link.guard";
-import { GoogleAuthGuard } from "src/auth/infra/guards/google.guard";
-import { JwtLinkGuard } from "src/auth/infra/guards/jwt-link.guard";
+import { GoogleLinkAuthGuard } from "src/shared/guards/google-link.guard";
+import { GoogleAuthGuard } from "src/shared/guards/google.guard";
+import { JwtLinkGuard } from "src/shared/guards/jwt-link.guard";
 import { googleUser } from "src/auth/infra/types/google.user";
 import { CreateUserUseCase } from "src/auth/application/use-cases/create-user.use-case";
 import { LoginInput } from "src/auth/application/dto/login-input.dto";
 import { RegisterInput } from "src/auth/application/dto/register-input.dto";
+import { AuthGuard } from "src/shared/guards/auth.guard";
+import { changePWDto } from "src/auth/application/dto/change-password.dto";
+import { ChangePasswordUseCase } from "src/auth/application/use-cases/change-password.use-case";
 
 @Controller("auth")
 export class AuthController {
@@ -30,6 +34,7 @@ export class AuthController {
     private readonly loginJwt: LoginUseCase,
     private readonly createUser: CreateUserUseCase,
     private readonly googleLink: LinkGoogleUseCase,
+    private readonly changePW: ChangePasswordUseCase,
   ) {
     // const frontUrl = this.configService.get("FRONTEND_URL") as string;
     // if (frontUrl) this.frontUrl = frontUrl;
@@ -65,14 +70,11 @@ export class AuthController {
     res.cookie("access_token", accessToken, {
       maxAge: 60 * 60 * 1000,
       httpOnly: true,
-      // secure: true,
-      secure: false,
-      // sameSite: "none",
-      sameSite: "lax",
-      // domain: process.env.COOKIE_DOMAIN,
+      secure: true,
+      sameSite: "none",
+      domain: process.env.COOKIE_DOMAIN,
     });
     res.redirect(`${this.frontUrl}`);
-    res.end();
   }
   // 일반 회원가입
   @Post("register")
@@ -108,5 +110,18 @@ export class AuthController {
       domain: process.env.COOKIE_DOMAIN,
     });
     res.redirect(this.frontUrl);
+  }
+  // 비밀번호 변경
+  @UseGuards(AuthGuard)
+  @Patch("ch-pw")
+  async changePassword(@Req() req: Request, @Body() body: changePWDto) {
+    const user = req.user;
+    if (!user) throw new BadRequestException("로그인된 유저 정보가 없습니다.");
+    const result = await this.changePW.execute(
+      user,
+      body.exPassword,
+      body.newPassword,
+    );
+    return { message: "비밀번호가 변경되었습니다.", result };
   }
 }

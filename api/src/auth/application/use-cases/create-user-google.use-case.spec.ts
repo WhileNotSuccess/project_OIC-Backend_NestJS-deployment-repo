@@ -1,15 +1,17 @@
 import { CreateGoogleUserUseCase } from "./create-user-google.use-case";
 import { UserRepository } from "src/users/domain/repositories/user.repository";
 import { AuthRepository } from "src/auth/domain/repositories/user-credential.repository";
-import { DataSource, QueryRunner } from "typeorm";
 import { User } from "src/users/domain/entities/user.entity";
 import { Auth } from "src/auth/domain/entities/auth.entity";
 import { Test, TestingModule } from "@nestjs/testing";
+import { TransactionManager } from "src/common/ports/transaction-manager.port";
+import { QueryRunner } from "typeorm";
 
 describe("CreateGoogleUserUseCase", () => {
   let useCase: CreateGoogleUserUseCase;
   let userRepository: jest.Mocked<UserRepository>;
   let authRepository: jest.Mocked<AuthRepository>;
+  let transactionManager: jest.Mocked<TransactionManager>;
 
   const userDto = {
     id: 1,
@@ -22,15 +24,6 @@ describe("CreateGoogleUserUseCase", () => {
     password: "1234",
     googleId: "12345678",
   };
-
-  const mockQueryRunner = {
-    manager: {},
-    connect: jest.fn(),
-    startTransaction: jest.fn(),
-    commitTransaction: jest.fn(),
-    rollbackTransaction: jest.fn(),
-    release: jest.fn(),
-  } as unknown as QueryRunner;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,18 +38,22 @@ describe("CreateGoogleUserUseCase", () => {
         },
         { provide: AuthRepository, useValue: { save: jest.fn() } },
         {
-          provide: DataSource,
-          useValue: { createQueryRunner: jest.fn(() => mockQueryRunner) },
+          provide: TransactionManager,
+          useValue: {
+            execute: jest.fn(),
+          },
         },
       ],
     }).compile();
     useCase = module.get<CreateGoogleUserUseCase>(CreateGoogleUserUseCase);
     userRepository = module.get(UserRepository);
     authRepository = module.get(AuthRepository);
+    transactionManager = module.get(TransactionManager);
   });
 
   it("should be defined", () => {
     expect(useCase).toBeDefined();
+    jest.spyOn(transactionManager, "execute").mockResolvedValue(userDto);
   });
 
   it("should throw an error if user with email already exists", async () => {
@@ -77,7 +74,7 @@ describe("CreateGoogleUserUseCase", () => {
     userRepository.findByEmail.mockResolvedValue(null);
 
     const mockUser = new User("Tester", "test@gmail.com");
-
+    jest.spyOn(userRepository, "save").mockResolvedValue(mockUser);
     // 들어온 user에 id와 createDate를 붙여 db에 저장된 것 처럼 보이게 함
     userRepository.save.mockImplementation((queryRunner, user) => {
       // .save 는 Promise<User>를 반환하므로 Promise.resolve를 써서 Promise 객체로 반환되게 만듬
@@ -92,7 +89,10 @@ describe("CreateGoogleUserUseCase", () => {
     // mockImplementation은 입력값에 따라 다른 동작을 실행시키고 싶을때
 
     authRepository.save.mockResolvedValue(true);
-
+    transactionManager.execute.mockImplementation(async (cb) => {
+      const queryRunner = {} as QueryRunner;
+      return cb(queryRunner);
+    });
     const result = await useCase.execute({
       ...mockUser,
       googleId: authDto.googleId,

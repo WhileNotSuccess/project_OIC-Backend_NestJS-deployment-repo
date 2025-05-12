@@ -12,8 +12,10 @@ export class GoogleLinkStrategy extends PassportStrategy(
     const clientID = configService.get<string>("GOOGLE_CLIENT_ID");
     const clientSecret = configService.get<string>("GOOGLE_SECRET");
     const callbackURL = configService.get<string>("GOOGLE_CALLBACK_LINK_URL");
-    if (!clientID || !clientSecret || !callbackURL)
+    if (!clientID || !clientSecret || !callbackURL) {
       throw new Error("oauth관련 환경변수를 확인해 주십시오.");
+    }
+
     super({
       clientID,
       clientSecret,

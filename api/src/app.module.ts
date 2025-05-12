@@ -26,6 +26,8 @@ import { UserOrmEntity } from "./users/infra/entities/user.entity";
 import { AuthOrmEntity } from "./auth/infra/entities/auth.entity";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./users/user.module";
+import { CommonModule } from "./common/common.module";
+
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -112,6 +114,7 @@ import { UserModule } from "./users/user.module";
     CorporationModule,
     AuthModule,
     UserModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [

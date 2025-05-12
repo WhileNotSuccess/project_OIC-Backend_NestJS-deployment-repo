@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Patch, Req, UseGuards } from "@nestjs/common";
 import { Request } from "express";
-import { AdminGuard } from "src/auth/infra/guards/admin.guard";
-import { AuthGuard } from "src/auth/infra/guards/auth.guard";
+import { AdminGuard } from "src/shared/guards/admin.guard";
+import { AuthGuard } from "src/shared/guards/auth.guard";
 import { ChangeUserName } from "src/users/application/use-cases/change-user-name-use-case";
 import { GetAllUsersUseCase } from "src/users/application/use-cases/get-all-users.use-case";
 import { GetUserInfo } from "src/users/application/use-cases/get-user-info.use-case";
@@ -16,7 +16,7 @@ export interface CustomRequest extends Request {
   };
 }
 
-@Controller("user")
+@Controller("users")
 export class UsersController {
   constructor(
     private readonly getAllUser: GetAllUsersUseCase,
@@ -40,7 +40,7 @@ export class UsersController {
   }
   // 유저 정보를 다 가져오기
   @UseGuards(AdminGuard)
-  @Get("users/info")
+  @Get("info")
   async getAllUserInfo(@Body() body: FindAllUsersOptions) {
     const { users, pageData } = await this.getAllUser.execute({ ...body });
     return { message: "유저 정보를 불러왔습니다.", data: users, pageData };
