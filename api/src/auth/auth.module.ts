@@ -21,12 +21,14 @@ import { AdminStrategy } from "./infra/strategy/admin.strategy";
 import { CommonModule } from "src/common/common.module";
 import { ChangePasswordUseCase } from "./application/use-cases/change-password.use-case";
 
+const isTest = process.env.NODE_ENV === "test";
+
 @Module({
   imports: [
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>(
-          process.env.NODE_ENV === "test" ? "JWT_TEST_SECRET" : "JWT_SECRET",
+          isTest ? "JWT_TEST_SECRET" : "JWT_SECRET",
         ),
         signOptions: { expiresIn: "1h" },
       }),
@@ -41,9 +43,10 @@ import { ChangePasswordUseCase } from "./application/use-cases/change-password.u
   providers: [
     // 전략
     JwtStrategy,
-    GoogleStrategy,
-    GoogleLinkStrategy,
     AdminStrategy,
+    // oauth 전략 (테스트에선 실행하지 않음)
+    ...(isTest ? [] : [GoogleStrategy, GoogleLinkStrategy]),
+
     // 로그인 use-case
     LoginUseCase,
     LoginWithGoogleUseCase,

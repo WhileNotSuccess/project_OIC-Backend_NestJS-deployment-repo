@@ -25,7 +25,7 @@ describe("Auth & UserController (e2e)", () => {
   };
   const adminInfo = {
     name: "관리자",
-    email: "yju.intl@gmail.com",
+    email: "user@gmail.com",
     password: "123456",
   };
 
@@ -112,6 +112,7 @@ describe("Auth & UserController (e2e)", () => {
       const AdminCookies = adminRes.headers[
         "set-cookie"
       ] as unknown as string[];
+      expect(cookies).toBeDefined();
       const accessAdminTokenCookie = AdminCookies.find((c: string) =>
         c.includes("access_token"),
       );
