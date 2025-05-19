@@ -15,11 +15,11 @@ async function bootstrap() {
   Logger.overrideLogger(logger);
   app.enableCors({
     origin: [
-      'https://www.bapull.store',
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'https://www.localhost.com',
-      'https://localhost.com',
+      "https://www.bapull.store",
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://www.localhost.com",
+      "https://localhost.com",
     ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: "Content-Type, Accept, Authorization",
