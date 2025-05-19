@@ -11,7 +11,7 @@ import {
 } from "typeorm";
 import { AttachmentOrmEntity } from "./attachment-orm.entity";
 import { PostImageOrmEntity } from "./post-image-orm.entity";
-import { UserOrmEntity } from "src/users/infra/entities/user.entity";
+import { UserOrmEntity } from "../../../users/infra/entities/user.entity";
 
 @Entity()
 export class PostOrmEntity {

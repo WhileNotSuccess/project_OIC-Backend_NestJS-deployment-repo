@@ -1,4 +1,4 @@
-import { PostOrmEntity } from "src/post/infra/entities/post-orm.entity";
+import { PostOrmEntity } from "../../../post/infra/entities/post-orm.entity";
 import { AuthOrmEntity } from "../../../auth/infra/entities/auth.entity";
 import {
   Column,
