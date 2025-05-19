@@ -188,6 +188,7 @@ export class PostController {
           postId: 1,
           imageUrl: "https://example.com/api/files/hello.png",
           title: "게시글 제목",
+          date: "2025-04-22T11:34:06.175Z",
         },
       ],
     },

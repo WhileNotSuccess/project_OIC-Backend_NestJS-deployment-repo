@@ -163,7 +163,12 @@ export class TypeormPostRepository extends PostRepository {
       .getMany();
 
     const news = posts.map((item) => {
-      return { postId: item.id, content: item.content, title: item.title };
+      return {
+        postId: item.id,
+        content: item.content,
+        title: item.title,
+        date: item.createdDate.toISOString(),
+      };
     });
 
     return news;

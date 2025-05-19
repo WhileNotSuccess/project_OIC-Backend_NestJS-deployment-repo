@@ -400,6 +400,7 @@ describe("TypeormPostRepository (Integration)", () => {
           content: item.content,
           postId: item.id,
           title: item.title,
+          date: item.createdDate.toISOString(),
         })),
     );
   });
