@@ -3,12 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { AttachmentOrmEntity } from "./attachment-orm.entity";
 import { PostImageOrmEntity } from "./post-image-orm.entity";
+import { UserOrmEntity } from "src/users/infra/entities/user.entity";
 
 @Entity()
 export class PostOrmEntity {
@@ -36,4 +39,7 @@ export class PostOrmEntity {
     onDelete: "CASCADE",
   })
   images: PostImageOrmEntity[];
+  @ManyToOne(() => UserOrmEntity, (user) => user.id, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "userId" })
+  user: UserOrmEntity;
 }
