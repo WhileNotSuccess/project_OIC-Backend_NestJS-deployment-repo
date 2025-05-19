@@ -14,6 +14,9 @@ import {
   UsersInfoResponse,
 } from "./types/user.response";
 import { ConfigModule } from "@nestjs/config";
+import { PostOrmEntity } from "src/post/infra/entities/post-orm.entity";
+import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm.entity";
+import { AttachmentOrmEntity } from "src/post/infra/entities/attachment-orm.entity";
 
 describe("Auth & UserController (e2e)", () => {
   let app: INestApplication;
@@ -44,7 +47,13 @@ describe("Auth & UserController (e2e)", () => {
           database: process.env.TEST_DB_DATABASE,
           synchronize: true,
           dropSchema: true,
-          entities: [AuthOrmEntity, UserOrmEntity],
+          entities: [
+            AuthOrmEntity,
+            UserOrmEntity,
+            PostOrmEntity,
+            PostImageOrmEntity,
+            AttachmentOrmEntity,
+          ],
         }),
         UserModule,
         AuthModule,

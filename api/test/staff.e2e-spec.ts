@@ -14,6 +14,9 @@ import { UserOrmEntity } from "src/users/infra/entities/user.entity";
 import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
 import { UserModule } from "src/users/user.module";
 import { AuthModule } from "src/auth/auth.module";
+import { PostOrmEntity } from "src/post/infra/entities/post-orm.entity";
+import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm.entity";
+import { AttachmentOrmEntity } from "src/post/infra/entities/attachment-orm.entity";
 
 describe("StaffController (e2e)", () => {
   let app: INestApplication;
@@ -91,7 +94,14 @@ describe("StaffController (e2e)", () => {
           database: process.env.TEST_DB_DATABASE,
           synchronize: true,
           dropSchema: true, // 테스트 후 테이블 초기화
-          entities: [StaffOrmEntity, UserOrmEntity, AuthOrmEntity],
+          entities: [
+            StaffOrmEntity,
+            UserOrmEntity,
+            AuthOrmEntity,
+            PostOrmEntity,
+            PostImageOrmEntity,
+            AttachmentOrmEntity,
+          ],
         }),
         StaffModule,
         UserModule,

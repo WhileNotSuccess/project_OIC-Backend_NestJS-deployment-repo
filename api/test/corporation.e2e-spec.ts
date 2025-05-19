@@ -16,6 +16,9 @@ import { UserModule } from "src/users/user.module";
 import { UserOrmEntity } from "src/users/infra/entities/user.entity";
 import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
 import { ConfigModule } from "@nestjs/config";
+import { AttachmentOrmEntity } from "src/post/infra/entities/attachment-orm.entity";
+import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm.entity";
+import { PostOrmEntity } from "src/post/infra/entities/post-orm.entity";
 
 describe("CorporationController (e2e)", () => {
   let accessToken: string;
@@ -101,6 +104,9 @@ describe("CorporationController (e2e)", () => {
             CountryOrmEntity,
             UserOrmEntity,
             AuthOrmEntity,
+            PostOrmEntity,
+            PostImageOrmEntity,
+            AttachmentOrmEntity,
           ],
         }),
         CorporationModule,

@@ -17,6 +17,9 @@ import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
 import { UserOrmEntity } from "src/users/infra/entities/user.entity";
 import { AuthModule } from "src/auth/auth.module";
 import { UserModule } from "src/users/user.module";
+import { AttachmentOrmEntity } from "src/post/infra/entities/attachment-orm.entity";
+import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm.entity";
+import { PostOrmEntity } from "src/post/infra/entities/post-orm.entity";
 
 describe("PrideOfYjuController (e2e)", () => {
   let app: INestApplication;
@@ -50,7 +53,14 @@ describe("PrideOfYjuController (e2e)", () => {
           database: process.env.TEST_DB_DATABASE,
           synchronize: true,
           dropSchema: true, // 테스트 후 테이블 초기화
-          entities: [PrideOfYjuOrmEntity, UserOrmEntity, AuthOrmEntity],
+          entities: [
+            PrideOfYjuOrmEntity,
+            UserOrmEntity,
+            AuthOrmEntity,
+            PostOrmEntity,
+            PostImageOrmEntity,
+            AttachmentOrmEntity,
+          ],
         }),
         PrideOfYjuModule,
         AuthModule,
