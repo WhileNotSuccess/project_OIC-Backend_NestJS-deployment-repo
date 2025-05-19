@@ -139,16 +139,19 @@ describe("PostService", () => {
         postId: 1,
         content: testingPosts[0].content,
         title: testingPosts[0].title,
+        date: now.toISOString(),
       },
       {
         postId: 2,
         content: testingPosts[1].content,
         title: testingPosts[1].title,
+        date: now.toISOString(),
       },
       {
         postId: 3,
         content: testingPosts[2].content,
         title: testingPosts[2].title,
+        date: now.toISOString(),
       },
     ];
   });
