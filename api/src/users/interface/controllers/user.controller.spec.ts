@@ -4,8 +4,9 @@ import { GetUserInfo } from "src/users/application/use-cases/get-user-info.use-c
 import { ChangeUserName } from "src/users/application/use-cases/change-user-name-use-case";
 import { AdminGuard } from "src/shared/guards/admin.guard";
 import { AuthGuard } from "src/shared/guards/auth.guard";
-import { CustomRequest, UsersController } from "./user.controller";
+import { UsersController } from "./user.controller";
 import { FindAllUsersOptions } from "src/users/domain/repositories/user.repository";
+import { CustomRequest } from "src/common/types/custom-request";
 
 describe("UsersController", () => {
   let controller: UsersController;
@@ -61,8 +62,9 @@ describe("UsersController", () => {
         user: mockUser,
       } as CustomRequest;
 
-      const name = "아무개";
-      const result = await controller.nameChange(mockRequest, name);
+      const result = await controller.nameChange(mockRequest, {
+        name: "아무개",
+      });
 
       expect(result.message).toBe("이름이 수정되었습니다.");
       expect(result.userInfo.name).toBe("아무개");
@@ -79,7 +81,7 @@ describe("UsersController", () => {
       } as CustomRequest;
 
       await expect(
-        controller.nameChange(mockRequest, "누렁이"),
+        controller.nameChange(mockRequest, { name: "누렁이" }),
       ).rejects.toThrow(new Error("잘못된 접근 입니다."));
     });
   });

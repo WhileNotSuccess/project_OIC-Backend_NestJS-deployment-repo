@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  UseGuards,
 } from "@nestjs/common";
 import { StaffService } from "../application/service/staff.service";
 import { CreateStaffDto } from "../application/dto/create-staff.dto";
@@ -15,6 +16,7 @@ import { RequestWithCookies } from "src/common/request-with-cookies";
 import { toLanguageEnum } from "src/common/utils/to-language-enum";
 import { Language } from "src/common/types/language";
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
+import { AdminGuard } from "src/shared/guards/admin.guard";
 
 @Controller("staff")
 export class StaffController {
@@ -31,6 +33,7 @@ export class StaffController {
       message: "생성이 완료되었습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Post()
   async create(@Body() createStaffDto: CreateStaffDto) {
     await this.staffService.create(createStaffDto);
@@ -149,6 +152,7 @@ export class StaffController {
       message: "수정이 완료되었습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Patch(":id")
   async update(
     @Param("id") id: string,
@@ -173,6 +177,7 @@ export class StaffController {
       message: "삭제가 완료되었습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Delete(":id")
   async remove(@Param("id") id: string) {
     await this.staffService.remove(+id);

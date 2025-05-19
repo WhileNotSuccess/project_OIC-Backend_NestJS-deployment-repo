@@ -9,9 +9,18 @@ import {
   StaffResMessageForAdmin,
 } from "./types/staff-response";
 import * as cookieParser from "cookie-parser";
+import { ConfigModule } from "@nestjs/config";
+import { UserOrmEntity } from "src/users/infra/entities/user.entity";
+import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
+import { UserModule } from "src/users/user.module";
+import { AuthModule } from "src/auth/auth.module";
+import { PostOrmEntity } from "src/post/infra/entities/post-orm.entity";
+import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm.entity";
+import { AttachmentOrmEntity } from "src/post/infra/entities/attachment-orm.entity";
 
 describe("StaffController (e2e)", () => {
   let app: INestApplication;
+  let accessToken: string;
   const staff = [
     {
       name: "홍길동",
@@ -73,6 +82,9 @@ describe("StaffController (e2e)", () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+        }),
         TypeOrmModule.forRoot({
           type: "mysql",
           host: process.env.TEST_DB_HOST,
@@ -82,15 +94,48 @@ describe("StaffController (e2e)", () => {
           database: process.env.TEST_DB_DATABASE,
           synchronize: true,
           dropSchema: true, // 테스트 후 테이블 초기화
-          entities: [StaffOrmEntity],
+          entities: [
+            StaffOrmEntity,
+            UserOrmEntity,
+            AuthOrmEntity,
+            PostOrmEntity,
+            PostImageOrmEntity,
+            AttachmentOrmEntity,
+          ],
         }),
         StaffModule,
+        UserModule,
+        AuthModule,
       ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     app.use(cookieParser());
     await app.init();
+
+    const server = app.getHttpServer() as unknown as Parameters<
+      typeof request
+    >[0];
+    // 테스트 서버에 쿠키 설정
+    await request(server).post("/auth/register").send({
+      name: "관리자",
+      email: "user@gmail.com",
+      password: "12345678",
+    });
+    const res = await request(server)
+      .post("/auth/login")
+      .send({
+        email: "user@gmail.com",
+        password: "12345678",
+      })
+      .redirects(0);
+    const cookie = res.headers["set-cookie"][0];
+    const token = cookie.match(/access_token=([^;]*)/);
+    if (token) {
+      accessToken = token[1];
+    } else {
+      throw new Error("access_token not found");
+    }
   });
 
   afterAll(async () => {
@@ -101,10 +146,18 @@ describe("StaffController (e2e)", () => {
     const server = app.getHttpServer() as unknown as Parameters<
       typeof request
     >[0];
-    await request(server).post("/staff").send(staff[0]).expect(201);
+    await request(server)
+      .post("/staff")
+      .set("Cookie", [`access_token=${accessToken}`])
+      .send(staff[0])
+      .expect(201);
     await Promise.all(
       staff.map(async (item) => {
-        return await request(server).post("/staff").send(item).expect(201);
+        return await request(server)
+          .post("/staff")
+          .set("Cookie", [`access_token=${accessToken}`])
+          .send(item)
+          .expect(201);
       }),
     );
   });
@@ -162,7 +215,11 @@ describe("StaffController (e2e)", () => {
       typeof request
     >[0];
 
-    await request(server).patch(`/staff/1`).send({ role: "staff" }).expect(200);
+    await request(server)
+      .patch(`/staff/1`)
+      .set("Cookie", [`access_token=${accessToken}`])
+      .send({ role: "staff" })
+      .expect(200);
 
     const test = await request(server)
       .get("/staff")
@@ -183,7 +240,10 @@ describe("StaffController (e2e)", () => {
     const server = app.getHttpServer() as unknown as Parameters<
       typeof request
     >[0];
-    await request(server).delete(`/staff/1`).expect(200);
+    await request(server)
+      .delete(`/staff/1`)
+      .set("Cookie", [`access_token=${accessToken}`])
+      .expect(200);
 
     await request(server).get(`/staff/1`).expect(404);
   });

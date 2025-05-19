@@ -12,6 +12,7 @@ import {
   Query,
   UseInterceptors,
   UploadedFiles,
+  UseGuards,
 } from "@nestjs/common";
 import { PostService } from "../application/service/post.service";
 import { CreatePostDto } from "../application/dto/create-post.dto";
@@ -30,6 +31,8 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import { Language } from "../../common/types/language";
 import { toLanguageEnum } from "src/common/utils/to-language-enum";
 import { SearchPostQueryDto } from "./dto/search-post-query.dto";
+import { AuthGuard } from "src/shared/guards/auth.guard";
+import { CustomRequest } from "src/common/types/custom-request";
 
 @Controller("post")
 export class PostController {
@@ -56,6 +59,7 @@ export class PostController {
     },
   })
   @UseInterceptors(FilesInterceptor("image"))
+  @UseGuards(AuthGuard)
   @Post("image")
   async uploadImage(
     @UploadedFiles() image: Express.Multer.File[],
@@ -249,13 +253,14 @@ export class PostController {
     example: { message: "게시글이 작성되었습니다." },
   })
   @UseInterceptors(FilesInterceptor("files", 10))
+  @UseGuards(AuthGuard)
   @Post()
   async create(
     @Body() createPostDto: CreatePostDto,
     @UploadedFiles() files: Express.Multer.File[],
-    // @Req() req: RequestWithCookies,
+    @Req() req: CustomRequest,
   ) {
-    await this.postService.create(createPostDto, 1, files);
+    await this.postService.create(createPostDto, req.user.id, files);
     return {
       message: "게시글이 작성되었습니다.",
     };
@@ -433,12 +438,15 @@ export class PostController {
     example: { message: "수정이 완료되었습니다." },
   })
   @UseInterceptors(FilesInterceptor("files", 10))
+  @UseGuards(AuthGuard)
   @Patch(":id")
   async update(
     @Param("id") id: string,
     @Body() updatePostDto: UpdatePostDto,
     @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: CustomRequest,
   ) {
+    await this.postService.checkPostOwner(+id, req.user.id, req.user.email);
     await this.postService.update(+id, updatePostDto, files);
     return {
       message: "수정이 완료되었습니다.",
@@ -449,7 +457,9 @@ export class PostController {
   @ApiParam({ name: "id", example: 1 })
   @ApiResponse({ example: { message: "삭제가 완료되었습니다." } })
   @Delete(":id")
-  async remove(@Param("id") id: string) {
+  @UseGuards(AuthGuard)
+  async remove(@Param("id") id: string, @Req() req: CustomRequest) {
+    await this.postService.checkPostOwner(+id, req.user.id, req.user.email);
     const result = await this.postService.remove(+id);
     if (!result) {
       throw new NotFoundException("해당 포스트가 없습니다.");

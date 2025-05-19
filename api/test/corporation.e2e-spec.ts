@@ -11,8 +11,17 @@ import {
   MessageResponse,
 } from "./types/corporation.response";
 import { CountryOrmEntity } from "src/corporation/infra/entities/country.entity";
+import { AuthModule } from "src/auth/auth.module";
+import { UserModule } from "src/users/user.module";
+import { UserOrmEntity } from "src/users/infra/entities/user.entity";
+import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
+import { ConfigModule } from "@nestjs/config";
+import { AttachmentOrmEntity } from "src/post/infra/entities/attachment-orm.entity";
+import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm.entity";
+import { PostOrmEntity } from "src/post/infra/entities/post-orm.entity";
 
 describe("CorporationController (e2e)", () => {
+  let accessToken: string;
   const createCorporationDTOs = [
     {
       countryId: 1,
@@ -78,6 +87,9 @@ describe("CorporationController (e2e)", () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+        }),
         TypeOrmModule.forRoot({
           type: "mysql",
           host: process.env.TEST_DB_HOST,
@@ -87,15 +99,49 @@ describe("CorporationController (e2e)", () => {
           database: process.env.TEST_DB_DATABASE,
           synchronize: true,
           dropSchema: true, // 테스트 후 테이블 초기화
-          entities: [CorporationOrmEntity, CountryOrmEntity],
+          entities: [
+            CorporationOrmEntity,
+            CountryOrmEntity,
+            UserOrmEntity,
+            AuthOrmEntity,
+            PostOrmEntity,
+            PostImageOrmEntity,
+            AttachmentOrmEntity,
+          ],
         }),
         CorporationModule,
+        AuthModule,
+        UserModule,
       ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     app.use(cookieParser());
     await app.init();
+
+    const server = app.getHttpServer() as unknown as Parameters<
+      typeof request
+    >[0];
+    // 테스트 서버에 쿠키 설정
+    await request(server).post("/auth/register").send({
+      name: "관리자",
+      email: "user@gmail.com",
+      password: "12345678",
+    });
+    const res = await request(server)
+      .post("/auth/login")
+      .send({
+        email: "user@gmail.com",
+        password: "12345678",
+      })
+      .redirects(0);
+    const cookie = res.headers["set-cookie"][0];
+    const token = cookie.match(/access_token=([^;]*)/);
+    if (token) {
+      accessToken = token[1];
+    } else {
+      throw new Error("access_token not found");
+    }
   });
 
   afterAll(async () => {
@@ -112,6 +158,7 @@ describe("CorporationController (e2e)", () => {
       for (const country of createCountryDTOs) {
         const result = await request(server)
           .post("/corporation/country")
+          .set("Cookie", [`access_token=${accessToken}`])
           .send(country)
           .expect(201);
         const body = result.body as MessageResponse;
@@ -129,6 +176,7 @@ describe("CorporationController (e2e)", () => {
       for (const corporation of createCorporationDTOs) {
         const result = await request(server)
           .post("/corporation/corporation")
+          .set("Cookie", [`access_token=${accessToken}`])
           .send(corporation)
           .expect(201);
         const body = result.body as MessageResponse;
@@ -146,6 +194,7 @@ describe("CorporationController (e2e)", () => {
       // 기관 정보 수정
       const result = await request(server)
         .patch("/corporation/corporation/1")
+        .set("Cookie", [`access_token=${accessToken}`])
         .send({ koreanName: "영진전문대학교" })
         .expect(200);
       const resultBody = result.body as MessageResponse;
@@ -156,7 +205,7 @@ describe("CorporationController (e2e)", () => {
       // 정보 불러와서 수정되었는지 확인
       const test = await request(server)
         .get("/corporation?country=한국")
-        .set("Cookie", ["language=korean"])
+        .set("Cookie", ["language=korean", `access_token=${accessToken}`])
         .expect(200);
 
       const body = test.body as CorporationResponse;
@@ -174,6 +223,7 @@ describe("CorporationController (e2e)", () => {
       // 한국을 대한민국으로 수정
       const result = await request(server)
         .patch("/corporation/country/1")
+        .set("Cookie", [`access_token=${accessToken}`])
         .send({ name: "대한민국" })
         .expect(200);
       const resultBody = result.body as MessageResponse;
@@ -183,7 +233,7 @@ describe("CorporationController (e2e)", () => {
       // 수정되었는지 확인
       const test = await request(server)
         .get("/corporation/countries")
-        .set("Cookie", ["language=korean"])
+        .set("Cookie", ["language=korean", `access_token=${accessToken}`])
         .expect(200);
 
       const body = test.body as CountryNamesResponse;
@@ -205,6 +255,7 @@ describe("CorporationController (e2e)", () => {
       // 가장 마지막에 추가된 기관 삭제
       const result = await request(server)
         .delete(`/corporation/corporation/${createCorporationDTOs.length}`)
+        .set("Cookie", [`access_token=${accessToken}`])
         .expect(200);
       const resultBody = result.body as MessageResponse;
 
@@ -241,6 +292,7 @@ describe("CorporationController (e2e)", () => {
       // 삭제용 나라 추가
       await request(server)
         .post("/corporation/country")
+        .set("Cookie", [`access_token=${accessToken}`])
         .send(createCountryDTOs[0])
         .expect(201);
       // 추가 됐는지 확인
@@ -253,6 +305,7 @@ describe("CorporationController (e2e)", () => {
       // 삭제 요청
       const deleteTest = await request(server)
         .delete(`/corporation/country/${createCountryDTOs.length + 1}`)
+        .set("Cookie", [`access_token=${accessToken}`])
         .expect(200);
 
       const body = deleteTest.body as MessageResponse;

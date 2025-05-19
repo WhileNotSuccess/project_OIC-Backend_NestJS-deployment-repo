@@ -5,8 +5,10 @@ import { GetAllUsersUseCase } from "./application/use-cases/get-all-users.use-ca
 import { GetUserInfo } from "./application/use-cases/get-user-info.use-case";
 import { UserRepository } from "./domain/repositories/user.repository";
 import { TypeormUserRepository } from "./infra/repositories/typeorm-user.repository";
+import { CommonModule } from "src/common/common.module";
 
 @Module({
+  imports: [CommonModule],
   exports: [GetUserInfo, UserRepository],
   controllers: [UsersController],
   providers: [

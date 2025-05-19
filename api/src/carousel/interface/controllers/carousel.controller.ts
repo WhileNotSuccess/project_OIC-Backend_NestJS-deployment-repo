@@ -9,6 +9,7 @@ import {
   Post,
   Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { Request } from "express";
@@ -25,6 +26,7 @@ import {
 } from "@nestjs/swagger";
 import { ReturnCarousel } from "src/carousel/domain/entities/carousel.entity";
 import { Language } from "src/common/types/language";
+import { AdminGuard } from "src/shared/guards/admin.guard";
 
 interface Req extends Request {
   cookies: { [key: string]: string };
@@ -58,6 +60,7 @@ export class CarouselController {
     },
   })
   @ApiResponse({ example: { message: "carousel 작성에 성공했습니다." } })
+  @UseGuards(AdminGuard)
   @Post()
   @UseInterceptors(FileInterceptor("file"))
   async create(
@@ -193,6 +196,7 @@ export class CarouselController {
       message: "carousel 수정에 성공했습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Patch(":id")
   @UseInterceptors(FileInterceptor("file"))
   async update(
@@ -211,6 +215,7 @@ export class CarouselController {
       message: "carousel 삭제에 성공했습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Delete(":id")
   async delete(@Param("id") id: number) {
     await this.carouselService.delete(id);

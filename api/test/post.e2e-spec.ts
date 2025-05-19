@@ -18,12 +18,21 @@ import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm.entit
 import * as path from "path";
 import * as cookieParser from "cookie-parser";
 import * as fs from "fs";
+import { ConfigModule } from "@nestjs/config";
+import { UserOrmEntity } from "src/users/infra/entities/user.entity";
+import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
+import { AuthModule } from "src/auth/auth.module";
+import { UserModule } from "src/users/user.module";
 
 describe("PostController (e2e)", () => {
   let app: INestApplication;
+  let accessToken: string;
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+        }),
         TypeOrmModule.forRoot({
           type: "mysql",
           host: process.env.TEST_DB_HOST,
@@ -33,15 +42,47 @@ describe("PostController (e2e)", () => {
           database: process.env.TEST_DB_DATABASE,
           synchronize: true,
           dropSchema: true, // 테스트 후 테이블 초기화
-          entities: [PostOrmEntity, AttachmentOrmEntity, PostImageOrmEntity],
+          entities: [
+            PostOrmEntity,
+            AttachmentOrmEntity,
+            PostImageOrmEntity,
+            UserOrmEntity,
+            AuthOrmEntity,
+          ],
         }),
         PostModule,
+        AuthModule,
+        UserModule,
       ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     app.use(cookieParser());
     await app.init();
+
+    const server = app.getHttpServer() as unknown as Parameters<
+      typeof request
+    >[0];
+    // 테스트 서버에 쿠키 설정
+    await request(server).post("/auth/register").send({
+      name: "관리자",
+      email: "user@gmail.com",
+      password: "12345678",
+    });
+    const res = await request(server)
+      .post("/auth/login")
+      .send({
+        email: "user@gmail.com",
+        password: "12345678",
+      })
+      .redirects(0);
+    const cookie = res.headers["set-cookie"][0];
+    const token = cookie.match(/access_token=([^;]*)/);
+    if (token) {
+      accessToken = token[1];
+    } else {
+      throw new Error("access_token not found");
+    }
   });
 
   afterAll(async () => {
@@ -71,6 +112,7 @@ describe("PostController (e2e)", () => {
       >[0];
       const resGuidelinesForApplicants = await request(server)
         .post("/post")
+        .set("Cookie", [`access_token=${accessToken}`])
         .type("form")
         .field("category", "guidelinesForApplicants")
         .field("title", "guidelinesForApplicants")
@@ -91,6 +133,7 @@ describe("PostController (e2e)", () => {
         .expect(201);
       const resApplicants = await request(server)
         .post("/post")
+        .set("Cookie", [`access_token=${accessToken}`])
         .type("form")
         .field("category", "applicants")
         .field("title", "applicants")
@@ -157,6 +200,7 @@ describe("PostController (e2e)", () => {
       >[0];
       const resNews1 = await request(server)
         .post("/post")
+        .set("Cookie", [`access_token=${accessToken}`])
         .type("form")
         .field("category", "news")
         .field("title", "News1")
@@ -175,6 +219,7 @@ describe("PostController (e2e)", () => {
         .expect(201);
       const resNews2 = await request(server)
         .post("/post")
+        .set("Cookie", [`access_token=${accessToken}`])
         .type("form")
         .field("category", "news")
         .field("title", "News2")
@@ -260,6 +305,7 @@ describe("PostController (e2e)", () => {
 
     await request(server)
       .post("/post")
+      .set("Cookie", [`access_token=${accessToken}`])
       .type("form")
       .field("category", "notice")
       .field("title", "News1")
@@ -278,6 +324,7 @@ describe("PostController (e2e)", () => {
       .expect(201);
     await request(server)
       .post("/post")
+      .set("Cookie", [`access_token=${accessToken}`])
       .type("form")
       .field("category", "notice")
       .field("title", "News2")
@@ -394,6 +441,7 @@ describe("PostController (e2e)", () => {
     >[0];
     const res = await request(server)
       .patch("/post/1")
+      .set("Cookie", [`access_token=${accessToken}`])
       .type("form")
       .field(
         "content",
@@ -425,7 +473,10 @@ describe("PostController (e2e)", () => {
     const server = app.getHttpServer() as unknown as Parameters<
       typeof request
     >[0];
-    const res = await request(server).delete("/post/1").expect(200);
+    const res = await request(server)
+      .delete("/post/1")
+      .set("Cookie", [`access_token=${accessToken}`])
+      .expect(200);
 
     const body = res.body as PostOKResponse;
 
@@ -446,6 +497,7 @@ describe("PostController (e2e)", () => {
     );
     const res = await request(server)
       .post("/post/image")
+      .set("Cookie", [`access_token=${accessToken}`])
       .type("form")
       .attach("image", testfilePath)
       .expect(201);

@@ -3,6 +3,9 @@ import { DataSource, QueryRunner } from "typeorm";
 import { UserOrmEntity } from "../entities/user.entity";
 import { User } from "src/users/domain/entities/user.entity";
 import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
+import { PostOrmEntity } from "src/post/infra/entities/post-orm.entity";
+import { AttachmentOrmEntity } from "src/post/infra/entities/attachment-orm.entity";
+import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm.entity";
 
 describe("TypeormUserRepository", () => {
   let repository: TypeormUserRepository;
@@ -24,7 +27,13 @@ describe("TypeormUserRepository", () => {
       database: process.env.TEST_DB_DATABASE,
       synchronize: true,
       dropSchema: true, // 테스트 후 테이블 초기화
-      entities: [UserOrmEntity, AuthOrmEntity],
+      entities: [
+        UserOrmEntity,
+        AuthOrmEntity,
+        PostOrmEntity,
+        PostImageOrmEntity,
+        AttachmentOrmEntity,
+      ],
     });
     await dataSource.initialize();
     repository = new TypeormUserRepository(dataSource);

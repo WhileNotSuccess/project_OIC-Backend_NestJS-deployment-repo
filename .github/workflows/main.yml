@@ -13,7 +13,7 @@ env:
   BACKEND_URL: http://localhost:3000
   JWT_TEST_SECRET: iehmlgdjifdsnfsk
   ADMIN_TEST_EMAIL: user@gmail.com
-
+  ADMIN_EMAIL: user@gmail.com
 jobs:
   lint:
     name: lintCheckJob

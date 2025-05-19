@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -20,6 +21,7 @@ import {
 import { CreatePrideOfYjuDto } from "src/pride-of-yju/application/dto/create-pride-of-yju.dto";
 import { UpdatePrideOfYjuDto } from "src/pride-of-yju/application/dto/update-pride-of-yju.dto";
 import { PrideOfYjuService } from "src/pride-of-yju/application/services/pride-of-yju.service";
+import { AdminGuard } from "src/shared/guards/admin.guard";
 
 @Controller("pride")
 export class PrideOfYjuController {
@@ -47,6 +49,7 @@ export class PrideOfYjuController {
       message: "PrideOfYju 작성에 성공했습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Post()
   @UseInterceptors(FileInterceptor("file"))
   async create(
@@ -76,6 +79,7 @@ export class PrideOfYjuController {
     },
   })
   @ApiResponse({ example: { message: "PrideOfYju 수정에 성공했습니다." } })
+  @UseGuards(AdminGuard)
   @Patch(":id")
   @UseInterceptors(FileInterceptor("file"))
   async update(
@@ -90,6 +94,7 @@ export class PrideOfYjuController {
   @ApiOperation({ summary: "PrideOfYju 삭제 요청" })
   @ApiParam({ name: "id", example: 1 })
   @ApiResponse({ example: { message: "PrideOfYju 삭제에 성공했습니다." } })
+  @UseGuards(AdminGuard)
   @Delete(":id")
   async delete(@Param("id") id: number) {
     await this.POYservice.delete(id);

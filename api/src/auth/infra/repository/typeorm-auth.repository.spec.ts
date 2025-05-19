@@ -3,6 +3,9 @@ import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
 import { TypeormAuthRepository } from "./typeorm-auth.repository";
 import { UserOrmEntity } from "src/users/infra/entities/user.entity";
 import { Auth } from "src/auth/domain/entities/auth.entity";
+import { PostOrmEntity } from "src/post/infra/entities/post-orm.entity";
+import { AttachmentOrmEntity } from "src/post/infra/entities/attachment-orm.entity";
+import { PostImageOrmEntity } from "src/post/infra/entities/post-image-orm.entity";
 
 describe("TypeormUserRepository", () => {
   let repository: TypeormAuthRepository;
@@ -25,7 +28,13 @@ describe("TypeormUserRepository", () => {
       database: process.env.TEST_DB_DATABASE,
       synchronize: true,
       dropSchema: true, // 테스트 후 테이블 초기화
-      entities: [UserOrmEntity, AuthOrmEntity],
+      entities: [
+        UserOrmEntity,
+        AuthOrmEntity,
+        PostOrmEntity,
+        PostImageOrmEntity,
+        AttachmentOrmEntity,
+      ],
     });
     await dataSource.initialize();
     // user - auth 관계를 위해 user 테이블에 미리 하나 넣어두고 시작
