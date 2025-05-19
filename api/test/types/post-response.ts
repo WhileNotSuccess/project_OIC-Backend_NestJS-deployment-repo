@@ -36,6 +36,7 @@ export interface GetPaginationResponse {
       language: string;
       createdDate: string;
       updatedDate: string;
+      author: string;
       id: number;
     },
   ];

@@ -6,9 +6,21 @@ import { SearchTarget } from "src/post/domain/types/search-target.enum";
 import { DataSource } from "typeorm";
 import { PostOrmEntity } from "../entities/post-orm.entity";
 import { UserOrmEntity } from "src/users/infra/entities/user.entity";
-import { Post } from "src/post/domain/entities/post.entity";
-import { User } from "src/users/domain/entities/user.entity";
+import { toLanguageEnum } from "src/common/utils/to-language-enum";
 
+type PostWithAuthor = {
+  id: number;
+  title: string;
+  content: string;
+  userId: number;
+  category: string;
+  language: string;
+  createdDate: string;
+  updatedDate: string;
+  user: {
+    name: string;
+  };
+};
 @Injectable()
 export class TypeormPostQueryRepository extends PostQueryRepository {
   constructor(private readonly dataSource: DataSource) {
@@ -28,7 +40,6 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
       .getRawMany()) as unknown as PostWithAuthorDto[];
 
     if (post.length === 0) return null;
-
     return {
       title: post[0].title,
       content: post[0].content,
@@ -50,26 +61,25 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
   ): Promise<[PostWithAuthorDto[], number]> {
     const [post, total] = (await this.dataSource.manager
       .createQueryBuilder(PostOrmEntity, "post")
-      .leftJoin(UserOrmEntity, "user", "post.userId = user.id")
+      .leftJoinAndSelect("post.user", "user")
       .where("post.category = :category", { category })
       .andWhere("post.language = :language", { language })
       .take(take)
       .skip((page - 1) * take)
       .orderBy("post.updatedDate", "DESC")
-      .getManyAndCount()) as unknown as [(Post & User)[], number];
-
+      .getManyAndCount()) as unknown as [PostWithAuthor[], number];
     if (post.length === 0) return [[], 0];
 
     return [
       post.map((item) => ({
         title: item.title,
         content: item.content,
-        author: item.name,
+        author: item.user.name,
         userId: item.userId,
         category: item.category,
-        language: item.language,
-        createdDate: item.createdDate,
-        updatedDate: item.updatedDate,
+        language: toLanguageEnum(item.language),
+        createdDate: new Date(item.createdDate),
+        updatedDate: new Date(item.updatedDate),
         id: item.id,
       })),
       total,
@@ -86,7 +96,7 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
   ): Promise<[PostWithAuthorDto[], number]> {
     const [post, total] = (await this.dataSource.manager
       .createQueryBuilder(PostOrmEntity, "post")
-      .leftJoin(UserOrmEntity, "user", "post.userId = user.id")
+      .leftJoinAndSelect("post.user", "user")
       .where("post.category = :category", { category })
       .andWhere("post.language = :language", { language })
       .andWhere(
@@ -98,7 +108,7 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
       .take(limit)
       .skip((page - 1) * limit)
       .orderBy("post.updatedDate", "DESC")
-      .getManyAndCount()) as unknown as [(Post & User)[], number];
+      .getManyAndCount()) as unknown as [PostWithAuthor[], number];
 
     if (post.length === 0) return [[], 0];
 
@@ -106,12 +116,12 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
       post.map((item) => ({
         title: item.title,
         content: item.content,
-        author: item.name,
+        author: item.user.name,
         userId: item.userId,
         category: item.category,
-        language: item.language,
-        createdDate: item.createdDate,
-        updatedDate: item.updatedDate,
+        language: toLanguageEnum(item.language),
+        createdDate: new Date(item.createdDate),
+        updatedDate: new Date(item.updatedDate),
         id: item.id,
       })),
       total,
