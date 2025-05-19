@@ -188,6 +188,7 @@ export class PostService {
           postId: item.postId,
           title: item.title,
           imageUrl: match[1].replace(`${process.env.BACKEND_URL}/files`, ""),
+          date: item.date,
         };
       }
     });

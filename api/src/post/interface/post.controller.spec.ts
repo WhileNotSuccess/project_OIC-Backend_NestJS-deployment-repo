@@ -149,6 +149,7 @@ describe("PostController", () => {
           postId: 1,
           imageUrl: "https://example.com/api/files/hello.png",
           title: "게시글 제목",
+          date: new Date().toISOString(),
         },
       ]);
 

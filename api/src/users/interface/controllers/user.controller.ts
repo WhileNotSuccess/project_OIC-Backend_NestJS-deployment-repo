@@ -18,11 +18,11 @@ export class UsersController {
   ) {}
 
   // 유저의 이름 변경
-  @ApiOperation({ summary: "일반 회원가입" })
+  @ApiOperation({ summary: "유저 이름 변경" })
   @ApiBody({ type: NameChangeInput })
   @ApiResponse({
     example: {
-      message: "회원가입되었습니다",
+      message: "이름이 수정되었습니다.",
     },
   })
   @UseGuards(AuthGuard)
@@ -46,7 +46,7 @@ export class UsersController {
     return { message: "관리자 확인 결과 입니다.", result: req.user.admin };
   }
   // 유저 정보를 다 가져오기
-  @ApiOperation({ summary: "일반 회원가입" })
+  @ApiOperation({ summary: "모든 유저 정보 가져오기 " })
   @ApiBody({ type: FindAllUsersOptions })
   @ApiResponse({
     example: {
