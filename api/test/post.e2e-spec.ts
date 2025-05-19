@@ -367,6 +367,7 @@ describe("PostController (e2e)", () => {
     const body = res.body as GetPaginationResponse;
     expect(body.message).toBe("게시글 목록을 불러왔습니다.");
     expect(body.data.length).toBe(1);
+    expect(body.data[0].author).toBe("관리자");
     expect(body.data[0].content).toBe(`<p>감사해요</p>
 <p>잘있어요</p>
 <p>다시만나요</p>

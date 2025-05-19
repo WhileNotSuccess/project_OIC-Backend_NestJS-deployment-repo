@@ -27,7 +27,7 @@ services:
       - JWT_TEST_SECRET=${JWT_TEST_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
     ports:
-      - "3001:3000"
+      - "3031:3000"
     volumes:
       - ./api:/app
       - ./files:/files
@@ -42,7 +42,7 @@ services:
       - MYSQL_ROOT_PASSWORD=1234
       - TZ=Asia/Seoul
     ports:
-      - "3307:3306"
+      - "3337:3306"
     networks:
       - backend
 
