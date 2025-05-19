@@ -11,13 +11,31 @@ import { SearchTarget } from "src/post/domain/types/search-target.enum";
 import { Language } from "src/common/types/language";
 import { MediaServicePort } from "src/media/application/media-service.port";
 import { HtmlParserPort } from "../port/html-parser.port";
+import { PostQueryRepository } from "../query/post-query.repository";
 @Injectable()
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
     private readonly MediaServicePort: MediaServicePort,
     private readonly htmlParser: HtmlParserPort,
+    private readonly postQueryRepository: PostQueryRepository,
   ) {}
+
+  async checkPostOwner(
+    postId: number,
+    userId: number,
+    email: string,
+  ): Promise<boolean> {
+    if (email === process.env.ADMIN_EMAIL) {
+      return true;
+    }
+    const post = await this.postQueryRepository.getOneWithAuthorById(postId);
+    if (!post) {
+      throw new NotFoundException("게시글을 찾을 수 없습니다.");
+    }
+    return post.userId === userId;
+  }
+
   async uploadImage(image: Express.Multer.File) {
     const url = await this.MediaServicePort.uploadImage(image, "post-image");
     return url;
@@ -63,12 +81,13 @@ export class PostService {
     language: Language,
   ) {
     // 페이지네이션 정보 불러오기
-    const [posts, total] = await this.postRepository.getAllForCategory(
-      category,
-      page,
-      take,
-      language,
-    );
+    const [posts, total] =
+      await this.postQueryRepository.getManyWithAuthorByCategory(
+        category,
+        page,
+        take,
+        language,
+      );
     const totalPage = Math.ceil(total / take);
     const nextPage = page < totalPage ? page + 1 : null;
     const prevPage = page > 1 ? page - 1 : null;
@@ -84,7 +103,7 @@ export class PostService {
 
   async findOneForId(id: number) {
     // 게시글 받아오기
-    const post = await this.postRepository.getOneById(id);
+    const post = await this.postQueryRepository.getOneWithAuthorById(id);
     // 첨부파일 확인
     const attachments = await this.postRepository.getAttachmentsByPostId(id);
     if (!post) {
@@ -175,7 +194,7 @@ export class PostService {
   }
 
   async findNotice(language: Language) {
-    const [data] = await this.postRepository.getAllForCategory(
+    const [data] = await this.postQueryRepository.getManyWithAuthorByCategory(
       "notice",
       1,
       10,
@@ -279,7 +298,7 @@ export class PostService {
     page: number,
     limit: number,
   ) {
-    const [posts, total] = await this.postRepository.search(
+    const [posts, total] = await this.postQueryRepository.search(
       target,
       word,
       language,

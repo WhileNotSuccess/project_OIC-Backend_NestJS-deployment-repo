@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   Req,
+  UseGuards,
 } from "@nestjs/common";
 import { CorporationService } from "../application/corporation.service";
 import { CreateCorporationDto } from "../application/dto/create-corporation.dto";
@@ -24,6 +25,7 @@ import {
   ApiQuery,
   ApiResponse,
 } from "@nestjs/swagger";
+import { AdminGuard } from "src/shared/guards/admin.guard";
 
 @Controller("corporation")
 export class CorporationController {
@@ -40,6 +42,7 @@ export class CorporationController {
       message: "생성이 완료되었습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Post("/corporation")
   async createCorporation(@Body() createCorporationDto: CreateCorporationDto) {
     await this.corporationService.createCorporation(createCorporationDto);
@@ -64,6 +67,7 @@ export class CorporationController {
       message: "수정이 완료되었습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Patch("/corporation/:id")
   async updateCorporation(
     @Param("id") id: string,
@@ -88,6 +92,7 @@ export class CorporationController {
       message: "삭제가 완료되었습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Delete("/corporation/:id")
   async removeCorporation(@Param("id") id: string) {
     await this.corporationService.deleteCorporation(+id);
@@ -107,6 +112,7 @@ export class CorporationController {
       message: "생성이 완료되었습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Post("/country")
   async createCountry(@Body() createCountryDto: CreateCountryDto) {
     await this.corporationService.createCountry(createCountryDto);
@@ -131,6 +137,7 @@ export class CorporationController {
       message: "수정이 완료되었습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Patch("/country/:id")
   async updateCountry(
     @Param("id") id: string,
@@ -143,18 +150,19 @@ export class CorporationController {
   }
 
   @ApiOperation({
-    summary: "협약기관 삭제",
+    summary: "나라라 삭제",
   })
   @ApiParam({
     name: "id",
     example: 1,
-    description: "삭제할 협약기관의 아이디",
+    description: "삭제할 나라의 아이디",
   })
   @ApiResponse({
     example: {
       message: "삭제가 완료되었습니다.",
     },
   })
+  @UseGuards(AdminGuard)
   @Delete("/country/:id")
   async removeCountry(@Param("id") id: string) {
     await this.corporationService.deleteCountry(+id);

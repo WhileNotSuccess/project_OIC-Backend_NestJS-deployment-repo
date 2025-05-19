@@ -10,15 +10,18 @@ import { UpdatePostDto } from "../dto/update-post.dto";
 import { toSearchTargetEnum } from "src/common/utils/to-search-target-enum";
 import { MediaServicePort } from "src/media/application/media-service.port";
 import { HtmlParserPort } from "../port/html-parser.port";
+import { PostQueryRepository } from "../query/post-query.repository";
+import { PostWithAuthorDto } from "../dto/post-with-author.dto";
 
 describe("PostService", () => {
   let service: PostService;
   let repository: jest.Mocked<PostRepository>;
+  let queryRepository: jest.Mocked<PostQueryRepository>;
   let media: MediaServicePort;
   let parser: HtmlParserPort;
   // 페이지네이션 결과에서 나올 배열
   let postsPagination: Post[];
-
+  let postsPaginationWithAuthor: PostWithAuthorDto[];
   // 뉴스 결과에서 나올 배열
   let news: News[];
 
@@ -111,6 +114,25 @@ describe("PostService", () => {
         isOwner: jest.fn(),
       },
     ];
+    postsPaginationWithAuthor = [
+      {
+        ...testingPosts[0],
+        userId: 1,
+        createdDate: now,
+        updatedDate: now,
+        id: 1,
+        author: "user",
+      },
+      {
+        ...testingPosts[1],
+        userId: 1,
+        createdDate: now,
+        updatedDate: now,
+        id: 2,
+        author: "user",
+      },
+    ];
+
     // 뉴스 결과 생성
     news = [
       {
@@ -144,15 +166,21 @@ describe("PostService", () => {
         {
           provide: PostRepository,
           useValue: {
-            getOneById: jest.fn(),
             getAttachmentsByPostId: jest.fn(),
             getOneForCategory: jest.fn(),
             create: jest.fn(),
-            getAllForCategory: jest.fn(),
+
             update: jest.fn(),
             findImagesWithPostId: jest.fn(),
             delete: jest.fn(),
             getNews: jest.fn(),
+          },
+        },
+        {
+          provide: PostQueryRepository,
+          useValue: {
+            getOneWithAuthorById: jest.fn(),
+            getManyWithAuthorByCategory: jest.fn(),
             search: jest.fn(),
           },
         },
@@ -171,6 +199,7 @@ describe("PostService", () => {
     service = module.get<PostService>(PostService);
     repository = module.get(PostRepository);
     media = module.get<MediaServicePort>(MediaServicePort);
+    queryRepository = module.get(PostQueryRepository);
   });
 
   it("should be defined", () => {
@@ -227,8 +256,8 @@ describe("PostService", () => {
     it("get pagination", async () => {
       // 페이지네이션 결과 모킹
       jest
-        .spyOn(repository, "getAllForCategory")
-        .mockResolvedValue([postsPagination, 5]);
+        .spyOn(queryRepository, "getManyWithAuthorByCategory")
+        .mockResolvedValue([postsPaginationWithAuthor, 5]);
 
       // news 카테고리 페이지네이션 호출
       const result = await service.findAll(
@@ -240,7 +269,7 @@ describe("PostService", () => {
 
       // 결과 확인인
       expect(result).toMatchObject({
-        data: postsPagination,
+        data: postsPaginationWithAuthor,
         currentPage: 1,
         prevPage: null,
         nextPage: 2,
@@ -266,15 +295,15 @@ describe("PostService", () => {
 
       // post 결과 모킹
       jest
-        .spyOn(repository, "getOneById")
-        .mockResolvedValue(postsPagination[0]);
+        .spyOn(queryRepository, "getOneWithAuthorById")
+        .mockResolvedValue(postsPaginationWithAuthor[0]);
 
       // 서비스 호출
       const result = await service.findOneForId(1);
 
       // 결과 확인
       expect(result).toMatchObject({
-        post: postsPagination[0],
+        post: postsPaginationWithAuthor[0],
         files: getAttachmentsByPostIdResult,
       });
     });
@@ -370,66 +399,71 @@ describe("PostService", () => {
   describe("should get notice", () => {
     it("findNotice", async () => {
       const now = new Date();
-      const notices: Post[] = [
-        new Post(
+      const notices: PostWithAuthorDto[] = [
+        new PostWithAuthorDto(
           "안녕",
           `<p>감사해요</p>
     <p>잘있어요</p>
     <p>다시만나요</p>
     <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
     `,
+          "user",
           1,
           "notice",
           toLanguageEnum("korean"),
           now,
           now,
         ),
-        new Post(
+        new PostWithAuthorDto(
           "안녕1",
           `<p>감사해요</p>
     <p>잘있어요</p>
     <p>다시만나요</p>
     <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
     `,
+          "user",
           1,
           "notice",
           toLanguageEnum("korean"),
           now,
           now,
         ),
-        new Post(
+        new PostWithAuthorDto(
           "안녕2",
           `<p>감사해요</p>
     <p>잘있어요</p>
     <p>다시만나요</p>
     <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
     `,
+          "user",
           1,
           "notice",
           toLanguageEnum("korean"),
           now,
           now,
         ),
-        new Post(
+        new PostWithAuthorDto(
           "안녕3",
           `<p>감사해요</p>
     <p>잘있어요</p>
     <p>다시만나요</p>
     <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
     `,
+          "user",
           1,
           "notice",
           toLanguageEnum("korean"),
           now,
           now,
         ),
-        new Post(
+        new PostWithAuthorDto(
           "안녕4",
           `<p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
           <p>감사해요</p>
     <p>잘있어요</p>
     <p>다시만나요</p>
     `,
+          "user",
           1,
           "notice",
           toLanguageEnum("korean"),
@@ -440,7 +474,7 @@ describe("PostService", () => {
 
       // news 결과 모킹
       jest
-        .spyOn(repository, "getAllForCategory")
+        .spyOn(queryRepository, "getManyWithAuthorByCategory")
         .mockResolvedValue([notices, 5]);
       jest
         .spyOn(parser, "extractFirstParagraphText")
@@ -448,7 +482,7 @@ describe("PostService", () => {
       const result = await service.findNotice(toLanguageEnum("korean"));
 
       // 파리미터 확인
-      expect(repository.getAllForCategory).toHaveBeenCalledWith(
+      expect(queryRepository.getManyWithAuthorByCategory).toHaveBeenCalledWith(
         "notice",
         1,
         10,
@@ -575,7 +609,9 @@ describe("PostService", () => {
   describe("should search post", () => {
     it("search", async () => {
       // 검색 결과 모킹
-      jest.spyOn(repository, "search").mockResolvedValue([postsPagination, 5]);
+      jest
+        .spyOn(queryRepository, "search")
+        .mockResolvedValue([postsPaginationWithAuthor, 5]);
 
       // 서비스 호출
       const result = await service.search(
@@ -588,7 +624,7 @@ describe("PostService", () => {
       );
       // 결과 확인
       expect(result).toMatchObject({
-        data: postsPagination,
+        data: postsPaginationWithAuthor,
         currentPage: 2,
         prevPage: 1,
         nextPage: 3,
@@ -596,7 +632,7 @@ describe("PostService", () => {
       });
 
       // 파라미터 확인
-      expect(repository.search).toHaveBeenCalledWith(
+      expect(queryRepository.search).toHaveBeenCalledWith(
         "author",
         "hello",
         "english",

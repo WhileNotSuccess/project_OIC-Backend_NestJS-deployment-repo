@@ -13,9 +13,15 @@ import * as cookieParser from "cookie-parser";
 // import { Carousel } from "src/carousel/domain/entities/carousel.entity";
 import * as path from "path";
 import * as fs from "fs";
+import { AuthModule } from "src/auth/auth.module";
+import { UserModule } from "src/users/user.module";
+import { ConfigModule } from "@nestjs/config";
+import { UserOrmEntity } from "src/users/infra/entities/user.entity";
+import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
 
 describe("CarouselController (e2e)", () => {
   let app: INestApplication;
+  let accessToken: string;
   const testfilePath = path.join(
     __dirname,
     "__fixtures__",
@@ -35,6 +41,9 @@ describe("CarouselController (e2e)", () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+        }),
         // TypeOrmModule.forRoot({
         //   type: "sqlite",
         //   database: ":memory:",
@@ -50,15 +59,42 @@ describe("CarouselController (e2e)", () => {
           database: process.env.TEST_DB_DATABASE,
           synchronize: true,
           dropSchema: true, // 테스트 후 테이블 초기화
-          entities: [CarouselOrmEntity],
+          entities: [CarouselOrmEntity, UserOrmEntity, AuthOrmEntity],
         }),
         CarouselModule,
+        AuthModule,
+        UserModule,
       ],
     }).compile();
     app = moduleFixture.createNestApplication();
     //테스트 서버에 cookieParser 적용
     app.use(cookieParser());
     await app.init();
+
+    //테스트 서버에 쿠키 설정
+    const server = app.getHttpServer() as unknown as Parameters<
+      typeof request
+    >[0];
+    await request(server).post("/auth/register").send({
+      name: "관리자",
+      email: "user@gmail.com",
+      password: "12345678",
+    });
+    const res = await request(server)
+      .post("/auth/login")
+      .send({
+        email: "user@gmail.com",
+        password: "12345678",
+      })
+      .redirects(0);
+
+    const setCookie = res.headers["set-cookie"] as unknown as string[];
+    const token = setCookie[0].match(/access_token=([^;]*)/);
+    if (token) {
+      accessToken = token[1];
+    } else {
+      throw new Error("access_token not found");
+    }
   });
   afterAll(async () => {
     //e2e 테스트로 생성된 파일의 삭제
@@ -85,6 +121,7 @@ describe("CarouselController (e2e)", () => {
     >[0];
     const createRes = await request(server)
       .post("/carousel")
+      .set("Cookie", [`access_token=${accessToken}`])
       // .send(dto)
       // .attach(첨부파일)를 사용 -> multipart 형식이므로 .send 대신 .field 사용해야함
       .field("koreanPostId", 1)
@@ -111,7 +148,7 @@ describe("CarouselController (e2e)", () => {
     const res = await request(server)
       .get("/carousel")
       // 쿠키 설정
-      .set("Cookie", ["language=korean"])
+      .set("Cookie", ["language=korean", `access_token=${accessToken}`])
       .expect(200);
     const body = res.body as CarouselArrayResponse;
     expect(body.message).toBe("carousel을 불러왔습니다.");
@@ -135,7 +172,10 @@ describe("CarouselController (e2e)", () => {
     const server = app.getHttpServer() as unknown as Parameters<
       typeof request
     >[0];
-    const res = await request(server).get(`/carousel/${createdId}`).expect(200);
+    const res = await request(server)
+      .get(`/carousel/${createdId}`)
+      .set("Cookie", [`access_token=${accessToken}`])
+      .expect(200);
     expect((res.body as CarouselResponse).data.image).toContain(`141735.png`);
   });
 
@@ -146,6 +186,7 @@ describe("CarouselController (e2e)", () => {
 
     const res = await request(server)
       .patch(`/carousel/${createdId}`)
+      .set("Cookie", [`access_token=${accessToken}`])
       .field("koreanTitle", "수정된 한글")
       .expect(200);
 
@@ -155,6 +196,7 @@ describe("CarouselController (e2e)", () => {
     // 수정 됐는지 확인
     const resTest = await request(server)
       .get(`/carousel/${createdId}`)
+      .set("Cookie", [`access_token=${accessToken}`])
       .expect(200);
     const body = resTest.body as CarouselResponse;
     expect(body.data.koreanTitle).toBe("수정된 한글");
@@ -165,8 +207,14 @@ describe("CarouselController (e2e)", () => {
       typeof request
     >[0];
     // 삭제 요청
-    await request(server).delete(`/carousel/${createdId}`).expect(200);
+    await request(server)
+      .delete(`/carousel/${createdId}`)
+      .set("Cookie", [`access_token=${accessToken}`])
+      .expect(200);
     // 확인
-    await request(server).get(`/carousel/${createdId}`).expect(404);
+    await request(server)
+      .get(`/carousel/${createdId}`)
+      .set("Cookie", [`access_token=${accessToken}`])
+      .expect(404);
   });
 });

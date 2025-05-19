@@ -24,6 +24,12 @@ import { RegisterInput } from "src/auth/application/dto/register-input.dto";
 import { AuthGuard } from "src/shared/guards/auth.guard";
 import { changePWDto } from "src/auth/application/dto/change-password.dto";
 import { ChangePasswordUseCase } from "src/auth/application/use-cases/change-password.use-case";
+import {
+  ApiBody,
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiResponse,
+} from "@nestjs/swagger";
 
 @Controller("auth")
 export class AuthController {
@@ -41,12 +47,18 @@ export class AuthController {
     this.frontUrl = this.configService.get("FRONTEND_URL")!;
   }
   //구글 로그인
+  @ApiOperation({
+    summary: "구글 로그인 페이지로 이동, 구글로 회원가입 하는 경우도 사용",
+    description:
+      "이미 구글 연동이나 구글 회원가입을 한 사람이 로그인할때도 사용하고, 구글로 회원가입하고 싶은 사람도 사용하는 엔드포인트",
+  })
   @UseGuards(GoogleAuthGuard)
   @Get("google/login")
   googleLogin() {
     return "googleLogin";
   }
   // 구글 리다이렉트
+  @ApiExcludeEndpoint()
   @UseGuards(GoogleAuthGuard)
   @Get("google/redirect")
   async googleRedirect(@Req() req: Request, @Res() res: Response) {
@@ -64,6 +76,8 @@ export class AuthController {
     res.redirect(`${this.frontUrl}`);
   }
   // 일반 로그인
+  @ApiOperation({ summary: "일반 로그인" })
+  @ApiBody({ type: LoginInput })
   @Post("login")
   async loginWithJwt(@Body() body: LoginInput, @Res() res: Response) {
     const { accessToken } = await this.loginJwt.execute(body);
@@ -77,6 +91,13 @@ export class AuthController {
     res.redirect(`${this.frontUrl}`);
   }
   // 일반 회원가입
+  @ApiOperation({ summary: "일반 회원가입" })
+  @ApiBody({ type: RegisterInput })
+  @ApiResponse({
+    example: {
+      message: "회원가입되었습니다",
+    },
+  })
   @Post("register")
   async registerWithJWT(@Body() body: RegisterInput) {
     await this.createUser.execute({
@@ -87,12 +108,17 @@ export class AuthController {
     return { message: "회원가입되었습니다." };
   }
   // 구글 연동
+  @ApiOperation({
+    summary: "이미 가입된 계정의 구글 연동",
+    description: "회원가입된 계정으로 로그인 후 이 링크로 이동시킬 것",
+  })
   @UseGuards(JwtLinkGuard, GoogleLinkAuthGuard)
   @Get("google/link")
   googleLinkLogin() {
     return "googleLogin";
   }
   // 구글 연동 리다이렉트
+  @ApiExcludeEndpoint()
   @UseGuards(JwtLinkGuard, GoogleLinkAuthGuard)
   @Get("google/link/redirect")
   async googleLinkRedirect(@Req() req: Request, @Res() res: Response) {
@@ -113,6 +139,14 @@ export class AuthController {
   }
   // 비밀번호 변경
   @UseGuards(AuthGuard)
+  @ApiOperation({ summary: "비밀번호 변경" })
+  @ApiBody({ type: changePWDto })
+  @ApiResponse({
+    example: {
+      message: "비밀번호가 변경되었습니다.",
+      result: true,
+    },
+  })
   @Patch("ch-pw")
   async changePassword(@Req() req: Request, @Body() body: changePWDto) {
     const user = req.user;

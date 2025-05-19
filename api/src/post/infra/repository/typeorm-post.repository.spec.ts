@@ -8,6 +8,9 @@ import { UploadAttachmentReturn } from "src/media/domain/upload-attachment";
 import { AttachmentOrmEntity } from "../entities/attachment-orm.entity";
 import { PostImageOrmEntity } from "../entities/post-image-orm.entity";
 import { toSearchTargetEnum } from "src/common/utils/to-search-target-enum";
+import { TypeormPostQueryRepository } from "./typeorm-post-query.repository";
+import { UserOrmEntity } from "src/users/infra/entities/user.entity";
+import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
 
 describe("TypeormPostRepository (Integration)", () => {
   let dataSource: DataSource;
@@ -17,6 +20,7 @@ describe("TypeormPostRepository (Integration)", () => {
   let latestNew: Post;
   let createdNotices: Post[];
   let createdNews: Post[];
+  let queryRepository: TypeormPostQueryRepository;
 
   const createDtoNotice: Partial<Post>[] = [
     {
@@ -173,10 +177,42 @@ describe("TypeormPostRepository (Integration)", () => {
       database: process.env.TEST_DB_DATABASE,
       synchronize: true,
       dropSchema: true, // 테스트 후 테이블 초기화
-      entities: [PostOrmEntity, AttachmentOrmEntity, PostImageOrmEntity],
+      entities: [
+        PostOrmEntity,
+        AttachmentOrmEntity,
+        PostImageOrmEntity,
+        UserOrmEntity,
+        AuthOrmEntity,
+      ],
     });
     await dataSource.initialize();
     repository = new TypeormPostRepository(dataSource);
+    queryRepository = new TypeormPostQueryRepository(dataSource);
+    await dataSource
+      .createQueryBuilder()
+      .insert()
+      .into(UserOrmEntity)
+      .values([
+        {
+          id: 1,
+          email: "user",
+          name: "user",
+        },
+      ])
+      .execute();
+
+    await dataSource
+      .createQueryBuilder()
+      .insert()
+      .into(AuthOrmEntity)
+      .values([
+        {
+          userId: 1,
+          hashedPassword: "hashedPassword",
+          googleId: "googleId",
+        },
+      ])
+      .execute();
   });
 
   afterAll(async () => {
@@ -220,8 +256,9 @@ describe("TypeormPostRepository (Integration)", () => {
   });
 
   it("getOneById", async () => {
-    const result = await repository.getOneById(1);
-    expect(result).toMatchObject(postId1);
+    const result = await queryRepository.getOneWithAuthorById(1);
+
+    expect(result).toMatchObject({ ...postId1, author: "user" });
   });
 
   it("getAttachmentsByPostId", async () => {
@@ -248,7 +285,7 @@ describe("TypeormPostRepository (Integration)", () => {
   });
 
   it("getAllForCategory", async () => {
-    const notices = await repository.getAllForCategory(
+    const notices = await queryRepository.getManyWithAuthorByCategory(
       "notice",
       2,
       1,
@@ -301,7 +338,7 @@ describe("TypeormPostRepository (Integration)", () => {
     );
 
     //content 확인
-    const resultContent = await repository.getOneById(1);
+    const resultContent = await queryRepository.getOneWithAuthorById(1);
     expect(resultContent?.content).toEqual(`<p>감사해요</p>
       <p>잘있어요</p>
       <p>다시만나요</p>
@@ -340,7 +377,7 @@ describe("TypeormPostRepository (Integration)", () => {
   it("delete", async () => {
     const result = await repository.delete(1);
     expect(result).toBe(true);
-    const post = await repository.getOneById(1);
+    const post = await queryRepository.getOneWithAuthorById(1);
     const image = await repository.findImagesWithPostId(1);
     const attachment = await repository.getAttachmentsByPostId(1);
     expect(post).toBeFalsy();
@@ -368,7 +405,7 @@ describe("TypeormPostRepository (Integration)", () => {
   });
 
   it("search", async () => {
-    const result = await repository.search(
+    const result = await queryRepository.search(
       toSearchTargetEnum("title"),
       "3",
       toLanguageEnum("korean"),

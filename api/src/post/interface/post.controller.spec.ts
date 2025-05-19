@@ -9,6 +9,7 @@ import { CreatePostDto } from "../application/dto/create-post.dto";
 import { UpdatePostDto } from "../application/dto/update-post.dto";
 import { Readable } from "typeorm/platform/PlatformTools";
 import { SearchPostQueryDto } from "./dto/search-post-query.dto";
+import { CustomRequest } from "src/common/types/custom-request";
 
 describe("PostController", () => {
   let controller: PostController;
@@ -27,6 +28,15 @@ describe("PostController", () => {
   const mockRequest = {
     cookies: { language: "korean" },
   } as unknown as RequestWithCookies;
+  const mockRequestWithUser = {
+    cookies: { language: "korean" },
+    user: {
+      id: 1,
+      name: "name",
+      email: "email",
+      admin: true,
+    },
+  } as unknown as CustomRequest;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PostController],
@@ -45,6 +55,7 @@ describe("PostController", () => {
             search: jest.fn(),
             uploadImage: jest.fn(),
             findNotice: jest.fn(),
+            checkPostOwner: jest.fn(),
           },
         },
       ],
@@ -85,9 +96,9 @@ describe("PostController", () => {
     });
   });
   describe("search", () => {
-    it("should return search result", async () => {
+    it("should return search result`", async () => {
       service.search.mockResolvedValue({
-        data: [dummyPost],
+        data: [{ ...dummyPost, author: "user" }],
         currentPage: 2,
         prevPage: 1,
         nextPage: 3,
@@ -191,7 +202,7 @@ describe("PostController", () => {
         category: "korean",
       };
       const files: Express.Multer.File[] = [];
-      const result = await controller.create(dto, files);
+      const result = await controller.create(dto, files, mockRequestWithUser);
       expect(service.create).toHaveBeenCalledWith(dto, 1, []);
       expect(result).toMatchObject({
         message: "게시글이 작성되었습니다.",
@@ -201,7 +212,7 @@ describe("PostController", () => {
   describe("findAll", () => {
     it("should return pagination", async () => {
       service.findAll.mockResolvedValue({
-        data: [dummyPost],
+        data: [{ ...dummyPost, author: "user" }],
         currentPage: 2,
         prevPage: 1,
         nextPage: 3,
@@ -232,7 +243,7 @@ describe("PostController", () => {
   describe("findOneForId", () => {
     it("should return one post", async () => {
       service.findOneForId.mockResolvedValue({
-        post: dummyPost,
+        post: { ...dummyPost, author: "user" },
         files: [],
       });
       const result = await controller.findOneForId("1");
@@ -270,7 +281,8 @@ describe("PostController", () => {
         category: "korean",
         deleteFilePath: "[]",
       };
-      const result = await controller.update("1", dto, []);
+      jest.spyOn(service, "checkPostOwner").mockResolvedValue(true);
+      const result = await controller.update("1", dto, [], mockRequestWithUser);
       expect(service.update).toHaveBeenCalledWith(1, dto, []);
       expect(result).toMatchObject({
         message: "수정이 완료되었습니다.",
@@ -280,7 +292,8 @@ describe("PostController", () => {
   describe("remove", () => {
     it("should remove post", async () => {
       service.remove.mockResolvedValue(true);
-      const result = await controller.remove("1");
+      jest.spyOn(service, "checkPostOwner").mockResolvedValue(true);
+      const result = await controller.remove("1", mockRequestWithUser);
       expect(service.remove).toHaveBeenCalledWith(1);
       expect(result).toMatchObject({
         message: "삭제가 완료되었습니다.",

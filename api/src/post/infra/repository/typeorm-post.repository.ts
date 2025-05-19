@@ -5,7 +5,6 @@ import { PostOrmEntity } from "../entities/post-orm.entity";
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { imageMetadata } from "src/media/domain/image-metadata";
 import { News } from "src/post/domain/types/news";
-import { SearchTarget } from "src/post/domain/types/search-target.enum";
 import { UploadAttachmentReturn } from "src/media/domain/upload-attachment";
 import { AttachmentOrmEntity } from "../entities/attachment-orm.entity";
 import {
@@ -15,7 +14,6 @@ import {
 } from "../mapper/to-domain";
 import { transactional } from "src/common/utils/transaction-helper";
 import { PostImageOrmEntity } from "../entities/post-image-orm.entity";
-import { Language } from "src/common/types/language";
 import { PostImage } from "src/post/domain/entities/post-image.entity";
 import { Attachment } from "src/post/domain/entities/attachment.entity";
 
@@ -23,10 +21,6 @@ import { Attachment } from "src/post/domain/entities/attachment.entity";
 export class TypeormPostRepository extends PostRepository {
   constructor(private readonly dataSource: DataSource) {
     super();
-  }
-  async getOneById(id: number): Promise<Post | null> {
-    const orm = await this.dataSource.manager.findOneBy(PostOrmEntity, { id });
-    return orm ? toDomainPost(orm) : null;
   }
 
   async getAttachmentsByPostId(postId: number): Promise<Attachment[]> {
@@ -92,24 +86,6 @@ export class TypeormPostRepository extends PostRepository {
       );
     }
     return result;
-  }
-  async getAllForCategory(
-    category: string,
-    page: number,
-    take: number,
-    language: Language,
-  ): Promise<[Post[], number]> {
-    const [rows, total] = await this.dataSource.manager.findAndCount(
-      PostOrmEntity,
-      {
-        where: { category, language },
-        skip: (page - 1) * take,
-        take,
-        order: { updatedDate: "DESC" },
-      },
-    );
-
-    return [rows.map(toDomainPost), total];
   }
 
   async update(
@@ -191,28 +167,5 @@ export class TypeormPostRepository extends PostRepository {
     });
 
     return news;
-  }
-
-  async search(
-    target: SearchTarget,
-    word: string,
-    language: Language,
-    category: string,
-    page: number,
-    limit: number,
-  ): Promise<[Post[], number]> {
-    const [rows, total] = await this.dataSource
-      .createQueryBuilder()
-      .select("p")
-      .from(PostOrmEntity, "p")
-      .where(`p.${target} LIKE :word`, { word: `%${word}%` })
-      .andWhere(`p.language = :language`, { language })
-      .andWhere(`p.category = :category`, { category })
-      .orderBy("p.updatedDate", "DESC")
-      .skip((page - 1) * limit)
-      .take(limit)
-      .getManyAndCount();
-
-    return [rows.map(toDomainPost), total];
   }
 }
