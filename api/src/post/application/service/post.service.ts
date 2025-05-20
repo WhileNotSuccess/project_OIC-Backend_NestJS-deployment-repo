@@ -12,6 +12,8 @@ import { Language } from "src/common/types/language";
 import { MediaServicePort } from "src/media/application/media-service.port";
 import { HtmlParserPort } from "../port/html-parser.port";
 import { PostQueryRepository } from "../query/post-query.repository";
+import { EventBus } from "@nestjs/cqrs";
+import { NewNewsEvent } from "src/post/domain/events/new-news.event";
 @Injectable()
 export class PostService {
   constructor(
@@ -19,6 +21,7 @@ export class PostService {
     private readonly MediaServicePort: MediaServicePort,
     private readonly htmlParser: HtmlParserPort,
     private readonly postQueryRepository: PostQueryRepository,
+    private readonly eventBus: EventBus,
   ) {}
 
   async checkPostOwner(
@@ -64,7 +67,7 @@ export class PostService {
       ),
     );
     // 이미지, 첨부파일의 메타데이터와 포스트를 전부 각각의 테이블에 저장
-    await this.postRepository.create(
+    const result = await this.postRepository.create(
       {
         ...createPostDto,
         userId: userId,
@@ -72,6 +75,10 @@ export class PostService {
       imageData,
       filesData,
     );
+    // 게시글 생성 후 이벤트 발생
+    if (result.category === "news" && result.id) {
+      this.eventBus.publish(new NewNewsEvent(createPostDto.title, result.id));
+    }
   }
 
   async findAll(

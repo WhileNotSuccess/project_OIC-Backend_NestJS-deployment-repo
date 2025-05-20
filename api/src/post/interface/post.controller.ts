@@ -256,14 +256,15 @@ export class PostController {
     example: { message: "게시글이 작성되었습니다." },
   })
   @UseInterceptors(FilesInterceptor("files", 10))
-  @UseGuards(AdminGuard)
+  //@UseGuards(AdminGuard)
   @Post()
   async create(
     @Body() createPostDto: CreatePostDto,
     @UploadedFiles() files: Express.Multer.File[],
-    @Req() req: CustomRequest,
+    //@Req() req: CustomRequest,
   ) {
-    await this.postService.create(createPostDto, req.user.id, files);
+    //await this.postService.create(createPostDto, req.user.id, files);
+    await this.postService.create(createPostDto, 1, files);
     return {
       message: "게시글이 작성되었습니다.",
     };

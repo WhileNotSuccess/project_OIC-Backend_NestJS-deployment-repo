@@ -26,6 +26,8 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - JWT_TEST_SECRET=${JWT_TEST_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
+      - NAVER_BAND_ACCESS_TOKEN=${NAVER_BAND_ACCESS_TOKEN}
+      - BAND_KEY=${BAND_KEY}
     ports:
       - "3031:3000"
     volumes:
