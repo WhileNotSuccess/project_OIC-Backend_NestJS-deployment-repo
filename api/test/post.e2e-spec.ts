@@ -447,7 +447,7 @@ describe("PostController (e2e)", () => {
       .field(
         "content",
         `<p>감사해요</p>
-<p>잘있어요</p>
+<p>잘있어</p>
 <p>다시만나요</p>
 <img src="http://localhost:3000/files/post/filename1.png" alt="" width="190" height="162">
 <img src="http://localhost:3000/files/post/filename6.png" alt="" width="190" height="162">
@@ -463,7 +463,7 @@ describe("PostController (e2e)", () => {
     const test = await request(server).get("/post/one/id/1").expect(200);
     const testBody = test.body as PostOneResponse;
     expect(testBody.data.content).toBe(`<p>감사해요</p>
-<p>잘있어요</p>
+<p>잘있어</p>
 <p>다시만나요</p>
 <img src="http://localhost:3000/files/post/filename1.png" alt="" width="190" height="162">
 <img src="http://localhost:3000/files/post/filename6.png" alt="" width="190" height="162">
