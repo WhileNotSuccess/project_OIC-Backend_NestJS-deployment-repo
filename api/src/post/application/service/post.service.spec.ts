@@ -11,7 +11,7 @@ import { toSearchTargetEnum } from "src/common/utils/to-search-target-enum";
 import { MediaServicePort } from "src/media/application/media-service.port";
 import { HtmlParserPort } from "../port/html-parser.port";
 import { PostQueryRepository } from "../query/post-query.repository";
-import { PostWithAuthorDto } from "../dto/post-with-author.dto";
+import { PostWithAuthor } from "../dto/post-with-user.dto";
 
 describe("PostService", () => {
   let service: PostService;
@@ -21,7 +21,7 @@ describe("PostService", () => {
   let parser: HtmlParserPort;
   // 페이지네이션 결과에서 나올 배열
   let postsPagination: Post[];
-  let postsPaginationWithAuthor: PostWithAuthorDto[];
+  let postsPaginationWithAuthor: PostWithAuthor[];
   // 뉴스 결과에서 나올 배열
   let news: News[];
 
@@ -402,77 +402,82 @@ describe("PostService", () => {
   describe("should get notice", () => {
     it("findNotice", async () => {
       const now = new Date();
-      const notices: PostWithAuthorDto[] = [
-        new PostWithAuthorDto(
-          "안녕",
-          `<p>감사해요</p>
+      const notices: PostWithAuthor[] = [
+        {
+          id: 1,
+          title: "안녕",
+          content: `<p>감사해요</p>
     <p>잘있어요</p>
     <p>다시만나요</p>
     <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
     `,
-          "user",
-          1,
-          "notice",
-          toLanguageEnum("korean"),
-          now,
-          now,
-        ),
-        new PostWithAuthorDto(
-          "안녕1",
-          `<p>감사해요</p>
+          author: "user",
+          userId: 1,
+          category: "notice",
+          language: toLanguageEnum("korean"),
+          createdDate: now,
+          updatedDate: now,
+        },
+        {
+          id: 2,
+          title: "안녕1",
+          content: `<p>감사해요</p>
     <p>잘있어요</p>
     <p>다시만나요</p>
     <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
     `,
-          "user",
-          1,
-          "notice",
-          toLanguageEnum("korean"),
-          now,
-          now,
-        ),
-        new PostWithAuthorDto(
-          "안녕2",
-          `<p>감사해요</p>
+          author: "user",
+          userId: 1,
+          category: "notice",
+          language: toLanguageEnum("korean"),
+          createdDate: now,
+          updatedDate: now,
+        },
+        {
+          id: 3,
+          title: "안녕2",
+          content: `<p>감사해요</p>
     <p>잘있어요</p>
     <p>다시만나요</p>
     <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
     `,
-          "user",
-          1,
-          "notice",
-          toLanguageEnum("korean"),
-          now,
-          now,
-        ),
-        new PostWithAuthorDto(
-          "안녕3",
-          `<p>감사해요</p>
+          author: "user",
+          userId: 1,
+          category: "notice",
+          language: toLanguageEnum("korean"),
+          createdDate: now,
+          updatedDate: now,
+        },
+        {
+          id: 4,
+          title: "안녕3",
+          content: `<p>감사해요</p>
     <p>잘있어요</p>
     <p>다시만나요</p>
     <p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
     `,
-          "user",
-          1,
-          "notice",
-          toLanguageEnum("korean"),
-          now,
-          now,
-        ),
-        new PostWithAuthorDto(
-          "안녕4",
-          `<p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
+          author: "user",
+          userId: 1,
+          category: "notice",
+          language: toLanguageEnum("korean"),
+          createdDate: now,
+          updatedDate: now,
+        },
+        {
+          id: 5,
+          title: "안녕4",
+          content: `<p><img src="http://localhost:3000/files/post/20250411-102416_aefe0ae0-1673-11f0-be4a-8b8c33409480.png" alt="" width="190" height="162"></p>
           <p>감사해요</p>
     <p>잘있어요</p>
     <p>다시만나요</p>
     `,
-          "user",
-          1,
-          "notice",
-          toLanguageEnum("korean"),
-          now,
-          now,
-        ),
+          author: "user",
+          userId: 1,
+          category: "notice",
+          language: toLanguageEnum("korean"),
+          createdDate: now,
+          updatedDate: now,
+        },
       ];
 
       // news 결과 모킹

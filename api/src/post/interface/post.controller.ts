@@ -33,6 +33,7 @@ import { toLanguageEnum } from "src/common/utils/to-language-enum";
 import { SearchPostQueryDto } from "./dto/search-post-query.dto";
 import { AuthGuard } from "src/shared/guards/auth.guard";
 import { CustomRequest } from "src/common/types/custom-request";
+import { AdminGuard } from "src/shared/guards/admin.guard";
 
 @Controller("post")
 export class PostController {
@@ -145,6 +146,7 @@ export class PostController {
           createdDate: "createdDate",
           updatedDate: "updatedDate",
           id: 1,
+          author: "author",
         },
       ],
       currentPage: 2,
@@ -254,7 +256,7 @@ export class PostController {
     example: { message: "게시글이 작성되었습니다." },
   })
   @UseInterceptors(FilesInterceptor("files", 10))
-  @UseGuards(AuthGuard)
+  @UseGuards(AdminGuard)
   @Post()
   async create(
     @Body() createPostDto: CreatePostDto,
@@ -351,9 +353,9 @@ export class PostController {
         {
           id: 1,
           postId: 1,
-          filename: "20250204-154557_인천대학교 한국어 교육센터 메뉴 구성.hwp",
-          fileType: "application/octet-stream",
-          fileSize: 20234,
+          originalName:
+            "20250204-154557_인천대학교 한국어 교육센터 메뉴 구성.hwp",
+          url: "/attachments/random-uuid-name.hwp",
         },
       ],
     },
@@ -385,7 +387,6 @@ export class PostController {
         id: 1,
         title: "asdf",
         content: "<p>asdf</p>",
-        author: "admin",
         userId: 1,
         category: "notice",
         createdDate: "2025-01-31T15:12:47.145Z",

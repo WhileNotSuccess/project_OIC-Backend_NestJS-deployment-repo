@@ -1,35 +1,23 @@
 import { Injectable } from "@nestjs/common";
 import { Language } from "src/common/types/language";
-import { PostWithAuthorDto } from "src/post/application/dto/post-with-author.dto";
 import { PostQueryRepository } from "src/post/application/query/post-query.repository";
 import { SearchTarget } from "src/post/domain/types/search-target.enum";
 import { DataSource } from "typeorm";
 import { PostOrmEntity } from "../entities/post-orm.entity";
 import { UserOrmEntity } from "src/users/infra/entities/user.entity";
 import { toLanguageEnum } from "src/common/utils/to-language-enum";
+import {
+  PostWithAuthor,
+  PostWithUserDto,
+} from "src/post/application/dto/post-with-user.dto";
 
-type PostWithAuthor = {
-  id: number;
-  title: string;
-  content: string;
-  userId: number;
-  category: string;
-  language: string;
-  createdDate: string;
-  updatedDate: string;
-  user: {
-    name: string;
-  };
-};
 @Injectable()
 export class TypeormPostQueryRepository extends PostQueryRepository {
   constructor(private readonly dataSource: DataSource) {
     super();
   }
-  async getOneWithAuthorById(
-    postId: number,
-  ): Promise<PostWithAuthorDto | null> {
-    const post: PostWithAuthorDto[] = (await this.dataSource.manager
+  async getOneWithAuthorById(postId: number): Promise<PostWithAuthor | null> {
+    const post = (await this.dataSource.manager
       .createQueryBuilder()
       .from(PostOrmEntity, "post")
       .leftJoin(UserOrmEntity, "user", "post.userId = user.id")
@@ -37,7 +25,7 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
       .select(
         "post.id AS id, post.title AS title, post.content AS content, post.category AS category, post.language AS language, post.createdDate AS createdDate, post.updatedDate AS updatedDate, user.name AS author, post.userId AS userId",
       )
-      .getRawMany()) as unknown as PostWithAuthorDto[];
+      .getRawMany()) as unknown as PostWithAuthor[];
 
     if (post.length === 0) return null;
     return {
@@ -46,9 +34,9 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
       author: post[0].author,
       userId: post[0].userId,
       category: post[0].category,
-      language: post[0].language,
-      createdDate: post[0].createdDate,
-      updatedDate: post[0].updatedDate,
+      language: toLanguageEnum(post[0].language),
+      createdDate: new Date(post[0].createdDate),
+      updatedDate: new Date(post[0].updatedDate),
       id: post[0].id,
     };
   }
@@ -58,7 +46,7 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
     page: number,
     take: number,
     language: Language,
-  ): Promise<[PostWithAuthorDto[], number]> {
+  ): Promise<[PostWithAuthor[], number]> {
     const [post, total] = (await this.dataSource.manager
       .createQueryBuilder(PostOrmEntity, "post")
       .leftJoinAndSelect("post.user", "user")
@@ -67,7 +55,7 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
       .take(take)
       .skip((page - 1) * take)
       .orderBy("post.updatedDate", "DESC")
-      .getManyAndCount()) as unknown as [PostWithAuthor[], number];
+      .getManyAndCount()) as unknown as [PostWithUserDto[], number];
     if (post.length === 0) return [[], 0];
 
     return [
@@ -93,7 +81,7 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
     category: string,
     page: number,
     limit: number,
-  ): Promise<[PostWithAuthorDto[], number]> {
+  ): Promise<[PostWithAuthor[], number]> {
     const [post, total] = (await this.dataSource.manager
       .createQueryBuilder(PostOrmEntity, "post")
       .leftJoinAndSelect("post.user", "user")
@@ -108,7 +96,7 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
       .take(limit)
       .skip((page - 1) * limit)
       .orderBy("post.updatedDate", "DESC")
-      .getManyAndCount()) as unknown as [PostWithAuthor[], number];
+      .getManyAndCount()) as unknown as [PostWithUserDto[], number];
 
     if (post.length === 0) return [[], 0];
 

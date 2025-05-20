@@ -98,7 +98,7 @@ describe("PostController", () => {
   describe("search", () => {
     it("should return search result`", async () => {
       service.search.mockResolvedValue({
-        data: [{ ...dummyPost, author: "user" }],
+        data: [{ ...dummyPost, author: "user", id: 1 }],
         currentPage: 2,
         prevPage: 1,
         nextPage: 3,
@@ -213,7 +213,7 @@ describe("PostController", () => {
   describe("findAll", () => {
     it("should return pagination", async () => {
       service.findAll.mockResolvedValue({
-        data: [{ ...dummyPost, author: "user" }],
+        data: [{ ...dummyPost, author: "user", id: 1 }],
         currentPage: 2,
         prevPage: 1,
         nextPage: 3,
@@ -244,7 +244,7 @@ describe("PostController", () => {
   describe("findOneForId", () => {
     it("should return one post", async () => {
       service.findOneForId.mockResolvedValue({
-        post: { ...dummyPost, author: "user" },
+        post: { ...dummyPost, author: "user", id: 1 },
         files: [],
       });
       const result = await controller.findOneForId("1");

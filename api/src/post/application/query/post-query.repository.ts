@@ -1,18 +1,16 @@
 import { Language } from "src/common/types/language";
-import { PostWithAuthorDto } from "../dto/post-with-author.dto";
 import { SearchTarget } from "src/post/domain/types/search-target.enum";
+import { PostWithAuthor } from "../dto/post-with-user.dto";
 
 export abstract class PostQueryRepository {
-  abstract getOneWithAuthorById(
-    postId: number,
-  ): Promise<PostWithAuthorDto | null>;
+  abstract getOneWithAuthorById(postId: number): Promise<PostWithAuthor | null>;
 
   abstract getManyWithAuthorByCategory(
     category: string,
     page: number,
     take: number,
     language: Language,
-  ): Promise<[PostWithAuthorDto[], number]>;
+  ): Promise<[PostWithAuthor[], number]>;
 
   abstract search(
     target: SearchTarget,
@@ -21,5 +19,5 @@ export abstract class PostQueryRepository {
     category: string,
     page: number,
     limit: number,
-  ): Promise<[PostWithAuthorDto[], number]>;
+  ): Promise<[PostWithAuthor[], number]>;
 }
