@@ -31,4 +31,5 @@ export abstract class PostRepository {
   abstract findImagesWithPostId(postId: number): Promise<PostImage[]>;
   abstract delete(id: number): Promise<boolean>;
   abstract getNews(language: Language): Promise<News[]>;
+  abstract getFilenames(): Promise<string[]>;
 }
