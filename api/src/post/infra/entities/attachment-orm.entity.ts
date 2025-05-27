@@ -13,9 +13,9 @@ export class AttachmentOrmEntity {
   id: number;
   @Column()
   postId: number;
-  @Column({ length: 150 })
+  @Column()
   url: string;
-  @Column({ length: 100 })
+  @Column()
   originalName: string;
   @ManyToOne(() => PostOrmEntity, (post) => post.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "postId" })
