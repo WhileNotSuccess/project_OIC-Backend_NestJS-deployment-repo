@@ -1,0 +1,11 @@
+source /sqls/db_auth.sql                 
+source /sqls/db_corporation_orm_entity.sql  
+source /sqls/db_migrations.sql             
+source /sqls/db_post_orm_entity.sql          
+source /sqls/db_staff_orm_entity.sql
+source /sqls/db_attachment_orm_entity.sql  
+source /sqls/db_carousel_orm_entity.sql  
+source /sqls/db_country_orm_entity.sql      
+source /sqls/db_post_image_orm_entity.sql  
+source /sqls/db_pride_of_yju_orm_entity.sql  
+source /sqls/db_user.sql

@@ -37,6 +37,7 @@ describe("CorporationController", () => {
             deleteCountry: jest.fn(),
             getAllCountry: jest.fn(),
             getCorporationByCountry: jest.fn(),
+            countCorporationAndCountry: jest.fn(),
           },
         },
       ],
@@ -61,7 +62,18 @@ describe("CorporationController", () => {
     });
     expect(service.createCorporation).toHaveBeenCalledWith(corporationDto);
   });
-
+  it("count", async () => {
+    jest.spyOn(service, "countCorporationAndCountry").mockResolvedValue([5, 4]);
+    const result = await controller.countCorporationAndCountry();
+    expect(result).toMatchObject({
+      message: "협약기관, 국가 수를 조회했습니다.",
+      data: {
+        corporationCount: 5,
+        countryCount: 4,
+      },
+    });
+    expect(service.countCorporationAndCountry).toHaveBeenCalled();
+  });
   it("updateCorporation", async () => {
     jest.spyOn(service, "updateCorporation").mockResolvedValue({
       ...corporationDto,
