@@ -126,7 +126,7 @@ export class TypeormPostRepository extends PostRepository {
       await Promise.all(
         deleteFilePath.map(async (item) => {
           return await queryRunner.manager.delete(AttachmentOrmEntity, {
-            url: item,
+            originalName: item,
           });
         }),
       );
