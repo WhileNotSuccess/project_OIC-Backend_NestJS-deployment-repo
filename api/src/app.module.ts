@@ -27,6 +27,7 @@ import { AuthOrmEntity } from "./auth/infra/entities/auth.entity";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./users/user.module";
 import { CommonModule } from "./common/common.module";
+import { BatchModule } from "./batch/batch.module";
 
 @Module({
   imports: [
@@ -115,6 +116,7 @@ import { CommonModule } from "./common/common.module";
     AuthModule,
     UserModule,
     CommonModule,
+    BatchModule,
   ],
   controllers: [AppController],
   providers: [

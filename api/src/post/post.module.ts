@@ -10,6 +10,7 @@ import { PostQueryRepository } from "./application/query/post-query.repository";
 import { TypeormPostQueryRepository } from "./infra/repository/typeorm-post-query.repository";
 
 @Module({
+  exports: [PostRepository],
   imports: [MediaModule],
   controllers: [PostController],
   providers: [
