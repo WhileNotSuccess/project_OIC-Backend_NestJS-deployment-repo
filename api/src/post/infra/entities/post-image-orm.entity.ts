@@ -13,7 +13,7 @@ export class PostImageOrmEntity {
   id: number;
   @Column()
   postId: number;
-  @Column({ length: 100 })
+  @Column()
   filename: string;
   @Column()
   fileSize: number;
