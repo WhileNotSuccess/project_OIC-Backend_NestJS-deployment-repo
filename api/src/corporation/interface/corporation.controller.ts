@@ -32,6 +32,31 @@ export class CorporationController {
   constructor(private readonly corporationService: CorporationService) {}
 
   @ApiOperation({
+    summary: "협약기관, 국가 수 조회",
+  })
+  @ApiResponse({
+    example: {
+      message: "협약기관, 국가 수를 조회했습니다.",
+      data: {
+        corporationCount: 10,
+        countryCount: 5,
+      },
+    },
+  })
+  @Get("/count")
+  async countCorporationAndCountry() {
+    const [corporationCount, countryCount] =
+      await this.corporationService.countCorporationAndCountry();
+    return {
+      message: "협약기관, 국가 수를 조회했습니다.",
+      data: {
+        corporationCount,
+        countryCount,
+      },
+    };
+  }
+
+  @ApiOperation({
     summary: "협약기관 생성",
   })
   @ApiBody({

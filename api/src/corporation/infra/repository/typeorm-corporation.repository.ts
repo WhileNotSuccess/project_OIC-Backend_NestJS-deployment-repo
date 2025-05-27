@@ -16,6 +16,14 @@ export class TypeormCorporationRepository extends CorporationRepository {
   constructor(private readonly dataSource: DataSource) {
     super();
   }
+  async countCountry(): Promise<number> {
+    const result = await this.dataSource.manager.count(CountryOrmEntity);
+    return result;
+  }
+  async countCorporation(): Promise<number> {
+    const result = await this.dataSource.manager.count(CorporationOrmEntity);
+    return result;
+  }
   async createCorporation(dto: Partial<Corporation>): Promise<Corporation> {
     const result = await transactional<CorporationOrmEntity>(
       this.dataSource,

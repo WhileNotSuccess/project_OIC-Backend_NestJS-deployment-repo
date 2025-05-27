@@ -158,7 +158,14 @@ describe("TypeormPostRepository (Integration)", () => {
       }
     });
   });
-
+  it("countCountry", async () => {
+    const result = await repository.countCountry();
+    expect(result).toBe(3);
+  });
+  it("countCorporation", async () => {
+    const result = await repository.countCorporation();
+    expect(result).toBe(3);
+  });
   it("getCorporationByCountryId", async () => {
     const result = await repository.getCorporationByCountryId(2);
     expect(result).toMatchObject([

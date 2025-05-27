@@ -43,6 +43,8 @@ services:
       - TZ=Asia/Seoul
     ports:
       - "3337:3306"
+    volumes:
+      - ./sqls:/sqls
     networks:
       - backend
 

@@ -10,6 +10,13 @@ import { Country } from "../domain/entities/country.entity";
 @Injectable()
 export class CorporationService {
   constructor(private readonly repository: CorporationRepository) {}
+  async countCorporationAndCountry() {
+    const [corporationCount, countryCount] = await Promise.all([
+      this.repository.countCorporation(),
+      this.repository.countCountry(),
+    ]);
+    return [corporationCount, countryCount];
+  }
   async createCorporation(createCorporationDto: CreateCorporationDto) {
     return await this.repository.createCorporation(createCorporationDto);
   }

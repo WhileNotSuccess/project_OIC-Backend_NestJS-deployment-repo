@@ -37,6 +37,8 @@ describe("CorporationService", () => {
             getCorporationByCountryId: jest.fn(),
             getAllCorporation: jest.fn(),
             getAllCountry: jest.fn(),
+            countCountry: jest.fn(),
+            countCorporation: jest.fn(),
           },
         },
       ],
@@ -68,6 +70,16 @@ describe("CorporationService", () => {
         expect(result).toMatchObject(element);
         expect(repository.createCorporation).toHaveBeenCalledWith(element);
       }
+    });
+  });
+  describe("count", () => {
+    it("corporation and country", async () => {
+      jest.spyOn(repository, "countCorporation").mockResolvedValue(5);
+      jest.spyOn(repository, "countCountry").mockResolvedValue(4);
+      const result = await service.countCorporationAndCountry();
+      expect(result).toEqual([5, 4]);
+      expect(repository.countCorporation).toHaveBeenCalled();
+      expect(repository.countCountry).toHaveBeenCalled();
     });
   });
   describe("update", () => {
