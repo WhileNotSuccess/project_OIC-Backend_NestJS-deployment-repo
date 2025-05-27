@@ -26,7 +26,7 @@ export class FileService extends IFileService {
   }
   deleteFiles(filePath: string[]): string[] {
     // 각 파일 삭제
-    // 삭제 되지 않은 파일이름을 저장
+    // 삭제 되지 않은 파일이름을 반환
     const CheckNotDeleted: string[] = [];
     filePath.forEach((item) => {
       try {
