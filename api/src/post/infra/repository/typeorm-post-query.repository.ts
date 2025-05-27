@@ -16,6 +16,38 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
   constructor(private readonly dataSource: DataSource) {
     super();
   }
+
+  async getManyWithAuthorByCategoryWithoutLanguage(
+    category: string,
+    page: number,
+    take: number,
+  ): Promise<[PostWithAuthor[], number]> {
+    const [post, total] = (await this.dataSource.manager
+      .createQueryBuilder(PostOrmEntity, "post")
+      .leftJoinAndSelect("post.user", "user")
+      .where("post.category = :category", { category })
+      .take(take)
+      .skip((page - 1) * take)
+      .orderBy("post.updatedDate", "DESC")
+      .getManyAndCount()) as unknown as [PostWithUserDto[], number];
+    if (post.length === 0) return [[], 0];
+
+    return [
+      post.map((item) => ({
+        title: item.title,
+        content: item.content,
+        author: item.user.name,
+        userId: item.userId,
+        category: item.category,
+        language: toLanguageEnum(item.language),
+        createdDate: new Date(item.createdDate),
+        updatedDate: new Date(item.updatedDate),
+        id: item.id,
+      })),
+      total,
+    ];
+  }
+
   async getOneWithAuthorById(postId: number): Promise<PostWithAuthor | null> {
     const post = (await this.dataSource.manager
       .createQueryBuilder()

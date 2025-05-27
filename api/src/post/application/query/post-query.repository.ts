@@ -12,6 +12,12 @@ export abstract class PostQueryRepository {
     language: Language,
   ): Promise<[PostWithAuthor[], number]>;
 
+  abstract getManyWithAuthorByCategoryWithoutLanguage(
+    category: string,
+    page: number,
+    take: number,
+  ): Promise<[PostWithAuthor[], number]>;
+
   abstract search(
     target: SearchTarget,
     word: string,

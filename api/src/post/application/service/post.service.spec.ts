@@ -184,6 +184,7 @@ describe("PostService", () => {
           useValue: {
             getOneWithAuthorById: jest.fn(),
             getManyWithAuthorByCategory: jest.fn(),
+            getManyWithAuthorByCategoryWithoutLanguage: jest.fn(),
             search: jest.fn(),
           },
         },
@@ -269,6 +270,27 @@ describe("PostService", () => {
         2,
         toLanguageEnum("korean"),
       );
+
+      // 결과 확인인
+      expect(result).toMatchObject({
+        data: postsPaginationWithAuthor,
+        currentPage: 1,
+        prevPage: null,
+        nextPage: 2,
+        totalPage: 3,
+      });
+    });
+  });
+
+  describe("should get pagination", () => {
+    it("get pagination", async () => {
+      // 페이지네이션 결과 모킹
+      jest
+        .spyOn(queryRepository, "getManyWithAuthorByCategoryWithoutLanguage")
+        .mockResolvedValue([postsPaginationWithAuthor, 5]);
+
+      // news 카테고리 페이지네이션 호출
+      const result = await service.findAllWithoutLanguage("news", 1, 2);
 
       // 결과 확인인
       expect(result).toMatchObject({
