@@ -27,7 +27,7 @@ services:
       - JWT_TEST_SECRET=${JWT_TEST_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
     ports:
-      - "3031:3000"
+      - "3001:3000"
     volumes:
       - ./api:/app
       - ./files:/files
