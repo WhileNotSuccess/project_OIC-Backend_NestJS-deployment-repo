@@ -325,7 +325,7 @@ describe("TypeormPostRepository (Integration)", () => {
       <img src="http://localhost:3000/files/post/filename6.png" alt="" width="190" height="162">`,
     };
     // 기존 파일중 삭제할 파일 (문자열 배열)
-    const deleteFile = ["/attachment/hello1.pdf"];
+    const deleteFile = ["hello1.pdf"];
     // 새로 추가할 이미지 (imageMetaData[])
     const newImage: imageMetadata[] = [
       { size: 1000, filename: "/post/filename6.png" },
