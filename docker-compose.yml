@@ -50,8 +50,13 @@ services:
       - TZ=Asia/Seoul
     ports:
       - "3337:3306"
+    volumes:
+      - db_data:/var/lib/mysql
     networks:
       - backend
 
 networks:
   backend:
+
+volumes:
+  db_data:
