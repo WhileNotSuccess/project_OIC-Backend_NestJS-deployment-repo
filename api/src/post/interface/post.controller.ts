@@ -13,6 +13,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   UseGuards,
+  ForbiddenException,
 } from "@nestjs/common";
 import { PostService } from "../application/service/post.service";
 import { CreatePostDto } from "../application/dto/create-post.dto";
@@ -34,6 +35,7 @@ import { SearchPostQueryDto } from "./dto/search-post-query.dto";
 import { AuthGuard } from "src/shared/guards/auth.guard";
 import { CustomRequest } from "src/common/types/custom-request";
 import { AdminGuard } from "src/shared/guards/admin.guard";
+import { FixOriginalNameInterceptor } from "src/shared/interceptors/fix-originalname.interceptor";
 
 @Controller("post")
 export class PostController {
@@ -255,7 +257,7 @@ export class PostController {
   @ApiResponse({
     example: { message: "게시글이 작성되었습니다." },
   })
-  @UseInterceptors(FilesInterceptor("files", 10))
+  @UseInterceptors(FilesInterceptor("files", 10), FixOriginalNameInterceptor)
   @UseGuards(AdminGuard)
   @Post()
   async create(
@@ -496,7 +498,7 @@ export class PostController {
   @ApiResponse({
     example: { message: "수정이 완료되었습니다." },
   })
-  @UseInterceptors(FilesInterceptor("files", 10))
+  @UseInterceptors(FilesInterceptor("files", 10), FixOriginalNameInterceptor)
   @UseGuards(AuthGuard)
   @Patch(":id")
   async update(
@@ -505,7 +507,14 @@ export class PostController {
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: CustomRequest,
   ) {
-    await this.postService.checkPostOwner(+id, req.user.id, req.user.email);
+    const isOwner = await this.postService.checkPostOwner(
+      +id,
+      req.user.id,
+      req.user.email,
+    );
+    if (!isOwner) {
+      throw new ForbiddenException("해당 포스트를 수정할 권한이 없습니다.");
+    }
     await this.postService.update(+id, updatePostDto, files);
     return {
       message: "수정이 완료되었습니다.",
@@ -518,7 +527,14 @@ export class PostController {
   @Delete(":id")
   @UseGuards(AuthGuard)
   async remove(@Param("id") id: string, @Req() req: CustomRequest) {
-    await this.postService.checkPostOwner(+id, req.user.id, req.user.email);
+    const isOwner = await this.postService.checkPostOwner(
+      +id,
+      req.user.id,
+      req.user.email,
+    );
+    if (!isOwner) {
+      throw new ForbiddenException("해당 포스트를 삭제할 권한이 없습니다.");
+    }
     const result = await this.postService.remove(+id);
     if (!result) {
       throw new NotFoundException("해당 포스트가 없습니다.");

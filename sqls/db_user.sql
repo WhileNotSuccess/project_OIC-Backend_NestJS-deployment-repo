@@ -37,7 +37,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'yju.intl@gmail.com','아무개','2025-05-21 00:08:21.517000');
+INSERT INTO `user` VALUES (1,'yju.intl@gmail.com','관리자','2025-05-21 00:08:21.517000');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
