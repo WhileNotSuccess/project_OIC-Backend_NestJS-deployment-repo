@@ -2,9 +2,6 @@ import { NewNewsEventX } from "src/post/domain/events/new-news-X.event";
 import { EventsHandler, IEventHandler } from "@nestjs/cqrs";
 import * as fs from "fs";
 import { lookup } from "mime-types";
-
-// import { Controller, Get, Post } from "@nestjs/common";
-// import * as crypto from "crypto";
 import { ApiResponseError, TwitterApi } from "twitter-api-v2";
 import * as path from "path";
 
@@ -25,7 +22,7 @@ export class CreatePostForNewNewsListenerX
     // 업로드 할 내용
     const content = [
       `${event.title}이 업로드 되었습니다.`,
-      `${process.env.FRONTEND_URL}/news/${event.postId}`,
+      `${process.env.FRONTEND_URL}/board/news/${event.postId}`,
     ].join("\n\n");
 
     try {

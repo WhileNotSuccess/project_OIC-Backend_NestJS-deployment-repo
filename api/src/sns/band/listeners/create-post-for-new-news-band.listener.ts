@@ -15,7 +15,7 @@ export class CreatePostForNewNewsListenerBand
     // 밴드에 올릴 글 내용
     const content = [
       `${event.title}이 업로드 되었습니다.`,
-      `${process.env.FRONTEND_URL}/news/${event.postId}`,
+      `${process.env.FRONTEND_URL}/board/news/${event.postId}`,
       `상기 링크에서 확인해주세요!`,
     ].join("\n\n");
 
