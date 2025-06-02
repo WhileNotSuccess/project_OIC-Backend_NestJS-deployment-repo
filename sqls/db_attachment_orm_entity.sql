@@ -25,8 +25,8 @@ DROP TABLE IF EXISTS `attachment_orm_entity`;
 CREATE TABLE `attachment_orm_entity` (
   `id` int NOT NULL AUTO_INCREMENT,
   `postId` int NOT NULL,
-  `url` varchar(150) NOT NULL,
-  `originalName` varchar(100) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `originalName` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_5831c8d770ea525c5a44613a329` (`postId`),
   CONSTRAINT `FK_5831c8d770ea525c5a44613a329` FOREIGN KEY (`postId`) REFERENCES `post_orm_entity` (`id`) ON DELETE CASCADE
@@ -52,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-22  0:48:03
+-- Dump completed on 2025-05-28  9:39:34
