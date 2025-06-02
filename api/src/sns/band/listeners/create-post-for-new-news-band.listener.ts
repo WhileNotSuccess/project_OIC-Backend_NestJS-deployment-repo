@@ -1,11 +1,11 @@
 import { EventsHandler, IEventHandler } from "@nestjs/cqrs";
-import { NewNewsEvent } from "src/post/domain/events/new-news.event";
+import { NewNewsEventBand } from "src/post/domain/events/new-news-band.event";
 
-@EventsHandler(NewNewsEvent)
-export class CreatePostForNewNewsListener
-  implements IEventHandler<NewNewsEvent>
+@EventsHandler(NewNewsEventBand)
+export class CreatePostForNewNewsListenerBand
+  implements IEventHandler<NewNewsEventBand>
 {
-  async handle(event: NewNewsEvent) {
+  async handle(event: NewNewsEventBand) {
     // 환경변수 확인
     if (!process.env.BAND_KEY) {
       console.warn("BAND_KEY is not set");

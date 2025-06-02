@@ -1,7 +1,8 @@
 import { Module } from "@nestjs/common";
-import { CreatePostForNewNewsListener } from "./band/listeners/create-post-for-new-news.listener";
+import { CreatePostForNewNewsListenerBand } from "./band/listeners/create-post-for-new-news-band.listener";
+import { CreatePostForNewNewsListenerX } from "./X/listeners/create-post-for-new-news-X.listener";
 
 @Module({
-  providers: [CreatePostForNewNewsListener],
+  providers: [CreatePostForNewNewsListenerBand, CreatePostForNewNewsListenerX],
 })
 export class SnsModule {}

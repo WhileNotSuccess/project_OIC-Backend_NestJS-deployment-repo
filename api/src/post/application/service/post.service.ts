@@ -13,7 +13,9 @@ import { MediaServicePort } from "src/media/application/media-service.port";
 import { HtmlParserPort } from "../port/html-parser.port";
 import { PostQueryRepository } from "../query/post-query.repository";
 import { EventBus } from "@nestjs/cqrs";
-import { NewNewsEvent } from "src/post/domain/events/new-news.event";
+import { NewNewsEventBand } from "src/post/domain/events/new-news-band.event";
+import { NewNewsEventX } from "src/post/domain/events/new-news-X.event";
+
 @Injectable()
 export class PostService {
   constructor(
@@ -77,7 +79,8 @@ export class PostService {
     );
     // 게시글 생성 후 이벤트 발생
     if (result.category === "news" && result.id) {
-      this.eventBus.publish(new NewNewsEvent(createPostDto.title, result.id));
+      this.eventBus.publish(new NewNewsEventBand(createPostDto.title, result.id));
+      this.eventBus.publish(new NewNewsEventX(createPostDto.title, result.id));
     }
   }
 
