@@ -52,7 +52,9 @@ export class PostService {
     files: Express.Multer.File[],
   ) {
     // 이미지 추출
-    const regex = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/g;
+    const regex =
+      /<img[^>]+src=["']?([^"'>]+(?:\.png|\.jpg|\.jpeg|\.gif|\.webp))["']?/gi;
+
     const createFilenames: string[] = [];
     let match: RegExpExecArray | null;
     if ((match = regex.exec(createPostDto.content)) !== null) {
@@ -77,9 +79,21 @@ export class PostService {
       imageData,
       filesData,
     );
+
     // 게시글 생성 후 이벤트 발생
     if (result.category === "news" && result.id) {
-      this.eventBus.publish(new NewNewsEventBand(createPostDto.title, result.id));
+      this.eventBus.publish(
+        new NewNewsEventBand(createPostDto.title, result.id),
+      );
+      if (imageData.length > 0) {
+        this.eventBus.publish(
+          new NewNewsEventX(
+            createPostDto.title,
+            result.id,
+            imageData[0].filename,
+          ),
+        );
+      }
       this.eventBus.publish(new NewNewsEventX(createPostDto.title, result.id));
     }
   }
@@ -237,7 +251,8 @@ export class PostService {
     // deleteFilePath 분리
     const { deleteFilePath, ...dto } = updatePostDto;
 
-    const regex = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/g;
+    const regex =
+      /<img[^>]+src=["']?([^"'>]+(?:\.png|\.jpg|\.jpeg|\.gif|\.webp))["']?/gi;
 
     // 업데이트 할 글에 들어있는 image의 src 추출
     const imageInContent: string[] = [];

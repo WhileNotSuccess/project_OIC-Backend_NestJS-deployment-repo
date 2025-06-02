@@ -34,7 +34,7 @@ services:
       - X_ACCESS_TOKEN_SECRET=${X_ACCESS_TOKEN_SECRET}
       - X_BEARER_TOKEN=${X_BEARER_TOKEN}
     ports:
-      - "3031:3000"
+      - "3001:3000"
     volumes:
       - ./api:/app
       - ./files:/files
