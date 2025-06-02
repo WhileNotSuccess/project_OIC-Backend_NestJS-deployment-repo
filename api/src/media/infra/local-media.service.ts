@@ -13,7 +13,7 @@ export class LocalMediaService extends MediaServicePort {
       filenames.map(async (file) => {
         const fileData = await fs.readFile(path.join(this.uploadRoot, file));
         return {
-          size: fileData.buffer.byteLength,
+          size: fileData.length,
           filename: file,
         };
       }),
