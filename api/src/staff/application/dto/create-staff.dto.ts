@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateStaffDto {
   @ApiProperty({
@@ -77,4 +77,11 @@ export class CreateStaffDto {
   @IsString()
   @IsOptional()
   role_jp?: string;
+  @ApiProperty({
+    name: "order",
+    description: "정렬 순서",
+  })
+  @IsNumber()
+  @IsOptional()
+  order?: number;
 }

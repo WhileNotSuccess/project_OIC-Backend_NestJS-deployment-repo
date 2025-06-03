@@ -12,6 +12,7 @@ export const toDomain = (orm: StaffOrmEntity): Staff => {
     orm.team_jp,
     orm.position_en,
     orm.team_en,
+    orm.order,
     orm.role,
     orm.role_en,
     orm.role_jp,

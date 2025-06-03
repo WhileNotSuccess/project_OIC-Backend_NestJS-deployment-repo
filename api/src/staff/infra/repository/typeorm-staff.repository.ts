@@ -1,13 +1,23 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { StaffOrmEntity } from "../entities/staff.entity";
-import { StaffRepository } from "../../domain/repository/staff.repository";
+import {
+  OrderUpdate,
+  StaffRepository,
+} from "../../domain/repository/staff.repository";
 import { toDomain } from "../mappers/staff.mapper";
 import { Staff } from "../../domain/entities/staff.entity";
 import { transactional } from "src/common/utils/transaction-helper";
 
 @Injectable()
 export class TypeormStaffRepository extends StaffRepository {
+  async updateOrder(orderUpdate: OrderUpdate[]): Promise<void> {
+    await transactional(this.dataSource, async (queryRunner) => {
+      for (const { id, order } of orderUpdate) {
+        await queryRunner.manager.update(StaffOrmEntity, { id }, { order });
+      }
+    });
+  }
   async create(staffData: Partial<Staff>): Promise<Staff> {
     const staff = await transactional<StaffOrmEntity>(
       this.dataSource,
@@ -41,7 +51,9 @@ export class TypeormStaffRepository extends StaffRepository {
   }
 
   async getAll(): Promise<Staff[]> {
-    const result = await this.dataSource.manager.find(StaffOrmEntity);
+    const result = await this.dataSource.manager.find(StaffOrmEntity, {
+      order: { order: "ASC" },
+    });
     return result.map((item) => toDomain(item));
   }
   constructor(private readonly dataSource: DataSource) {

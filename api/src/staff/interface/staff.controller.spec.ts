@@ -47,6 +47,7 @@ describe("StaffController", () => {
         team_jp: "team_jp",
         position_en: "position_en",
         team_en: "team_en",
+        order: 1,
       };
       const created = new Staff(
         "name",
@@ -58,6 +59,7 @@ describe("StaffController", () => {
         "team_jp",
         "position_en",
         "team_en",
+        1,
       );
       service.create.mockResolvedValue(created);
 
@@ -83,6 +85,7 @@ describe("StaffController", () => {
             "team_jp",
             "position_en",
             "team_en",
+            1,
           ),
         ],
       };
@@ -114,6 +117,7 @@ describe("StaffController", () => {
             "team_jp",
             "position_en",
             "team_en",
+            1,
           ),
         ],
       };
@@ -143,6 +147,7 @@ describe("StaffController", () => {
         "team_jp",
         "position_en",
         "team_en",
+        1,
       );
       service.update.mockResolvedValue(updated);
 

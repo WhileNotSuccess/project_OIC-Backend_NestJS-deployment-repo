@@ -17,6 +17,8 @@ import { toLanguageEnum } from "src/common/utils/to-language-enum";
 import { Language } from "src/common/types/language";
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
 import { AdminGuard } from "src/shared/guards/admin.guard";
+import { UpdateOrder } from "../application/types/update-order";
+import { UpdateOrderDto } from "../application/dto/update-order.dto";
 
 @Controller("staff")
 export class StaffController {
@@ -58,6 +60,7 @@ export class StaffController {
             team: "team1",
             role: "role",
             id: 1,
+            order: 1,
           },
         ],
         team2: [
@@ -69,6 +72,7 @@ export class StaffController {
             team: "team2",
             role: "role",
             id: 2,
+            order: 1,
           },
         ],
       },
@@ -106,6 +110,7 @@ export class StaffController {
             team_jp: "team1",
             role_jp: "role",
             id: 1,
+            order: 1,
           },
         ],
         team2: [
@@ -123,6 +128,7 @@ export class StaffController {
             team_jp: "team1",
             role_jp: "role",
             id: 2,
+            order: 1,
           },
         ],
       },
@@ -183,6 +189,26 @@ export class StaffController {
     await this.staffService.remove(+id);
     return {
       message: "삭제가 완료되었습니다.",
+    };
+  }
+
+  @ApiOperation({
+    summary: "staff의 순서를 변경",
+  })
+  @ApiBody({
+    type: UpdateOrder,
+  })
+  @ApiResponse({
+    example: {
+      message: "순서 변경이 완료되었습니다.",
+    },
+  })
+  @UseGuards(AdminGuard)
+  @Post("order")
+  async updateOrder(@Body() updateOrderDto: UpdateOrderDto) {
+    await this.staffService.changeOrder(updateOrderDto);
+    return {
+      message: "순서 변경이 완료되었습니다.",
     };
   }
 }
