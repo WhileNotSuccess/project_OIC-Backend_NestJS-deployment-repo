@@ -13,7 +13,7 @@ export class LocalMediaService extends MediaServicePort {
       filenames.map(async (file) => {
         const fileData = await fs.readFile(path.join(this.uploadRoot, file));
         return {
-          size: fileData.buffer.byteLength,
+          size: fileData.length,
           filename: file,
         };
       }),
@@ -44,21 +44,35 @@ export class LocalMediaService extends MediaServicePort {
     folder: string,
   ): Promise<string> {
     await MediaValidator.imageValidate(file);
-    const fileName = `${uuid()}-${file.originalname}`;
+
+    const ext = path.extname(file.originalname); // 예: .png
+    const base = path
+      .basename(file.originalname, ext)
+      .replace(/\s+/g, "_") // 공백 → _
+      .replace(/[^\w.-]/g, ""); // 특수문자 제거
+
+    const safeFileName = `${uuid()}-${base}${ext}`;
     const targetDir = path.join(this.uploadRoot, folder);
-    const targetPath = path.join(targetDir, fileName);
+    const targetPath = path.join(targetDir, safeFileName);
 
     await fs.mkdir(targetDir, { recursive: true });
-
     await fs.writeFile(targetPath, file.buffer);
 
-    return `/${folder}/${fileName}`;
+    return `/${folder}/${safeFileName}`;
   }
 
   async uploadAttachment(file: Express.Multer.File, folder: string) {
     const { mimeType, size } = await MediaValidator.attachmentValidate(file);
-    const savedFileName = `${uuid()}.${path.basename(file.originalname)}`;
+
+    const ext = path.extname(file.originalname); // 예: .pdf
+    const base = path
+      .basename(file.originalname, ext)
+      .replace(/\s+/g, "_")
+      .replace(/[^\w.-]/g, "");
+    const safeBase = base || "file";
+    const savedFileName = `${uuid()}-${safeBase}${ext}`;
     const originalname = file.originalname;
+
     const targetDir = path.join(this.uploadRoot, folder);
     const targetPath = path.join(targetDir, savedFileName);
 

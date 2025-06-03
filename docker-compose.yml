@@ -1,6 +1,6 @@
 services:
   api:
-    image: node:20-bullseye
+    image: node:20-buster
     environment:
       - NODE_ENV=development
       - DB_HOST=${DB_HOST}
@@ -26,13 +26,16 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - JWT_TEST_SECRET=${JWT_TEST_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
+      - LANG=en_US.UTF-8
+      - LANGUAGE=en_US:en
+      - LC_ALL=en_US.UTF-8
     ports:
       - "3001:3000"
     volumes:
       - ./api:/app
       - ./files:/files
     working_dir: /app
-    command: sh -c "npm install && npm run start:dev"
+    command: sh -c "apt-get update && apt-get install -y locales && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen && npm install && npm run start:dev"
     networks:
       - backend
   db:
@@ -45,8 +48,12 @@ services:
       - "3337:3306"
     volumes:
       - ./sqls:/sqls
+      - db_data:/var/lib/mysql
     networks:
       - backend
 
 networks:
   backend:
+
+volumes:
+  db_data:

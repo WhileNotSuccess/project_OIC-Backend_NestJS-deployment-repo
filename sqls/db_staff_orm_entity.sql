@@ -62,6 +62,7 @@ INSERT INTO `staff_orm_entity` VALUES
 (12,'이아용','조교','053-940-5625','yong00@yju.ac.kr','국제교류1팀','大学助手','国際交流1チーム','Teaching assistant','International Exchange Team 1',12,'조교','Teaching assistant','大学助手'),
 (13,'김해림','조교','-','somang0681@yju.ac.kr','국제교류2팀','大学助手','国際交流2チーム','Teaching assistant','International Exchange Team 2',13,'조교','Teaching assistant','大学助手');
 
+
 /*!40000 ALTER TABLE `staff_orm_entity` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
