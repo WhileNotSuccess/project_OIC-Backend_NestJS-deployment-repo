@@ -4,6 +4,8 @@ import { UpdateStaffDto } from "../dto/update-staff.dto";
 import { StaffRepository } from "src/staff/domain/repository/staff.repository";
 import { Language } from "src/common/types/language";
 import { toLanguageEnum } from "src/common/utils/to-language-enum";
+import { UpdateOrderDto } from "../dto/update-order.dto";
+import { Order } from "../types/update-order";
 
 @Injectable()
 export class StaffService {
@@ -42,6 +44,7 @@ export class StaffService {
               team: item.team_en,
               role: item.role_en,
               id: item.id,
+              order: item.order,
             };
           } else if (language === toLanguageEnum("japanese")) {
             return {
@@ -52,6 +55,7 @@ export class StaffService {
               team: item.team_jp,
               role: item.role_jp,
               id: item.id,
+              order: item.order,
             };
           } else {
             return {
@@ -62,6 +66,7 @@ export class StaffService {
               team: item.team,
               role: item.role,
               id: item.id,
+              order: item.order,
             };
           }
         });
@@ -86,5 +91,21 @@ export class StaffService {
 
   async remove(id: number) {
     return await this.staffRepository.delete(id);
+  }
+
+  async changeOrder(orders: UpdateOrderDto) {
+    const result: Order[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Object.entries(orders.orders).map(([team, orderList]) => {
+      const order = orderList as Order[];
+      order.map((order) => {
+        result.push({
+          id: order.id,
+          order: order.order,
+        });
+      });
+    });
+
+    await this.staffRepository.updateOrder(result);
   }
 }
