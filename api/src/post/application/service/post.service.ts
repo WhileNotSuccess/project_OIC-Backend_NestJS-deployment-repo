@@ -85,16 +85,16 @@ export class PostService {
       this.eventBus.publish(
         new NewNewsEventBand(createPostDto.title, result.id),
       );
-      if (imageData.length > 0) {
-        this.eventBus.publish(
-          new NewNewsEventX(
-            createPostDto.title,
-            result.id,
-            imageData[0].filename,
-          ),
-        );
-      }
-      this.eventBus.publish(new NewNewsEventX(createPostDto.title, result.id));
+      this.eventBus.publish(
+        imageData.length > 0
+          ? new NewNewsEventX(
+              createPostDto.title,
+              result.id,
+              // /files/~~.jpg 형식의 files 하워 폴터부터 시작하는 경로
+              imageData[0].filename,
+            )
+          : new NewNewsEventX(createPostDto.title, result.id),
+      );
     }
   }
 

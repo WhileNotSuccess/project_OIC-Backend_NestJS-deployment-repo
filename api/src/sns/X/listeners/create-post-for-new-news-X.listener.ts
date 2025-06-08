@@ -26,16 +26,19 @@ export class CreatePostForNewNewsListenerX
     ].join("\n\n");
 
     try {
+      // 올려야 할 미디어 파일이 있을 경우
       let mediaId: string | undefined;
       if (event.media) {
         const mediaPath = path.resolve(__dirname, "../../../../../files");
         const filePath = path.join(mediaPath, event.media);
         if (!fs.existsSync(filePath)) {
+          // 서버에 파일이 저장되어있지 않은 경우
           console.warn("해당 미디어 파일이 존재하지 않습니다.", filePath);
         } else {
+          // 파일을 읽어서 mimetype 추정
           const media = fs.readFileSync(filePath);
           const mimeType = lookup(filePath) || "application/octet-stream";
-
+          // 미디어 파일 업로드 후 id 받아오기
           mediaId = await client.v1.uploadMedia(media, {
             mimeType,
           });
