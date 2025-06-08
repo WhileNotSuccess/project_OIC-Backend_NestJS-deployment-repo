@@ -21,9 +21,11 @@ export class CreatePostForNewNewsListenerX
 
     // 업로드 할 내용
     const content = [
-      `${event.title}이 업로드 되었습니다.`,
+      `새로운 공지가 업데이트 되었습니다.`,
+      `영진전문대학교 국제교류원 ${event.title}\n`,
       `${process.env.FRONTEND_URL}/board/news/${event.postId}`,
-    ].join("\n\n");
+    ].join("\n");
+
 
     try {
       // 올려야 할 미디어 파일이 있을 경우
