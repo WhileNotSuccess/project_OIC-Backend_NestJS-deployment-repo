@@ -28,4 +28,6 @@ export class StaffOrmEntity {
   role_en: string;
   @Column({ nullable: true })
   role_jp: string;
+  @Column({ default: 100 })
+  order: number;
 }

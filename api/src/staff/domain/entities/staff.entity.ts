@@ -9,6 +9,7 @@ export class Staff {
     public team_jp: string,
     public position_en: string,
     public team_en: string,
+    public order: number,
     public role?: string,
     public role_en?: string,
     public role_jp?: string,

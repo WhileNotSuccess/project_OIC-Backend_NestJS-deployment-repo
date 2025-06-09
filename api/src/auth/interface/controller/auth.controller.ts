@@ -73,7 +73,7 @@ export class AuthController {
       sameSite: "none",
       domain: process.env.COOKIE_DOMAIN,
     });
-    res.redirect(`${this.frontUrl}`);
+    res.redirect(`${this.frontUrl}/admin`);
   }
   // 일반 로그인
   @ApiOperation({ summary: "일반 로그인" })

@@ -125,6 +125,26 @@ export class PostService {
     };
   }
 
+  async findAllWithoutLanguage(category: string, page: number, take: number) {
+    // 페이지네이션 정보 불러오기
+    const [posts, total] =
+      await this.postQueryRepository.getManyWithAuthorByCategoryWithoutLanguage(
+        category,
+        page,
+        take,
+      );
+    const totalPage = Math.ceil(total / take);
+    const nextPage = page < totalPage ? page + 1 : null;
+    const prevPage = page > 1 ? page - 1 : null;
+
+    return {
+      data: posts,
+      currentPage: page,
+      prevPage,
+      nextPage,
+      totalPage,
+    };
+  }
   async findOneForId(id: number) {
     // 게시글 받아오기
     const post = await this.postQueryRepository.getOneWithAuthorById(id);

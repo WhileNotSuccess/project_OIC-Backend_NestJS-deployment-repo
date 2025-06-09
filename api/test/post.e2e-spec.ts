@@ -378,6 +378,27 @@ describe("PostController (e2e)", () => {
 <img src="http://localhost:3000/files/post/filename5.png" alt="" width="190" height="162">`);
   });
 
+  it("/post/:category/without-language (GET) should return posts", async () => {
+    const server = app.getHttpServer() as unknown as Parameters<
+      typeof request
+    >[0];
+    const res = await request(server)
+      .get("/post/applicants/without-language")
+      .expect(200);
+    const body = res.body as GetPaginationResponse;
+    expect(body.message).toBe("게시글 목록을 불러왔습니다.");
+    expect(body.data.length).toBe(1);
+    expect(body.data[0].author).toBe("관리자");
+    expect(body.data[0].content).toBe(`<p>감사해요</p>
+<p>잘있어요</p>
+<p>다시만나요</p>
+<img src="http://localhost:3000/files/post/filename1.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename2.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename3.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename4.png" alt="" width="190" height="162">
+<img src="http://localhost:3000/files/post/filename5.png" alt="" width="190" height="162">`);
+  });
+
   it("/post/one/id/:id (GET) should return a post by id", async () => {
     const server = app.getHttpServer() as unknown as Parameters<
       typeof request

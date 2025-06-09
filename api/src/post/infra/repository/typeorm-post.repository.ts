@@ -126,7 +126,7 @@ export class TypeormPostRepository extends PostRepository {
       await Promise.all(
         deleteFilePath.map(async (item) => {
           return await queryRunner.manager.delete(AttachmentOrmEntity, {
-            url: item,
+            originalName: item,
           });
         }),
       );
@@ -172,5 +172,22 @@ export class TypeormPostRepository extends PostRepository {
     });
 
     return news;
+  }
+
+  async getFilenames(): Promise<string[]> {
+    const filenames = await this.dataSource.manager
+      .createQueryBuilder(AttachmentOrmEntity, "attach")
+      .select("attach.url")
+      .getMany();
+    const imageNames = await this.dataSource.manager
+      .createQueryBuilder(PostImageOrmEntity, "image")
+      .select("image.filename")
+      .getMany();
+    const newFilenames = [
+      ...filenames.map((i) => i.url),
+      ...imageNames.map((i) => i.filename),
+    ];
+
+    return newFilenames;
   }
 }

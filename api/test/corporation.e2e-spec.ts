@@ -186,6 +186,24 @@ describe("CorporationController (e2e)", () => {
       }
     });
   });
+  describe("get count", () => {
+    it("get corporation count", async () => {
+      const server = app.getHttpServer() as unknown as Parameters<
+        typeof request
+      >[0];
+      const result = await request(server)
+        .get("/corporation/count")
+        .expect(200);
+      const body = result.body as MessageResponse;
+      expect(body).toMatchObject({
+        message: "협약기관, 국가 수를 조회했습니다.",
+        data: {
+          corporationCount: createCorporationDTOs.length,
+          countryCount: createCountryDTOs.length,
+        },
+      });
+    });
+  });
   describe("update corporation", () => {
     it("update first corporation", async () => {
       const server = app.getHttpServer() as unknown as Parameters<

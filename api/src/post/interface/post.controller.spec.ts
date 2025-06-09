@@ -56,6 +56,7 @@ describe("PostController", () => {
             uploadImage: jest.fn(),
             findNotice: jest.fn(),
             checkPostOwner: jest.fn(),
+            findAllWithoutLanguage: jest.fn(),
           },
         },
       ],
@@ -241,6 +242,43 @@ describe("PostController", () => {
       });
     });
   });
+
+  describe("findAllWithoutLanguage", () => {
+    it("should return pagination", async () => {
+      service.findAllWithoutLanguage.mockResolvedValue({
+        data: [{ ...dummyPost, author: "user", id: 1 }],
+        currentPage: 2,
+        prevPage: 1,
+        nextPage: 3,
+        totalPage: 10,
+      });
+
+      const result = await controller.findAllWithoutLanguage("category", 10, 2);
+      expect(service.findAllWithoutLanguage).toHaveBeenCalledWith(
+        "category",
+        2,
+        10,
+      );
+      expect(result).toMatchObject({
+        message: "게시글 목록을 불러왔습니다.",
+        data: [
+          {
+            title: "title",
+            content: "content",
+            userId: 1,
+            category: "category",
+            language: "korean",
+            id: 1,
+          },
+        ],
+        currentPage: 2,
+        prevPage: 1,
+        nextPage: 3,
+        totalPage: 10,
+      });
+    });
+  });
+
   describe("findOneForId", () => {
     it("should return one post", async () => {
       service.findOneForId.mockResolvedValue({

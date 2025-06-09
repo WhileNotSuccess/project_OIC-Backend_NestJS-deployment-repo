@@ -298,6 +298,20 @@ describe("TypeormPostRepository (Integration)", () => {
     expect(notices).toMatchObject([expectedResult, createDtoNotice.length]);
   });
 
+  it("getManyWithAuthorByCategoryWithoutLanguage", async () => {
+    const notices =
+      await queryRepository.getManyWithAuthorByCategoryWithoutLanguage(
+        "notice",
+        2,
+        1,
+      );
+    // 한 페이지당 1개의 게시글, 2번째 페이지이고, 정렬기준이 수정일자 내림차순 이므로, 두 번째로 id가 큰 글을 찾아야 함
+    const expectedResult = createdNotices.filter(
+      (item) => item.id === createdNotices.length - 1,
+    );
+    expect(notices).toMatchObject([expectedResult, createDtoNotice.length]);
+  });
+
   it("update", async () => {
     // 업데이트 dto 생성
     const updateDto = {
@@ -311,7 +325,7 @@ describe("TypeormPostRepository (Integration)", () => {
       <img src="http://localhost:3000/files/post/filename6.png" alt="" width="190" height="162">`,
     };
     // 기존 파일중 삭제할 파일 (문자열 배열)
-    const deleteFile = ["/attachment/hello1.pdf"];
+    const deleteFile = ["hello1.pdf"];
     // 새로 추가할 이미지 (imageMetaData[])
     const newImage: imageMetadata[] = [
       { size: 1000, filename: "/post/filename6.png" },

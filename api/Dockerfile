@@ -3,6 +3,7 @@ FROM node:20-buster
 
 RUN mkdir /files
 
+RUN apt-get update && apt-get install -y locales && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 # Set the working directory inside the container
 WORKDIR /app
 

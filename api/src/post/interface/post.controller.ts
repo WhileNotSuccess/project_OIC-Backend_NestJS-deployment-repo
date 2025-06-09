@@ -13,6 +13,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   UseGuards,
+  ForbiddenException,
 } from "@nestjs/common";
 import { PostService } from "../application/service/post.service";
 import { CreatePostDto } from "../application/dto/create-post.dto";
@@ -32,6 +33,8 @@ import { Language } from "../../common/types/language";
 import { toLanguageEnum } from "src/common/utils/to-language-enum";
 import { SearchPostQueryDto } from "./dto/search-post-query.dto";
 import { CustomRequest } from "src/common/types/custom-request";
+import { AdminGuard } from "src/shared/guards/admin.guard";
+import { FixOriginalNameInterceptor } from "src/shared/interceptors/fix-originalname.interceptor";
 
 @Controller("post")
 export class PostController {
@@ -252,8 +255,8 @@ export class PostController {
   @ApiResponse({
     example: { message: "게시글이 작성되었습니다." },
   })
-  @UseInterceptors(FilesInterceptor("files", 10))
-  //@UseGuards(AdminGuard)
+  @UseInterceptors(FilesInterceptor("files", 10), FixOriginalNameInterceptor)
+  @UseGuards(AdminGuard)
   @Post()
   async create(
     @Body() createPostDto: CreatePostDto,
@@ -320,6 +323,63 @@ export class PostController {
       page,
       limit,
       language,
+    );
+    return {
+      message: "게시글 목록을 불러왔습니다.",
+      ...result,
+    };
+  }
+
+  @ApiOperation({
+    summary: "해당 카테고리의 모든 post를 언어제한 없이 가져오기",
+  })
+  @ApiParam({
+    name: "category",
+    example: "notice",
+  })
+  @ApiQuery({
+    name: "limit",
+    example: 10,
+    required: false,
+    default: 10,
+  })
+  @ApiQuery({
+    name: "page",
+    example: 1,
+    required: false,
+    default: 1,
+  })
+  @ApiResponse({
+    example: {
+      message: "게시글 목록을 불러왔습니다.",
+      data: [
+        {
+          id: 1,
+          title: "asdf",
+          content: "<p>asdf</p>",
+          author: "admin",
+          category: "notice",
+          createdDate: "2025-01-31T15:12:47.145Z",
+          updatedDate: "2025-01-31T15:12:58.281Z",
+          language: "korean",
+        },
+      ],
+      currentPage: 1,
+      prevPage: null,
+      nextPage: null,
+      totalPage: 1,
+    },
+  })
+  @Get(":category/without-language")
+  async findAllWithoutLanguage(
+    @Param("category") category: string,
+    @Query("limit", new DefaultValuePipe(10)) limit: number,
+    @Query("page", new DefaultValuePipe(1)) page: number,
+  ) {
+    const result = await this.postService.findAllWithoutLanguage(
+      category,
+      page,
+      limit,
     );
     return {
       message: "게시글 목록을 불러왔습니다.",
@@ -437,7 +497,8 @@ export class PostController {
   @ApiResponse({
     example: { message: "수정이 완료되었습니다." },
   })
-  @UseInterceptors(FilesInterceptor("files", 10))
+  @UseInterceptors(FilesInterceptor("files", 10), FixOriginalNameInterceptor)
+  @UseGuards(AuthGuard)
   @Patch(":id")
   async update(
     @Param("id") id: string,
@@ -445,7 +506,14 @@ export class PostController {
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: CustomRequest,
   ) {
-    await this.postService.checkPostOwner(+id, req.user.id, req.user.email);
+    const isOwner = await this.postService.checkPostOwner(
+      +id,
+      req.user.id,
+      req.user.email,
+    );
+    if (!isOwner) {
+      throw new ForbiddenException("해당 포스트를 수정할 권한이 없습니다.");
+    }
     await this.postService.update(+id, updatePostDto, files);
     return {
       message: "수정이 완료되었습니다.",
@@ -457,7 +525,14 @@ export class PostController {
   @ApiResponse({ example: { message: "삭제가 완료되었습니다." } })
   @Delete(":id")
   async remove(@Param("id") id: string, @Req() req: CustomRequest) {
-    await this.postService.checkPostOwner(+id, req.user.id, req.user.email);
+    const isOwner = await this.postService.checkPostOwner(
+      +id,
+      req.user.id,
+      req.user.email,
+    );
+    if (!isOwner) {
+      throw new ForbiddenException("해당 포스트를 삭제할 권한이 없습니다.");
+    }
     const result = await this.postService.remove(+id);
     if (!result) {
       throw new NotFoundException("해당 포스트가 없습니다.");

@@ -14,4 +14,6 @@ export abstract class CorporationRepository {
   abstract getCorporationByCountryId(countryId: number): Promise<Corporation[]>;
   abstract getAllCorporation(): Promise<Corporation[]>;
   abstract getAllCountry(): Promise<Country[]>;
+  abstract countCountry(): Promise<number>;
+  abstract countCorporation(): Promise<number>;
 }
