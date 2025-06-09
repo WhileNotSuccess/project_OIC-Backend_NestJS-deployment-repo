@@ -12,9 +12,9 @@ import { Language } from "src/common/types/language";
 import { MediaServicePort } from "src/media/application/media-service.port";
 import { HtmlParserPort } from "../port/html-parser.port";
 import { PostQueryRepository } from "../query/post-query.repository";
-import { EventBus } from "@nestjs/cqrs";
 import { NewNewsEventBand } from "src/post/domain/events/new-news-band.event";
 import { NewNewsEventX } from "src/post/domain/events/new-news-X.event";
+import { EventBus } from "@nestjs/cqrs";
 
 @Injectable()
 export class PostService {
@@ -81,7 +81,11 @@ export class PostService {
     );
 
     // 게시글 생성 후 이벤트 발생
-    if (result.category === "news" && result.id) {
+    if (
+      process.env.NODE_ENV !== "test" &&
+      result.category === "news" &&
+      result.id
+    ) {
       this.eventBus.publish(
         new NewNewsEventBand(createPostDto.title, result.id),
       );

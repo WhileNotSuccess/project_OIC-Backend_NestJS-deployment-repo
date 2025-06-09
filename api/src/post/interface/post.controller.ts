@@ -262,10 +262,9 @@ export class PostController {
   async create(
     @Body() createPostDto: CreatePostDto,
     @UploadedFiles() files: Express.Multer.File[],
-    //@Req() req: CustomRequest,
+    @Req() req: CustomRequest,
   ) {
-    //await this.postService.create(createPostDto, req.user.id, files);
-    await this.postService.create(createPostDto, 1, files);
+    await this.postService.create(createPostDto, req.user.id, files);
     return {
       message: "게시글이 작성되었습니다.",
     };
@@ -524,6 +523,7 @@ export class PostController {
   @ApiOperation({ summary: "post 삭제하기" })
   @ApiParam({ name: "id", example: 1 })
   @ApiResponse({ example: { message: "삭제가 완료되었습니다." } })
+  @UseGuards(AuthGuard)
   @Delete(":id")
   async remove(@Param("id") id: string, @Req() req: CustomRequest) {
     const isOwner = await this.postService.checkPostOwner(

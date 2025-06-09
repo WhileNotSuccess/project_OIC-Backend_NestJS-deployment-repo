@@ -12,6 +12,8 @@ import { MediaServicePort } from "src/media/application/media-service.port";
 import { HtmlParserPort } from "../port/html-parser.port";
 import { PostQueryRepository } from "../query/post-query.repository";
 import { PostWithAuthor } from "../dto/post-with-user.dto";
+import { EventBus } from "@nestjs/cqrs";
+import { Language } from "src/common/types/language";
 
 describe("PostService", () => {
   let service: PostService;
@@ -161,6 +163,12 @@ describe("PostService", () => {
       providers: [
         PostService,
         {
+          provide: EventBus,
+          useValue: {
+            publish: jest.fn(),
+          },
+        },
+        {
           provide: HtmlParserPort,
           useValue: {
             extractFirstParagraphText: jest.fn(),
@@ -234,6 +242,16 @@ describe("PostService", () => {
       jest
         .spyOn(media, "uploadAttachment")
         .mockResolvedValue(mockUploadAttachmentResult[0]);
+      jest.spyOn(repository, "create").mockResolvedValue({
+        category: "testing",
+        title: "title",
+        content: "content",
+        userId: 1,
+        language: "korean" as unknown as Language,
+        createdDate: new Date(),
+        updatedDate: new Date(),
+        isOwner: jest.fn(),
+      });
       await service.create(testingPosts[0], 1, [testingFile]);
 
       // content 내부에서 src를 잘 잘라서 findImage를 호출하는 지 확인

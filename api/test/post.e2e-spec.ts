@@ -23,6 +23,8 @@ import { UserOrmEntity } from "src/users/infra/entities/user.entity";
 import { AuthOrmEntity } from "src/auth/infra/entities/auth.entity";
 import { AuthModule } from "src/auth/auth.module";
 import { UserModule } from "src/users/user.module";
+import { SnsModule } from "src/sns/sns.module";
+import { CqrsModule } from "@nestjs/cqrs";
 
 describe("PostController (e2e)", () => {
   let app: INestApplication;
@@ -30,6 +32,7 @@ describe("PostController (e2e)", () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        CqrsModule.forRoot(),
         ConfigModule.forRoot({
           isGlobal: true,
         }),
@@ -50,6 +53,7 @@ describe("PostController (e2e)", () => {
             AuthOrmEntity,
           ],
         }),
+        SnsModule,
         PostModule,
         AuthModule,
         UserModule,

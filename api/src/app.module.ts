@@ -27,9 +27,9 @@ import { AuthOrmEntity } from "./auth/infra/entities/auth.entity";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./users/user.module";
 import { CommonModule } from "./common/common.module";
-import { CqrsModule } from "@nestjs/cqrs";
 import { SnsModule } from "./sns/sns.module";
 import { BatchModule } from "./batch/batch.module";
+import { CqrsModule } from "@nestjs/cqrs";
 
 @Module({
   imports: [

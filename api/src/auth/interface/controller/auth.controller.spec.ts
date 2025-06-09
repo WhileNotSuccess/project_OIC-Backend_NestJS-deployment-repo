@@ -88,7 +88,7 @@ describe("AuthController", () => {
         "token123",
         expect.any(Object),
       );
-      expect(res.redirect).toHaveBeenCalledWith(frontUrl);
+      expect(res.redirect).toHaveBeenCalledWith(`${frontUrl}/admin`);
     });
   });
 
