@@ -35,6 +35,7 @@ import { SearchPostQueryDto } from "./dto/search-post-query.dto";
 import { CustomRequest } from "src/common/types/custom-request";
 import { AdminGuard } from "src/shared/guards/admin.guard";
 import { FixOriginalNameInterceptor } from "src/shared/interceptors/fix-originalname.interceptor";
+import { AuthGuard } from "src/shared/guards/auth.guard";
 
 @Controller("post")
 export class PostController {
