@@ -12,6 +12,10 @@ import { Language } from "src/common/types/language";
 import { MediaServicePort } from "src/media/application/media-service.port";
 import { HtmlParserPort } from "../port/html-parser.port";
 import { PostQueryRepository } from "../query/post-query.repository";
+import { NewNewsEventBand } from "src/post/domain/events/new-news-band.event";
+import { NewNewsEventX } from "src/post/domain/events/new-news-X.event";
+import { EventBus } from "@nestjs/cqrs";
+
 @Injectable()
 export class PostService {
   constructor(
@@ -19,6 +23,7 @@ export class PostService {
     private readonly MediaServicePort: MediaServicePort,
     private readonly htmlParser: HtmlParserPort,
     private readonly postQueryRepository: PostQueryRepository,
+    private readonly eventBus: EventBus,
   ) {}
 
   async checkPostOwner(
@@ -47,7 +52,9 @@ export class PostService {
     files: Express.Multer.File[],
   ) {
     // 이미지 추출
-    const regex = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/g;
+    const regex =
+      /<img[^>]+src=["']?([^"'>]+(?:\.png|\.jpg|\.jpeg|\.gif|\.webp))["']?/gi;
+
     const createFilenames: string[] = [];
     let match: RegExpExecArray | null;
     if ((match = regex.exec(createPostDto.content)) !== null) {
@@ -64,7 +71,7 @@ export class PostService {
       ),
     );
     // 이미지, 첨부파일의 메타데이터와 포스트를 전부 각각의 테이블에 저장
-    await this.postRepository.create(
+    const result = await this.postRepository.create(
       {
         ...createPostDto,
         userId: userId,
@@ -72,6 +79,27 @@ export class PostService {
       imageData,
       filesData,
     );
+
+    // 게시글 생성 후 이벤트 발생
+    if (
+      process.env.NODE_ENV !== "test" &&
+      result.category === "news" &&
+      result.id
+    ) {
+      this.eventBus.publish(
+        new NewNewsEventBand(createPostDto.title, result.id),
+      );
+      this.eventBus.publish(
+        imageData.length > 0
+          ? new NewNewsEventX(
+              createPostDto.title,
+              result.id,
+              // /files/~~.jpg 형식의 files 하워 폴터부터 시작하는 경로
+              imageData[0].filename,
+            )
+          : new NewNewsEventX(createPostDto.title, result.id),
+      );
+    }
   }
 
   async findAll(
@@ -247,7 +275,8 @@ export class PostService {
     // deleteFilePath 분리
     const { deleteFilePath, ...dto } = updatePostDto;
 
-    const regex = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/g;
+    const regex =
+      /<img[^>]+src=["']?([^"'>]+(?:\.png|\.jpg|\.jpeg|\.gif|\.webp))["']?/gi;
 
     // 업데이트 할 글에 들어있는 image의 src 추출
     const imageInContent: string[] = [];

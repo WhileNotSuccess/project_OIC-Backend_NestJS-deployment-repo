@@ -27,10 +27,13 @@ import { AuthOrmEntity } from "./auth/infra/entities/auth.entity";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./users/user.module";
 import { CommonModule } from "./common/common.module";
+import { SnsModule } from "./sns/sns.module";
 import { BatchModule } from "./batch/batch.module";
+import { CqrsModule } from "@nestjs/cqrs";
 
 @Module({
   imports: [
+    CqrsModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: "/files",
       serveRoot: "/api/files",
@@ -116,6 +119,7 @@ import { BatchModule } from "./batch/batch.module";
     AuthModule,
     UserModule,
     CommonModule,
+    SnsModule,
     BatchModule,
   ],
   controllers: [AppController],

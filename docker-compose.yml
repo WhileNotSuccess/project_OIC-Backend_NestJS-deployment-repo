@@ -26,6 +26,13 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - JWT_TEST_SECRET=${JWT_TEST_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
+      - NAVER_BAND_ACCESS_TOKEN=${NAVER_BAND_ACCESS_TOKEN}
+      - BAND_KEY=${BAND_KEY}
+      - X_API_KEY=${X_API_KEY}
+      - X_API_KEY_SECRET=${X_API_KEY_SECRET}
+      - X_ACCESS_TOKEN=${X_ACCESS_TOKEN}
+      - X_ACCESS_TOKEN_SECRET=${X_ACCESS_TOKEN_SECRET}
+      - X_BEARER_TOKEN=${X_BEARER_TOKEN}
       - LANG=en_US.UTF-8
       - LANGUAGE=en_US:en
       - LC_ALL=en_US.UTF-8
@@ -47,7 +54,6 @@ services:
     ports:
       - "3337:3306"
     volumes:
-      - ./sqls:/sqls
       - db_data:/var/lib/mysql
     networks:
       - backend
