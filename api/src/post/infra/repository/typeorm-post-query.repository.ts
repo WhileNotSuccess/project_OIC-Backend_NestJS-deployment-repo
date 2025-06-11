@@ -79,11 +79,16 @@ export class TypeormPostQueryRepository extends PostQueryRepository {
     take: number,
     language: Language,
   ): Promise<[PostWithAuthor[], number]> {
-    const [post, total] = (await this.dataSource.manager
+    const queryBuilder = this.dataSource.manager
       .createQueryBuilder(PostOrmEntity, "post")
       .leftJoinAndSelect("post.user", "user")
-      .where("post.category = :category", { category })
-      .andWhere("post.language = :language", { language })
+      .where("post.category = :category", { category });
+
+    if (category !== "globalPrograms") {
+      queryBuilder.andWhere("post.language = :language", { language });
+    }
+
+    const [post, total] = (await queryBuilder
       .take(take)
       .skip((page - 1) * take)
       .orderBy("post.updatedDate", "DESC")
