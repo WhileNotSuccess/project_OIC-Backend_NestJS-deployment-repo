@@ -16,6 +16,7 @@ import { transactional } from "src/common/utils/transaction-helper";
 import { PostImageOrmEntity } from "../entities/post-image-orm.entity";
 import { PostImage } from "src/post/domain/entities/post-image.entity";
 import { Attachment } from "src/post/domain/entities/attachment.entity";
+import * as path from "path";
 
 @Injectable()
 export class TypeormPostRepository extends PostRepository {
@@ -184,8 +185,8 @@ export class TypeormPostRepository extends PostRepository {
       .select("image.filename")
       .getMany();
     const newFilenames = [
-      ...filenames.map((i) => i.url),
-      ...imageNames.map((i) => i.filename),
+      ...filenames.map((i) => path.join("/files", i.url)),
+      ...imageNames.map((i) => path.join("/files", i.filename)),
     ];
 
     return newFilenames;

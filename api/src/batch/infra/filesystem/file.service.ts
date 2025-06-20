@@ -11,7 +11,9 @@ export class FileService extends IFileService {
     // true일 경우 fs.Dirent 객체의 배열 형식으로 반환됨
 
     for (const entry of entries) {
+      // 폴더, 파일
       const fullPath = path.join(dir, entry.name);
+      // 루트 폴더 / 검색할 폴더,파일 join
       if (entry.isDirectory()) {
         // 폴더(디렉토리)인 경우
         fileList.push(...this.getAllFiles(fullPath));
