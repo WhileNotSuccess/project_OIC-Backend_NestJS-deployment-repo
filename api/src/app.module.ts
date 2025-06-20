@@ -28,7 +28,7 @@ import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./users/user.module";
 import { CommonModule } from "./common/common.module";
 import { SnsModule } from "./sns/sns.module";
-//import { BatchModule } from "./batch/batch.module";
+import { BatchModule } from "./batch/batch.module";
 import { CqrsModule } from "@nestjs/cqrs";
 
 @Module({
@@ -120,7 +120,7 @@ import { CqrsModule } from "@nestjs/cqrs";
     UserModule,
     CommonModule,
     SnsModule,
-  //  BatchModule,
+    BatchModule,
   ],
   controllers: [AppController],
   providers: [
@@ -131,4 +131,4 @@ import { CqrsModule } from "@nestjs/cqrs";
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
