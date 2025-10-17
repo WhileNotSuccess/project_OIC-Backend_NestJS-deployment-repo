@@ -15,6 +15,7 @@ import { PostQueryRepository } from "../query/post-query.repository";
 import { NewNewsEventBand } from "src/post/domain/events/new-news-band.event";
 import { NewNewsEventX } from "src/post/domain/events/new-news-X.event";
 import { EventBus } from "@nestjs/cqrs";
+import { NewNewsEventThreads } from "src/post/domain/events/new-news-threads.event";
 
 @Injectable()
 export class PostService {
@@ -98,6 +99,15 @@ export class PostService {
               imageData[0].filename,
             )
           : new NewNewsEventX(createPostDto.title, result.id),
+      );
+      this.eventBus.publish(
+        imageData.length > 0
+          ? new NewNewsEventThreads(
+              createPostDto.title,
+              result.id,
+              imageData[0].filename,
+            )
+          : new NewNewsEventThreads(createPostDto.title, result.id),
       );
     }
   }

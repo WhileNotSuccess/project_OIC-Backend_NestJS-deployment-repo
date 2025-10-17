@@ -1,6 +1,6 @@
 services:
   api:
-    image: node:20-buster
+    image: node:20-trixie
     environment:
       - NODE_ENV=development
       - DB_HOST=${DB_HOST}
@@ -33,6 +33,8 @@ services:
       - X_ACCESS_TOKEN=${X_ACCESS_TOKEN}
       - X_ACCESS_TOKEN_SECRET=${X_ACCESS_TOKEN_SECRET}
       - X_BEARER_TOKEN=${X_BEARER_TOKEN}
+      - THREADS_USER_ID=${THREADS_USER_ID}
+      - THREADS_ACCESS_TOKEN=${THREADS_ACCESS_TOKEN}
       - LANG=en_US.UTF-8
       - LANGUAGE=en_US:en
       - LC_ALL=en_US.UTF-8
