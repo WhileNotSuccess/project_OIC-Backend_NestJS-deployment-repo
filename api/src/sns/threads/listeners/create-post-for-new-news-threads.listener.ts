@@ -39,11 +39,11 @@ export class CreatePostForNewNewsListenerThreads
           `media_type=${event.media ? "IMAGE" : "TEXT"}`, // 게시 타입 TEXT, IMAGE, VIDEO
           `text=${content}`,
           `domain=THREADS`,
-          `${filePath ? `image_url=${filePath}` : null}`,
+          `${filePath ? `image_url=${process.env.FRONTEND_URL}${filePath}` : null}`,
         ].join("&"),
         { method: "POST" },
       );
-
+      
       const resJson = (await response.json()) as { id: number }; // {id:number}
 
       // 미디어 컨테이너 게시
