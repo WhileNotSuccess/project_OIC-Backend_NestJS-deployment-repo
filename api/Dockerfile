@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image
-FROM node:20-buster
+FROM node:20-trixie
 
 RUN mkdir /files
 
