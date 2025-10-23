@@ -45,9 +45,10 @@ export class CreatePostForNewNewsListenerThreads
       );
       
       const resJson = (await response.json()) as { id: number }; // {id:number}
+      console.log(resJson)
 
       // 미디어 컨테이너 게시
-      await fetch(
+      const conRes = await fetch(
         [
           `${baseURL}/threads_publish${accessor}`,
           `domain=THREADS`,
@@ -55,6 +56,7 @@ export class CreatePostForNewNewsListenerThreads
         ].join("&"),
         { method: "POST" },
       );
+      console.log(conRes)
     } catch (e) {
       if (e) {
         console.error("에러 메시지:", e);
