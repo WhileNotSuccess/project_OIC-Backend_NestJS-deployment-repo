@@ -39,7 +39,7 @@ export class CreatePostForNewNewsListenerThreads
           `media_type=${event.media ? "IMAGE" : "TEXT"}`, // 게시 타입 TEXT, IMAGE, VIDEO
           `text=${content}`,
           `domain=THREADS`,
-          `${filePath ? `image_url=${process.env.FRONTEND_URL}${filePath}` : null}`,
+          `${filePath ? `image_url=${process.env.BACKEND_URL}${filePath}` : null}`,
         ].join("&"),
         { method: "POST" },
       );
