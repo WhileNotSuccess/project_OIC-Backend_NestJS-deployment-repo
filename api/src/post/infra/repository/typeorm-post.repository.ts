@@ -17,6 +17,8 @@ import { PostImageOrmEntity } from "../entities/post-image-orm.entity";
 import { PostImage } from "src/post/domain/entities/post-image.entity";
 import { Attachment } from "src/post/domain/entities/attachment.entity";
 import * as path from "path";
+import { CarouselOrmEntity } from "src/carousel/infra/entities/carousel.entity";
+import { PrideOfYjuOrmEntity } from "src/pride-of-yju/infra/entities/pride-of-yju.entity";
 
 @Injectable()
 export class TypeormPostRepository extends PostRepository {
@@ -184,9 +186,19 @@ export class TypeormPostRepository extends PostRepository {
       .createQueryBuilder(PostImageOrmEntity, "image")
       .select("image.filename")
       .getMany();
+    const carouselNames = await this.dataSource.manager
+      .createQueryBuilder(CarouselOrmEntity, "carousel")
+      .select("carousel.image")
+      .getMany();
+    const prideNames = await this.dataSource.manager
+      .createQueryBuilder(PrideOfYjuOrmEntity, "pride")
+      .select("pride.image")
+      .getMany();
     const newFilenames = [
       ...filenames.map((i) => path.join("/files", i.url)),
       ...imageNames.map((i) => path.join("/files", i.filename)),
+      ...carouselNames.map((i) => path.join("/files", i.image)),
+      ...prideNames.map((i) => path.join("/files", i.image)),
     ];
 
     return newFilenames;
