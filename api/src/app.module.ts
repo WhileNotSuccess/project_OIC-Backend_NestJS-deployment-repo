@@ -131,4 +131,4 @@ import { CqrsModule } from "@nestjs/cqrs";
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

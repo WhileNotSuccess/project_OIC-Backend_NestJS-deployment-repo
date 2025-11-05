@@ -181,13 +181,13 @@ export class PostService {
     return await this.postRepository.getOneForCategory(category, language);
   }
 
-  async findApplicant() {
+  async findApplicant(language: Language) {
     const regex: RegExp = /<img[^>]+src=["']?([^"'\s>]+)["'\s>]/;
 
     // 모집요강 게시글 불러오기
     const applicants = await this.postRepository.getOneForCategory(
       "guidelinesForApplicants",
-      Language.korean,
+      language,
     );
     if (!applicants?.id) {
       throw new InternalServerErrorException("모집요강을 못 찾았습니다.");
@@ -201,7 +201,7 @@ export class PostService {
     // 입학신청서 게시글 불러오기
     const entry = await this.postRepository.getOneForCategory(
       "applicants",
-      Language.korean,
+      language,
     );
     if (!entry?.id) {
       throw new InternalServerErrorException("입학신청서를 못 찾았습니다.");
