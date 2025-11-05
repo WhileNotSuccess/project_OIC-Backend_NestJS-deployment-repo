@@ -92,8 +92,10 @@ export class PostController {
     },
   })
   @Get("main/applicants")
-  async getApplicants() {
-    const applicants = await this.postService.findApplicant();
+  async getApplicants(@Req() req: RequestWithCookies) {
+    const rawLang = req.cookies["language"] || "korean";
+    const language: Language = toLanguageEnum(rawLang);
+    const applicants = await this.postService.findApplicant(language);
     return {
       message: "모집요강과 입학신청서를 불러왔습니다.",
       applicants: applicants.applicants,
