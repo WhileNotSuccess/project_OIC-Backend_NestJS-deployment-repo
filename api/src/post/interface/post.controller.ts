@@ -89,6 +89,10 @@ export class PostController {
         imageUrl: "string",
         fileUrl: "string",
       },
+      guideBook: {
+        imageUrl: "string",
+        fileUrl: "string",
+      },
     },
   })
   @Get("main/applicants")
@@ -100,6 +104,7 @@ export class PostController {
       message: "모집요강과 입학신청서를 불러왔습니다.",
       applicants: applicants.applicants,
       entry: applicants.entry,
+      guideBook: applicants.guideBook,
     };
   }
 

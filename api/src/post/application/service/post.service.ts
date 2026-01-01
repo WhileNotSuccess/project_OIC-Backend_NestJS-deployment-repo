@@ -207,6 +207,20 @@ export class PostService {
       throw new InternalServerErrorException("입학신청서를 못 찾았습니다.");
     }
 
+    // 안내책자 게시글 불러오기
+    const guideBook = await this.postRepository.getOneForCategory(
+      "guideBook",
+      language,
+    );
+    if (!guideBook?.id) {
+      throw new InternalServerErrorException("안내책자를 못 찾았습니다.");
+    }
+
+    // 안내책자 파일 불러오기
+    const guideBookFile = await this.postRepository.getAttachmentsByPostId(
+      guideBook.id,
+    );
+
     // 입학신청서 파일 불러오기
     const entryFile = await this.postRepository.getAttachmentsByPostId(
       entry.id,
@@ -215,7 +229,8 @@ export class PostService {
     // 썸네일 추출
     const applicantsMatch = regex.exec(applicants.content);
     const entryMatch = regex.exec(entry.content);
-    if (!applicantsMatch || !entryMatch) {
+    const guideBookMatch = regex.exec(guideBook.content);
+    if (!applicantsMatch || !entryMatch || !guideBookMatch) {
       throw new NotFoundException(
         "입학신청서와 모집요강의 이미지를 가져오지 못했습니다.",
       );
@@ -231,6 +246,13 @@ export class PostService {
       entry: {
         imageUrl: entryMatch[1].replace(`${process.env.BACKEND_URL}/files`, ""),
         fileUrl: entryFile[0].url,
+      },
+      guideBook: {
+        imageUrl: guideBookMatch[1].replace(
+          `${process.env.BACKEND_URL}/files`,
+          "",
+        ),
+        fileUrl: guideBookFile[0].url,
       },
     };
   }
